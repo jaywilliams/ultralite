@@ -91,7 +91,41 @@
 		{
 			die(EZSQL_CORE_ERROR);
 		}
-
+		
+		/**
+		 * Escapes content by reference for insertion into the database, for security
+		 *
+		 * @param string $s
+		 */
+		function escape_by_ref(&$s)
+		{
+			$s = $this->escape($s);
+		}
+		
+		/**
+		 * Prepares a SQL query for safe use, using sprintf() syntax.
+		 * 
+		 * @example $this->prepare("INSERT INTO `table` (title, total) VALUES (%s, %d)", $title , $total);
+		 *
+		 * @link http://php.net/sprintf See for syntax to use for query string.
+		 *
+		 * @param null|string $args If string, first parameter must be query statement
+		 * @param mixed $args,... If additional parameters, they will be set inserted into the query.
+		 * @return null|string Sanitized query string
+		 */
+		function prepare($args=null)
+		{
+			if ( is_null( $args ) )
+				return;
+			$args = func_get_args();
+			$query = array_shift($args);
+			$query = str_replace("'%s'", '%s', $query); // in case someone mistakenly already singlequoted it
+			$query = str_replace('"%s"', '%s', $query); // doublequote unquoting
+			$query = str_replace('%s', "'%s'", $query); // quote the strings
+			array_walk($args, array(&$this, 'escape_by_ref'));
+			return @vsprintf($query, $args);
+		}
+		
 		/**********************************************************************
 		*  Return database specific system date syntax
 		*  i.e. Oracle: SYSDATE Mysql: NOW()

@@ -24,12 +24,18 @@ $db->query("CREATE TABLE IF NOT EXISTS 'main'.'pixelpost' ('id' INTEGER PRIMARY 
 /*
 	INSERT INTO "main"."pixelpost" ("title","description","filename","published") VALUES ('MyTitle','MyDescription','myimage.jpg',CURRENT_TIMESTAMP)
 */
-$db->query("INSERT INTO 'main'.'pixelpost' ('title','description','filename','published') VALUES ('MyTitle','MyDescription','myimage.jpg',CURRENT_TIMESTAMP)");
+$title = "My Title 'Loves' \"Quotes\"";
+$description = "MyDescription";
+$filename = 'myimage.jpg';
 
+$sql = $db->prepare("INSERT INTO 'main'.'pixelpost' (title, description, filename) VALUES (%s, %s, %s)", $title , $description, $filename);
+$db->query($sql);
+
+var_dump($sql);
 
 $rows = $db->get_results("SELECT * FROM pixelpost");
 
-var_dump($rows);
+// var_dump($rows);
 
 /*
 	Output test using foreach().

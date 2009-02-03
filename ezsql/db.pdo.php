@@ -30,6 +30,7 @@
 		var $dsn;
 		var $user;
 		var $password;
+		var $use_trace_log = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the 

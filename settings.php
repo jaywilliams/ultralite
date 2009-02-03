@@ -12,7 +12,7 @@
 $config['site']['title']       = "My Ultralite Photoblog";
 $config['site']['slogan']      = "Guess what, it's open source, and it's ultralite!";
 
-$config['site']['template']    = "lite";
+$config['site']['template']    = "ultralite";
 
 // Not implemented yet:
 $config['site']['language']    = "en-us";

@@ -29,7 +29,7 @@ $db = new ezSQL_pdo();
 
 // Make sure the file is writable, otherwise php will error out,
 // and won't be able to add anyting to the database.
-$db->connect('sqlite:'.$config['database']['sqlite']['databse']);
+$db->connect('sqlite:'.$config['database']['sqlite']['database']);
 
 
 // Grab the data from the DB

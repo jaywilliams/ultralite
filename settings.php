@@ -31,7 +31,7 @@ $config['site']['language']    = "en-us";
  * If you're using a SQLite database, uncomment the configuration below,
  * and fill out the correct information.
  */
-$config['database']['sqlite']['databse'] = './pixelpost.sqlite3.php';
+$config['database']['sqlite']['database'] = './pixelpost.sqlite3.php';
 
 
 /**

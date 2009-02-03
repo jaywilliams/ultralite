@@ -56,11 +56,11 @@
 			global $ezsql_pdo_str; $return_val = false;
 			
 			// Must have a user and a password
-			if ( ! $dsn || ! $user || ! $password )
-			{
-				$this->register_error($ezsql_pdo_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_pdo_str[1],E_USER_WARNING) : null;
-			}
+			// if ( ! $dsn || ! $user || ! $password )
+			// {
+			// 	$this->register_error($ezsql_pdo_str[1].' in '.__FILE__.' on line '.__LINE__);
+			// 	$this->show_errors ? trigger_error($ezsql_pdo_str[1],E_USER_WARNING) : null;
+			// }
 			
 			// Establish PDO connection
 			try 
@@ -182,14 +182,14 @@
 			$this->num_queries++;
 
 			// Start timer
-			$this->timer_start($this->num_queries);
+			// $this->timer_start($this->num_queries);
 
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
 			{
 
 				// Keep tack of how long all queries have taken
-				$this->timer_update_global($this->num_queries);
+				// $this->timer_update_global($this->num_queries);
 
 				// Trace all queries
 				if ( $this->use_trace_log )
@@ -282,7 +282,7 @@
 			$this->trace || $this->debug_all ? $this->debug() : null ;
 
 			// Keep tack of how long all queries have taken
-			$this->timer_update_global($this->num_queries);
+			// $this->timer_update_global($this->num_queries);
 
 			// Trace all queries
 			if ( $this->use_trace_log )

@@ -18,6 +18,10 @@ $config['site']['template']    = "ultralite";
 $config['site']['language']    = "en-us";
 
 
+// User Settings
+$config['user']['timezone']	   = '-5';
+
+
 /**
  * Database Type
  *

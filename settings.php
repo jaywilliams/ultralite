@@ -24,10 +24,23 @@ $config['site']['language']    = "en-us";
  * What type of database are you using? 
  * sqlite [OR] mysql
  */
-$config['database']['type']     = 'sqlite';
-$config['database']['hostname'] = './pixelpost.sqlite3"';
-$config['database']['username'] = '';
-$config['database']['password'] = '';
+
+
+
+/**
+ * If you're using a SQLite database, uncomment the configuration below,
+ * and fill out the correct information.
+ */
+$config['database']['sqlite']['databse'] = './pixelpost.sqlite3.php';
+
+
+/**
+ * If you're using a mySQL database, uncomment the configuration below,
+ * and fill out the correct information.
+ */
+# $config['database']['mysql']['hostname'] = 'localhost';
+# $config['database']['mysql']['username'] = 'root';
+# $config['database']['mysql']['password'] = '';
 
 
 

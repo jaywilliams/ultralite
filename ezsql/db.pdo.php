@@ -108,7 +108,7 @@
 		{
 			switch (gettype($str))
 			{
-				case 'string' : $str = addslashes(stripslashes($str));
+				case 'string' : $str = str_replace("'","''",$str);
 				break;
 				case 'boolean' : $str = ($str === FALSE) ? 0 : 1;
 				break;

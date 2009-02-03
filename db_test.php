@@ -12,7 +12,7 @@ $db = new ezSQL_pdo();
 	Make sure the file is writable, otherwise php will error out, 
 	and won't be able to add anyting to the database.
 */
-$db->connect('sqlite:./pixelpost.sqlite3');
+$db->connect('sqlite:./pixelpost.sqlite3.php');
 
 
 /*

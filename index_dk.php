@@ -1,5 +1,5 @@
 <?php
-// error_reporting(E_ALL);
+error_reporting(E_ALL);
 /*
 
 !! ATTENTION !!
@@ -7,10 +7,6 @@
 This is just a bare-bones test of how a template file can be included.
 
 None of the variables passed from the DB to template are cleaned...
-
-No fancy pagination (yet)...
-
-No way to connect to a MySQL DB if that is whats desired...
 
 ETC.
 
@@ -24,86 +20,101 @@ I want to be able to know what I'm dealing with just be reading the variable nam
 I.E. :	Pixelpost 1.71 Uses the following variable, $cdate.
 		
 		While all us devs know what it is by repeated use, it may seem less obvious to others,
-		so... take the extra second to spell it out: $current_datetime
+		so... take the extra second to spell it out: $time->current
 		
 		Much Better!
 */
 
 require_once 'settings.php';
 require_once 'ezsql/db.php';
-require_once 'ezsql/db.pdo.php';
-// require_once 'ezsql/db.mysql.php';
 
-
-// User timezone, will return 0 if not an integer.
-$user_timezone = (int) $config['user']['timezone'];
-
+// Split up the config file by refrence for easy access
+$site     = & $config->site;
+$language = & $config->language;
+$time     = & $config->time;
+$database = & $config->database;
 
 // Determine the current datetime
-$current_datetime = gmdate("Y-m-d H:i:s",time()+(3600 * $user_timezone));
+$time->current = gmdate("Y-m-d H:i:s",time()+(3600 * $time->offset));
 
 
-// This is how to initialse ezsql for sqlite PDO
-$db = new ezSQL_pdo();
-// $db = new ezSQL_mysql();
+/**
+ * Load the correct database
+ */
+switch ($database->type) {
+	case 'sqlite':
+	
+		require_once 'ezsql/db.pdo.php';
+		
+		// Initialize ezSQL for SQLsite PDO
+		$db = new ezSQL_pdo();
+		
+		// Make sure the file is writable, otherwise php will error out,
+		// and won't be able to add anyting to the database.
+		$db->connect("sqlite:{$database->sqlite->database}");
+		break;
+		
+	case 'mysql':
+	default:
+	
+		require_once 'ezsql/db.mysql.php';
+		
+		// Initialize ezSQL for mySQL
+		$db = new ezSQL_mysql();
+		$db->quick_connect( $database->mysql->username, 
+							$database->mysql->password, 
+							$database->mysql->database, 
+							$database->mysql->hostname);
+		break;
+}
 
 
-// Make sure the file is writable, otherwise php will error out,
-// and won't be able to add anyting to the database.
-$db->connect('sqlite:'.$config['database']['sqlite']['database']);
-// $db->quick_connect($config['database']['mysql']['username'],$config['database']['mysql']['password'],$config['database']['mysql']['database'],$config['database']['mysql']['hostname']);
+
+// Clean the image id number. Set to int 0 if invalid OR empty.
+$image->id = (isset($_GET['post']) && (int) $_GET['post'] > 0 )? (int) $_GET['post'] : 0;
 
 
-// Clean the post id number. Set to int 0 if invalid OR empty.
-$post_id = (isset($_GET['post']) && (int) $_GET['post'] > 0 )? (int) $_GET['post'] : 0;
-
-
-if($post_id > 0)
+if($image->id > 0)
 {
-	$sql = "SELECT * FROM pixelpost WHERE id = '$post_id' AND published <= '$current_datetime' LIMIT 1";
+	$sql = "SELECT * FROM pixelpost WHERE id = '$image->id' AND published <= '{$time->current}' LIMIT 1";
 }
 else
 {
-	$sql = "SELECT * FROM pixelpost WHERE published <= '$current_datetime' LIMIT 1";
+	$sql = "SELECT * FROM pixelpost WHERE published <= '{$time->current}' LIMIT 1";
 }
 
 
 // Grab the data object from the DB. Returns null on failure.
 $image = $db->get_row($sql);
 
-
 // Only load the template if the query was successful.
 // We can display a nice error or splash screen otherwise...
-if($image !== null)
-{
-	// Set the variables
-	$site->title		=	$config['site']['title'];
-	$site->slogan		=	$config['site']['slogan'];
-	$site->language		=	$config['site']['language'];
-
-	$image_info			=	getimagesize('images/'.$image->filename);
-
-	$image->width		=	$image_info[0];
-	$image->height		=	$image_info[1];
-	$image->dimensions	=	$image_info[3];
-
-
-	/*
-		Get the Next Image Information:
-	*/
-	$sql = "SELECT * FROM pixelpost WHERE (published > '$image->published') and (published<='$current_datetime') ORDER BY published ASC LIMIT 0,1";
-	$next_image = $db->get_row($sql);
-	
-	$sql = "SELECT * FROM pixelpost WHERE (published < '$image->published') and (published<='$current_datetime') ORDER BY published DESC LIMIT 0,1";
-	$previous_image = $db->get_row($sql);
-
-
-	// Include the image template!
-	include_once "themes/{$config['site']['template']}/image.php";
-}
-else
-{
+if (!is_object($image)) {
 	// Error? Splash Screen?
+	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
 }
+
+
+// Set the variables
+$image_info			=	getimagesize('images/'.$image->filename);
+
+$image->width		=	$image_info[0];
+$image->height		=	$image_info[1];
+$image->dimensions	=	$image_info[3];
+
+
+/*
+	Get the Next Image Information:
+*/
+$sql = "SELECT * FROM pixelpost WHERE (published > '$image->published') and (published<='{$time->current}') ORDER BY published ASC LIMIT 0,1";
+$next_image = $db->get_row($sql);
+
+$sql = "SELECT * FROM pixelpost WHERE (published < '$image->published') and (published<='{$time->current}') ORDER BY published DESC LIMIT 0,1";
+$previous_image = $db->get_row($sql);
+
+
+// Include the image template!
+include_once "themes/{$site->template}/image.php";
+
 
 ?>

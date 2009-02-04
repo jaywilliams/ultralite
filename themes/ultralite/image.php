@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $site_language; ?>">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $site->language; ?>">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title><?php echo $site_title; ?></title>
+	<title><?php echo $site->title; ?></title>
 	
 	<style type="text/css">
 		* {
@@ -12,7 +12,7 @@
 		}
 
 		body {
-			width: <?php echo $image_width; ?>px;
+			width: <?php echo $image->width; ?>px;
 			margin: 0 auto;
 			text-align: center;
 			font: 14px "Lucida Grande", Lucida, Verdana, sans-serif;
@@ -58,18 +58,18 @@
 <body>
 
 <div id="ultralite">
-	<h1><?php echo $site_title; ?></h1>
+	<h1><?php echo $site->title; ?></h1>
 	
-	<h2><?php echo $site_slogan; ?></h2>
+	<h2><?php echo $site->slogan; ?></h2>
 	
-	<h3 id="title"><?php echo $image_title; ?></h3>
+	<h3 id="title"><?php echo $image->title; ?></h3>
 	
-	<span id="published"><?php echo $image_published; ?></span>
+	<span id="published"><?php echo $image->published; ?></span>
 	
-	<img src="images/<?php echo $image_filename; ?>" alt="<?php echo $image_title; ?>" <?php echo $image_dimensions; ?> id="photo" />
+	<a href="?post=<?php echo $next_image->id; ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 	
 	<div id="description">
-		<p><?php echo $image_description; ?></p>
+		<p><?php echo $image->description; ?></p>
 	</div>
 </div>
 

@@ -1,7 +1,7 @@
 <?php
 
-require_once 'ezsql/db.php';
-require_once 'ezsql/db.pdo.php';
+require_once 'libraries/db.php';
+require_once 'libraries/db.pdo.php';
 
 
 // This is how to initialse ezsql for sqlite PDO

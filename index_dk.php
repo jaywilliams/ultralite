@@ -23,10 +23,20 @@ I.E. :	Pixelpost 1.71 Uses the following variable, $cdate.
 		so... take the extra second to spell it out: $time->current
 		
 		Much Better!
+
+
+!! MOVE !!
+
+Yes, you heard right, we need to move controler specific logic out from the index.php file, 
+and move it into the correct controler. That way if you'r creating an RSS feed, 
+you won't have to execute other non-essential code.
+
+Of course the best way to handle this is always up for debate. :)
+
 */
 
 require_once 'settings.php';
-require_once 'ezsql/db.php';
+require_once 'libraries/db.php';
 
 // Split up the config file by refrence for easy access
 $site     = & $config->site;
@@ -44,7 +54,7 @@ $time->current = gmdate("Y-m-d H:i:s",time()+(3600 * $time->offset));
 switch ($database->type) {
 	case 'sqlite':
 	
-		require_once 'ezsql/db.pdo.php';
+		require_once 'libraries/db.pdo.php';
 		
 		// Initialize ezSQL for SQLsite PDO
 		$db = new ezSQL_pdo();
@@ -57,7 +67,7 @@ switch ($database->type) {
 	case 'mysql':
 	default:
 	
-		require_once 'ezsql/db.mysql.php';
+		require_once 'libraries/db.mysql.php';
 		
 		// Initialize ezSQL for mySQL
 		$db = new ezSQL_mysql();
@@ -113,8 +123,8 @@ $sql = "SELECT * FROM pixelpost WHERE (published < '$image->published') and (pub
 $previous_image = $db->get_row($sql);
 
 
-// Include the image template!
-include_once "themes/{$site->template}/image.php";
+// Include the post template!
+include_once "themes/{$site->template}/post.php";
 
 
 ?>

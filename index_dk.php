@@ -32,6 +32,7 @@ I.E. :	Pixelpost 1.71 Uses the following variable, $cdate.
 require_once 'settings.php';
 require_once 'ezsql/db.php';
 require_once 'ezsql/db.pdo.php';
+// require_once 'ezsql/db.mysql.php';
 
 
 // User timezone, will return 0 if not an integer.
@@ -44,16 +45,13 @@ $current_datetime = gmdate("Y-m-d H:i:s",time()+(3600 * $user_timezone));
 
 // This is how to initialse ezsql for sqlite PDO
 $db = new ezSQL_pdo();
+// $db = new ezSQL_mysql();
 
 
 // Make sure the file is writable, otherwise php will error out,
 // and won't be able to add anyting to the database.
 $db->connect('sqlite:'.$config['database']['sqlite']['database']);
-
-
-// As an extra precaution, lets unset the database array as it *should* no longer be needed.
-// This may have to be moved to a different spot in the future if we decide to keep it.
-unset($config['database']);
+// $db->quick_connect($config['database']['mysql']['username'],$config['database']['mysql']['password'],$config['database']['mysql']['database'],$config['database']['mysql']['hostname']);
 
 
 // Clean the post id number. Set to int 0 if invalid OR empty.

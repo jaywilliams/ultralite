@@ -42,9 +42,10 @@ $config['database']['sqlite']['database'] = './pixelpost.sqlite3.php';
  * If you're using a mySQL database, uncomment the configuration below,
  * and fill out the correct information.
  */
-# $config['database']['mysql']['hostname'] = 'localhost';
-# $config['database']['mysql']['username'] = 'root';
-# $config['database']['mysql']['password'] = '';
+// $config['database']['mysql']['hostname'] = 'localhost';
+// $config['database']['mysql']['database'] = 'ultralite';
+// $config['database']['mysql']['username'] = 'root';
+// $config['database']['mysql']['password'] = '';
 
 
 

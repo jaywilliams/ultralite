@@ -1,5 +1,5 @@
 <?php
-
+// error_reporting(E_ALL);
 /*
 
 !! ATTENTION !!
@@ -55,44 +55,47 @@ $db->connect('sqlite:'.$config['database']['sqlite']['database']);
 
 
 // Clean the post id number. Set to int 0 if invalid OR empty.
-$post_id = (isset($_GET['post']) && is_numeric($_GET['post']) && $_GET['post'] > 0) ? (int) $_GET['post'] : 0;
+$post_id = (isset($_GET['post']) && (int) $_GET['post'] > 0 )? (int) $_GET['post'] : 0;
 
 
 if($post_id > 0)
 {
-	$image_sql = "SELECT * FROM pixelpost WHERE id = '$post_id' AND published <= '$current_datetime' LIMIT 1";
+	$sql = "SELECT * FROM pixelpost WHERE id = '$post_id' AND published <= '$current_datetime' LIMIT 1";
 }
 else
 {
-	$image_sql = "SELECT * FROM pixelpost WHERE published <= '$current_datetime' LIMIT 1";
+	$sql = "SELECT * FROM pixelpost WHERE published <= '$current_datetime' LIMIT 1";
 }
 
 
 // Grab the data object from the DB. Returns null on failure.
-$image_data = $db->get_results($image_sql);
-$image_data	= $image_data[0];
+$image = $db->get_row($sql);
 
 
 // Only load the template if the query was successful.
 // We can display a nice error or splash screen otherwise...
-if($image_data !== null)
+if($image !== null)
 {
 	// Set the variables
-	$site_title			=	$config['site']['title'];
-	$site_slogan		=	$config['site']['slogan'];
-	$site_language		=	$config['site']['language'];
+	$site->title		=	$config['site']['title'];
+	$site->slogan		=	$config['site']['slogan'];
+	$site->language		=	$config['site']['language'];
 
-	$image_id			=	$image_data->id;
-	$image_title		=	$image_data->title;
-	$image_description	=	$image_data->description;
-	$image_published	=	$image_data->published;
-	$image_filename		=	$image_data->filename;
+	$image_info			=	getimagesize('images/'.$image->filename);
 
-	$image_info			=	getimagesize('images/'.$image_filename);
+	$image->width		=	$image_info[0];
+	$image->height		=	$image_info[1];
+	$image->dimensions	=	$image_info[3];
 
-	$image_width		=	$image_info[0];
-	$image_height		=	$image_info[1];
-	$image_dimensions	=	$image_info[3];
+
+	/*
+		Get the Next Image Information:
+	*/
+	$sql = "SELECT * FROM pixelpost WHERE (published > '$image->published') and (published<='$current_datetime') ORDER BY published ASC LIMIT 0,1";
+	$next_image = $db->get_row($sql);
+	
+	$sql = "SELECT * FROM pixelpost WHERE (published < '$image->published') and (published<='$current_datetime') ORDER BY published DESC LIMIT 0,1";
+	$previous_image = $db->get_row($sql);
 
 
 	// Include the image template!

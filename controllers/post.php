@@ -42,7 +42,7 @@ if($image->id > 0)
 }
 else
 {
-	$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' LIMIT 0,1";
+	$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC LIMIT 0,1";
 }
 
 
@@ -57,7 +57,6 @@ if(!is_object($image))
 	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
 }
 
-
 // Set the variables
 $image_info			=	getimagesize('images/'.$image->filename);
 
@@ -67,38 +66,30 @@ $image->dimensions	=	$image_info[3];
 
 
 // Retrieve the Next image information:
-$next_sql = "SELECT * FROM `pixelpost` WHERE (`published` > '$image->published') and (`published` <= '{$time->current}') ORDER BY `published` ASC LIMIT 0,1";
+$sql	 = "SELECT * FROM `pixelpost` WHERE (`published` > '$image->published') and (`published` <= '{$time->current}') ORDER BY `published` ASC LIMIT 0,1";
 
-$next_image = $db->get_row($next_sql);
-if($next_image == null)
+$next_image = $db->get_row($sql);
+if(!is_object($next_image))
 {
 	// Lets wrap around to the first image.
 	
-	// Retrieve the id of the first image.
-	$first_image_id = "SELECT MIN(`id`) AS `minid` FROM `pixelpost` WHERE `published` <= '{$time->current}' LIMIT 0,1";
-	$first_image_id = $db->get_row($first_image_id);	
-	
 	// Retrieve the First image information:
-	$first_image	= "SELECT * FROM `pixelpost` WHERE `id` <= '{$first_image_id->minid}' LIMIT 1";
-	$next_image		= $db->get_row($first_image);
+	$sql			= "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC LIMIT 0,1";
+	$next_image		= $db->get_row($sql);
 }
 
 
 // Retrieve the Prev image information:
-$prev_sql = "SELECT * FROM `pixelpost` WHERE (`published` < '$image->published') and (`published` <= '{$time->current}') ORDER BY `published` DESC LIMIT 0,1";
+$sql	 = "SELECT * FROM `pixelpost` WHERE (`published` < '$image->published') and (`published` <= '{$time->current}') ORDER BY `published` DESC LIMIT 0,1";
 
-$previous_image = $db->get_row($prev_sql);
-if($previous_image == null)
+$previous_image = $db->get_row($sql);
+if(!is_object($previous_image))
 {
 	// Lets wrap around to the last image.
-	
-	// Retrieve the id of the last image.
-	$last_image_id	= "SELECT MAX(`id`) AS `maxid` FROM `pixelpost` WHERE `published` <= '{$time->current}' LIMIT 0,1";
-	$last_image_id	= $db->get_row($last_image_id);
 		
 	// Retrieve the Last image information:
-	$last_image		= "SELECT * FROM `pixelpost` WHERE `id` <= '{$last_image_id->maxid}' LIMIT 1";
-	$previous_image = $db->get_row($last_image);
+	$sql			= "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` DESC LIMIT 0,1";
+	$previous_image = $db->get_row($sql);
 }
 
 ?>

@@ -38,8 +38,8 @@ $config->database->type = "sqlite";
 
 
 /**
- * If you're using a SQLite database, uncomment the configuration below,
- * and fill out the correct information.
+ * If you're using a SQLite database, you will need to fill out 
+	 * the correct information below.
  */
 
 // Path to the sqlite database:
@@ -47,13 +47,13 @@ $config->database->sqlite->database = "./pixelpost.sqlite3.php";
 
 
 /**
- * If you're using a mySQL database, uncomment the configuration below,
- * and fill out the correct information.
+ * If you're using a mySQL database, you will need to fill out 
+ * the correct information below.
  */
-// $config->database->mysql->hostname = "localhost";
-// $config->database->mysql->database = "ultralite";
-// $config->database->mysql->username = "root";
-// $config->database->mysql->password = "";
+$config->database->mysql->hostname = "localhost";
+$config->database->mysql->database = "ultralite";
+$config->database->mysql->username = "root";
+$config->database->mysql->password = "";
 
 
 /**

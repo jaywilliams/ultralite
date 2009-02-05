@@ -35,6 +35,9 @@ Of course the best way to handle this is always up for debate. :)
 
 */
 
+// Defined for use within included files.
+define('ULTRALITE',true);
+
 require_once 'settings.php';
 require_once 'libraries/db.php';
 
@@ -44,14 +47,16 @@ $language = & $config->language;
 $time     = & $config->time;
 $database = & $config->database;
 
+
 // Determine the current datetime
-$time->current = gmdate("Y-m-d H:i:s",time()+(3600 * $time->offset));
+$time->current = gmdate("Y-m-d H:i:s",time()+(3600 * (int) $time->offset));
 
 
 /**
  * Load the correct database
  */
-switch ($database->type) {
+switch ($database->type)
+{
 	case 'sqlite':
 	
 		require_once 'libraries/db.pdo.php';
@@ -71,60 +76,17 @@ switch ($database->type) {
 		
 		// Initialize ezSQL for mySQL
 		$db = new ezSQL_mysql();
-		$db->quick_connect( $database->mysql->username, 
-							$database->mysql->password, 
-							$database->mysql->database, 
-							$database->mysql->hostname);
+		$db->quick_connect($database->mysql->username, 
+						   $database->mysql->password, 
+						   $database->mysql->database, 
+						   $database->mysql->hostname);
 		break;
 }
 
 
-
-// Clean the image id number. Set to int 0 if invalid OR empty.
-$image->id = (isset($_GET['post']) && (int) $_GET['post'] > 0 )? (int) $_GET['post'] : 0;
-
-
-if($image->id > 0)
-{
-	$sql = "SELECT * FROM pixelpost WHERE id = '$image->id' AND published <= '{$time->current}' LIMIT 1";
-}
-else
-{
-	$sql = "SELECT * FROM pixelpost WHERE published <= '{$time->current}' LIMIT 1";
-}
-
-
-// Grab the data object from the DB. Returns null on failure.
-$image = $db->get_row($sql);
-
-// Only load the template if the query was successful.
-// We can display a nice error or splash screen otherwise...
-if (!is_object($image)) {
-	// Error? Splash Screen?
-	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
-}
-
-
-// Set the variables
-$image_info			=	getimagesize('images/'.$image->filename);
-
-$image->width		=	$image_info[0];
-$image->height		=	$image_info[1];
-$image->dimensions	=	$image_info[3];
-
-
-/*
-	Get the Next Image Information:
-*/
-$sql = "SELECT * FROM pixelpost WHERE (published > '$image->published') and (published<='{$time->current}') ORDER BY published ASC LIMIT 0,1";
-$next_image = $db->get_row($sql);
-
-$sql = "SELECT * FROM pixelpost WHERE (published < '$image->published') and (published<='{$time->current}') ORDER BY published DESC LIMIT 0,1";
-$previous_image = $db->get_row($sql);
-
-
 // Include the post template!
-include_once "themes/{$site->template}/post.php";
+require_once "controllers/post.php";
+require_once "themes/{$site->template}/post.php";
 
 
 ?>

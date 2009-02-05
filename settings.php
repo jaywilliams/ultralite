@@ -23,7 +23,7 @@ $config->site->template   = "ultralite";
 $config->language->locale = "en-us";
 
 // Time Zome Offset (from GMT/UTC):
-$config->time->offset     = (int) "-5";
+$config->time->offset     = "-5";
 
 
 /**

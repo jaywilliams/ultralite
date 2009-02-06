@@ -38,8 +38,9 @@ Of course the best way to handle this is always up for debate. :)
 // Defined for use within included files.
 define('ULTRALITE',true);
 
-require_once 'settings.php';
-require_once 'libraries/db.php';
+
+// Initialize the config object and set a few default settings:
+$config->site->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
 
 // Split up the config file by refrence for easy access
 $site     = & $config->site;
@@ -47,10 +48,13 @@ $language = & $config->language;
 $time     = & $config->time;
 $database = & $config->database;
 
+// Load the settings (can override default settings):
+require_once 'settings.php';
 
 // Determine the current datetime
 $time->current = gmdate("Y-m-d H:i:s",time()+(3600 * (int) $time->offset));
 
+require_once 'libraries/db.php';
 
 /**
  * Load the correct database
@@ -84,16 +88,32 @@ switch($database->type)
 }
 
 
-if(isset($_GET['view']) && $_GET['view'] == 'rss')
+/**
+ * Grab the current View, if the view isn't set, default to "post".
+ * Note: Views must be lower case and contain only letters (a-z).
+ */
+$view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z]/','', strtolower($_GET['view'])) : 'post';
+
+// Check to see if the view controller exists, and if so, include it:
+if (file_exists("controllers/$view.php"))
 {
-	// Include the rss controller!
-	require_once "controllers/rss.php";
+	/**
+	 * @todo Include sub-views as well, possibly via a custom function.
+	 */
+	require_once "controllers/$view.php";
 }
-else
+
+// If a template page exists for this view, include that as well:
+if (file_exists("themes/{$site->template}/$view.php"))
 {
-	// Include the post template!
-	require_once "controllers/post.php";
-	require_once "themes/{$site->template}/post.php";
+	require_once "themes/{$site->template}/$view.php";
+}
+
+// If no view or controller exist, display an error:
+if ( ! (file_exists("controllers/$view.php") && file_exists("themes/{$site->template}/$view.php")) )
+{
+	// Error? Splash Screen?
+	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
 }
 
 

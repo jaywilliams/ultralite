@@ -1,0 +1,51 @@
+# Options FollowSymLinks -Indexes
+
+# Rename this file to ".htaccess" if you wish to use clean URLs.
+
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# RewriteBase /
+
+# If the request is for an actual file 
+# or directory, don't rewrite it:
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
+
+######### Clean URL Format Guide
+# 
+# /post/123/my-title/page/3
+#  ^1   ^2   ^3       ^4
+# 
+# 1 - View mode (required)
+# 		Posibilties could be: post, rss, archive, etc.
+# 
+# 2 - Post ID (optional)
+# 		This could also be used as a search query
+# 
+# 3 - Extra information (optional)
+# 		This can be used to store any additional data that you'd like to include in the URL.
+# 		Some possiblites are the post title, or for an archive page, sub categores or tags
+# 
+# 4 - Current Page
+# 		If you want to specify a page, other than page 1, you should append the suffix "/page/#" to your url.
+# 		You can append it to any url, either short or long. 
+# 
+########## Examples of Properly formatted Clean URLs
+# 
+# /rss
+# /post/2
+# /post/5/my-title
+# /archive/2005
+# /archive/2007/12
+# /archive/page/3
+# /tag/orange
+# /search/my+query/page/2
+# 
+
+RewriteRule ^$ index.php?mod_rewrite=true [QSA,L]
+RewriteRule ^([\w]+)(/([\w_+-]+))?(/(.*))?(/page/([0-9]+))$ index.php?view=$1&id=$3&extra=$5&page=$7&mod_rewrite=true [QSA,L]
+RewriteRule ^([\w]+)(/([\w_+-]+))?(/(.*))?$ index.php?view=$1&id=$3&extra=$5&page=1&mod_rewrite=true [QSA,L]
+</IfModule>

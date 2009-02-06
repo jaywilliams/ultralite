@@ -25,6 +25,10 @@ $config->language->locale = "en-us";
 // Time Zome Offset (from GMT/UTC):
 $config->time->offset     = "-5";
 
+// The script will auto-choose whether or not clean URLs should be used.
+// But if you want to overide this option, you can do so here:
+// $config->site->mod_rewrite     = true;
+
 
 /**
  * Database Configuration

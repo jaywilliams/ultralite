@@ -66,7 +66,7 @@
 	
 	<span id="published"><?php echo $image->published; ?></span>
 	
-	<a href="?post=<?php echo $next_image->id; ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
+	<a href="?id=<?php echo $next_image->id; ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 	
 	<div id="description">
 		<p><?php echo $image->description; ?></p>

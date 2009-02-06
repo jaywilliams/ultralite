@@ -110,7 +110,7 @@ if (file_exists("themes/{$site->template}/$view.php"))
 }
 
 // If no view or controller exist, display an error:
-if ( ! (file_exists("controllers/$view.php") && file_exists("themes/{$site->template}/$view.php")) )
+if ( (! file_exists("controllers/$view.php")) && (! file_exists("themes/{$site->template}/$view.php")) )
 {
 	// Error? Splash Screen?
 	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");

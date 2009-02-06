@@ -55,7 +55,7 @@ $time->current = gmdate("Y-m-d H:i:s",time()+(3600 * (int) $time->offset));
 /**
  * Load the correct database
  */
-switch ($database->type)
+switch($database->type)
 {
 	case 'sqlite':
 	
@@ -84,9 +84,17 @@ switch ($database->type)
 }
 
 
-// Include the post template!
-require_once "controllers/post.php";
-require_once "themes/{$site->template}/post.php";
+if(isset($_GET['view']) && $_GET['view'] == 'rss')
+{
+	// Include the rss controller!
+	require_once "controllers/rss.php";
+}
+else
+{
+	// Include the post template!
+	require_once "controllers/post.php";
+	require_once "themes/{$site->template}/post.php";
+}
 
 
 ?>

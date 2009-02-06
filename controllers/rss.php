@@ -13,9 +13,12 @@
  * @package ultralite
  **/
 
-
 // Prevent direct file access.
 if(!defined('ULTRALITE')) { die(); }
+
+
+// We can move this later on. true/1 OR false/0
+$config->feed->enclosure = 1;
 
 
 // Require the feed class
@@ -25,29 +28,47 @@ require_once 'libraries/rss.feed.php';
 // Initiate a new RSS feed
 $feed = new RSS();
 
-$feed->title       = $site->title;
-$feed->link        = 'http://example.com';
-$feed->description = $site->slogan;
+
+// Set the feed variables
+$feed->title		= $site->title;
+
+$feed->link			= $site->siteurl;
+
+$feed->description	= $site->slogan;
+
+$feed->language		= $language->locale;
 
 
-// Query the database
+// Query the database, retrieve the 10 most recent photos
 $sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` DESC LIMIT 0,10";
 
 
-// Create the RSS feed tiems
+// Create a feed item for each image
 foreach($db->get_results($sql) as $image)
-{
-	$image_info			=	getimagesize('images/'.$image->filename);
-	$image->dimensions	=	$image_info[3];
-	
-	$description = "<img src=\"images/$image->filename\" alt=\"$image->title\" $image->dimensions /><br />$image->description";
-	
+{	
+	// Initiate a new RSS feed item
 	$item = new RSSItem();
 	
-	$item->title = $image->title;
-	$item->link  = "$feed->link/$image->id";
+	// Determine the images dimensions and mime type
+	$image_info			= getimagesize('images/'.$image->filename);
+	
+	$item->title		= $image->title;
+	
+	$item->link			= "{$feed->link}?view=post&id={$image->id}";
+	
+	$item->description	= "<img src=\"{$feed->link}images/{$image->filename}\" alt=\"{$image->title}\" {$image_info[3]} /><br />{$image->description}";
+	
 	$item->setPubDate($image->published);
-	$item->description = $description;
+	
+	if($config->feed->enclosure)
+	{
+		// Determine the images filesize for use in enclosures
+		$image_filesize		= filesize('images/'.$image->filename);
+		
+		$item->enclosure("{$feed->link}images/{$image->filename}", $image_info['mime'], $image_filesize);
+	}
+	
+	// Add the item to the feed
 	$feed->addItem($item);
 }
 

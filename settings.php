@@ -16,6 +16,7 @@
  */
 $config->site->title      = "My Ultralite Photoblog";
 $config->site->slogan     = "Guess what, it's open source, and it's ultralite!";
+$config->site->siteurl	  = "http://example.com/ultralite/"; // Dont forget the last backslash!
 
 $config->site->template   = "ultralite";
 

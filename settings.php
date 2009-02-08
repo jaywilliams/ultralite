@@ -15,10 +15,10 @@
  * Global Site Configuration
  */
 $config->site->title      = "My Ultralite Photoblog";
-$config->site->slogan     = "Guess what, it's open source, and it's ultralite!";
-$config->site->siteurl	  = "http://example.com/ultralite/"; // Dont forget the last backslash!
+$config->site->tagline    = "Guess what, it's open source, and it's ultralite!";
+$config->site->url	      = "http://example.com/ultralite/"; // Dont forget the last backslash!
 
-$config->site->template   = "ultralite";
+$config->site->template   = "greyspace";
 
 // Not implemented yet:
 $config->language->locale = "en-us";

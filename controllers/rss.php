@@ -32,9 +32,9 @@ $feed = new RSS();
 // Set the feed variables
 $feed->title		= $site->title;
 
-$feed->link			= $site->siteurl;
+$feed->link			= $site->url;
 
-$feed->description	= $site->slogan;
+$feed->description	= $site->tagline;
 
 $feed->language		= $language->locale;
 

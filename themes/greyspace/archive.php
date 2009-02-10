@@ -18,7 +18,23 @@
 
 <body>
 
+<div>
+
+<!-- FOREACH $image->thumbnails -->
+
+<?php foreach ($image->thumbnails as $thumbnail): ?>
+<?php echo "<a href=\"".url("view=post&id={$thumbnail->id}")."\"> <img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" /> </a>\n"; ?>
+<?php endforeach ?>
+
+</div>
+
+<div>
+
+<!-- ECHO $thumbnails -->
+
 <?php echo $thumbnails; ?>
+
+</div>
 
 </body>
 </html>

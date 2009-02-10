@@ -7,7 +7,7 @@
 	
 	<base href="<?php echo $site->url; ?>" />
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php echo $site->title; ?> RSS Feed" href="?view=rss" />
+	<link rel="alternate" type="application/rss+xml" title="<?php echo $site->title; ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
 	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<style type="text/css">

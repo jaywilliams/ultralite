@@ -30,13 +30,13 @@ $feed = new RSS();
 
 
 // Set the feed variables
-$feed->title		= $site->title;
+$feed->title		= & $site->title;
 
-$feed->link			= $site->url;
+$feed->link			= & $site->url;
 
-$feed->description	= $site->tagline;
+$feed->description	= & $site->tagline;
 
-$feed->language		= $language->locale;
+$feed->language		= & $language->locale;
 
 
 // Query the database, retrieve the 10 most recent photos
@@ -54,7 +54,7 @@ foreach($db->get_results($sql) as $image)
 	
 	$item->title		= $image->title;
 	
-	$item->link			= "{$feed->link}?view=post&id={$image->id}";
+	$item->link			= "{$feed->link}".url("view=post&id={$image->id}");
 	
 	$item->description	= "<img src=\"{$feed->link}images/{$image->filename}\" alt=\"{$image->title}\" {$image_info[3]} /><br />{$image->description}";
 	

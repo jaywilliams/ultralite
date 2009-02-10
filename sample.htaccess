@@ -32,8 +32,9 @@ RewriteEngine On
 #                     ^Your Base
 # RewriteBase /photoblog/
 # 
-# 
-RewriteBase /
+# So, if you're having issues, un-comment the line below,
+# and manually specify yyour base path:
+# RewriteBase /
 
 
 # Added Security, block people from 

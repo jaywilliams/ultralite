@@ -27,14 +27,13 @@ if(!defined('ULTRALITE')) { die(); }
 $sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
 
 
-// Store the thumbnail data array within a variable
+// Store the thumbnails array
 $image->thumbnails = $db->get_results($sql);
 
 
 // Tack on thumbnail data to the thumbnails array
 foreach($image->thumbnails as $key => $thumbnail)
 {
-	// Set the variables
 	$image_info = getimagesize('images/'.$thumbnail->filename);
 		
 	// Image width and height are divided by 4 to make the image smaller.

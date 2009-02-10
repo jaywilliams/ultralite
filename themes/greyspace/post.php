@@ -5,6 +5,8 @@
 	
 	<title><?php echo $site->title; ?></title>
 	
+	<base href="<?php echo $site->url; ?>" />
+	
 	<link rel="alternate" type="application/rss+xml" title="<?php echo $site->title; ?> RSS Feed" href="?view=rss" />
 	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
@@ -26,9 +28,9 @@
 
 	
 	<div class="middle section">
-		<a href="?id=<?php echo $next_image->id; ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
+		<a href="<?php url("id={$next_image->id}",true); ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 		<div class="site section">
-			<h2 class="name"><a href="?" title="View Latest Photo"><?php echo $site->title; ?></a></h2>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php echo $site->title; ?></a></h2>
 			<em class="tagline"><?php echo $site->tagline; ?></em>
 		</div>
 	</div>

@@ -89,10 +89,98 @@ switch($database->type)
 
 
 /**
+ * Renders the URL in the proper format.
+ * 
+ * Examples:
+ * url("view=rss");
+ * url("view=post&id=3&extra=my-title");
+ * url("view=post&id=3&extra=my-title&custom=true");
+ *
+ * @param string $url Query (do not include http:// or /)
+ * @param bool $echo Disabled by default, this optional option will echo the result rather than return it silently.
+ * @return string $output Properly formated URL
+ */
+function url($url='',$echo=false)
+{
+	global $config,$view;
+	
+	/**
+	 * Prepare the variables we'll be using in this function
+	 */
+	$output    = "";
+	$url_param = array();
+	$url       = ltrim($url,"/");
+		         parse_str($url,$url);
+
+
+	
+	if (array_key_exists('view',$url))
+		$url_param['view'] = $url['view'];
+	elseif(array_key_exists('id',$url))
+		$url_param['view'] = $url['view'] = $view;
+	
+	if (array_key_exists('id',$url) && array_key_exists('view',$url))
+		$url_param['id'] = $url['id'];
+	
+	if (array_key_exists('extra',$url) && array_key_exists('id',$url) && array_key_exists('view',$url))
+		$url_param['extra'] = $url['extra'];
+	
+	// We can remove them from the $url array,
+	// as they now exist in the $url_param array.
+	unset($url['view'],$url['id'],$url['extra']);
+	
+	if (count($url) > 0)
+		$url_param['unknown'] = http_build_query($url);
+	
+	/**
+	 * Check to see if we are in mod_rewrite mode,
+	 * If so, convert the url to the clean URL format.
+	 * 
+	 * Otherwise, remove $url_param['unknown'] and merge
+	 * the remaining unknown parameters to create the url.
+	 */
+	if ($config->site->mod_rewrite)
+	{
+		foreach ($url_param as $key => $value) {
+			switch ($key) {
+				case 'view':
+					$output .= "$value";
+					break;
+				case 'id':
+				case 'extra':
+					$output .= "/$value";
+					break;
+				case 'unknown':
+					$output .= "?$value";
+					break;
+			}
+		}
+	}
+	else
+	{
+		unset($url_param['unknown']);
+		$url_param = array_merge($url_param,$url);
+		
+		$output    = '?'.http_build_query($url_param);
+
+	}
+	
+	/**
+	 * Output the code
+	 * Or, if specified 
+	 */
+	if ($echo)
+		echo $output;
+	else
+		return $output;
+}
+
+/**
  * Grab the current View, if the view isn't set, default to "post".
  * Note: Views must be lower case and contain only letters (a-z).
  */
 $view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z]/','', strtolower($_GET['view'])) : 'post';
+
 
 // Check to see if the view controller exists, and if so, include it:
 if (file_exists("controllers/$view.php"))

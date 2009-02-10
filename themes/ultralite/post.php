@@ -5,6 +5,8 @@
 	
 	<title><?php echo $site->title; ?></title>
 	
+	<base href="<?php echo $site->url; ?>" />
+	
 	<style type="text/css">
 		* {
 			margin: 0;
@@ -60,13 +62,13 @@
 <div id="ultralite">
 	<h1><?php echo $site->title; ?></h1>
 	
-	<h2><?php echo $site->slogan; ?></h2>
+	<h2><?php echo $site->tagline; ?></h2>
 	
 	<h3 id="title"><?php echo $image->title; ?></h3>
 	
 	<span id="published"><?php echo $image->published; ?></span>
 	
-	<a href="?id=<?php echo $next_image->id; ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
+	<a href="<?php url("id={$next_image->id}",true); ?>"><img src="images/<?php echo $image->filename; ?>" alt="<?php echo $image->title; ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 	
 	<div id="description">
 		<p><?php echo $image->description; ?></p>

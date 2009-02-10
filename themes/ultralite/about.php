@@ -5,6 +5,8 @@
 	
 	<title><?php echo $site->title; ?></title>
 	
+	<base href="<?php echo $site->url; ?>" />
+	
 	<style type="text/css">
 		* {
 			margin: 0;

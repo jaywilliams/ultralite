@@ -24,12 +24,14 @@
 if(!defined('ULTRALITE')) { die(); }
 
 
-$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
-
-
-// Store the thumbnails array
-$image->thumbnails = $db->get_results($sql);
-
+// If another controller has already created a query, 
+// run with that, rather than create our own:
+if (!isset($image->thumbnails)) {
+	$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
+	
+	// Store the thumbnails array
+	$image->thumbnails = $db->get_results($sql);
+}
 
 // Tack on thumbnail data to the thumbnails array
 foreach($image->thumbnails as $key => $thumbnail)

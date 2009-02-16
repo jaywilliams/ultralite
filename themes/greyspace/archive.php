@@ -24,6 +24,11 @@
 <?php echo "<a href=\"".url("view=post&id={$thumbnail->id}")."\"> <img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" /> </a>\n"; ?>
 <?php endforeach ?>
 
+<p>
+	<a href="<?php url("view=archive&page=".($site->page-1),true) ?>">Previous Page</a>
+	<a href="<?php url("view=archive&page=".($site->page+1),true) ?>">Next Page</a>
+</p>
+
 </div>
 
 </body>

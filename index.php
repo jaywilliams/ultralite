@@ -39,6 +39,32 @@ Of course the best way to handle this is always up for debate. :)
 define('ULTRALITE',true);
 
 
+/**
+ * Turn register globals off.
+ *
+ * @return null Will return null if register_globals PHP directive was disabled
+ */
+function unregister_globals() {
+	if ( !ini_get('register_globals') )
+		return;
+
+	if ( isset($_REQUEST['GLOBALS']) )
+		die('GLOBALS overwrite attempt detected');
+
+	// Variables that shouldn't be unset
+	$noUnset = array('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES', 'table_prefix');
+
+	$input = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset($_SESSION) && is_array($_SESSION) ? $_SESSION : array());
+	foreach ( $input as $k => $v )
+		if ( !in_array($k, $noUnset) && isset($GLOBALS[$k]) ) {
+			$GLOBALS[$k] = NULL;
+			unset($GLOBALS[$k]);
+		}
+}
+
+unregister_globals();
+
+
 // Initialize the config object and set a few default settings:
 $config->site->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
 
@@ -112,8 +138,6 @@ function url($url='',$echo=false)
 	$url       = ltrim($url,"/");
 		         parse_str($url,$url);
 
-
-	
 	if (array_key_exists('view',$url))
 		$url_param['view'] = $url['view'];
 	elseif(array_key_exists('id',$url))
@@ -124,10 +148,13 @@ function url($url='',$echo=false)
 	
 	if (array_key_exists('extra',$url) && array_key_exists('id',$url) && array_key_exists('view',$url))
 		$url_param['extra'] = $url['extra'];
+		
+	if (array_key_exists('page',$url) && $url['page'] > 1)
+		$url_param['page'] = $url['page'];
 	
 	// We can remove them from the $url array,
 	// as they now exist in the $url_param array.
-	unset($url['view'],$url['id'],$url['extra']);
+	unset($url['view'],$url['id'],$url['extra'],$url['page']);
 	
 	if (count($url) > 0)
 		$url_param['unknown'] = http_build_query($url);
@@ -149,6 +176,9 @@ function url($url='',$echo=false)
 				case 'id':
 				case 'extra':
 					$output .= "/$value";
+					break;
+				case 'page':
+					$output .= "/page/$value";
 					break;
 				case 'unknown':
 					$output .= "?$value";
@@ -179,8 +209,18 @@ function url($url='',$echo=false)
  * Grab the current View, if the view isn't set, default to "post".
  * Note: Views must be lower case and contain only letters (a-z).
  */
-$view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z]/','', strtolower($_GET['view'])) : 'post';
+$view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['view'])) : 'post';
+$site->view = $view;
 
+$id = (isset($_GET['id']) && !empty($_GET['id']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['id'])) : '';
+$site->id = $id;
+
+$extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra']) : array();
+// $extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? explode('/',preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra'])) : array();
+$site->extra = $extra;
+
+$page = (isset($_GET['page']) && !empty($_GET['page']) ) ? (int) $_GET['page'] : 1;
+$site->page = $page;
 
 // Check to see if the view controller exists, and if so, include it:
 if (file_exists("controllers/$view.php"))

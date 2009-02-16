@@ -27,10 +27,38 @@ if(!defined('ULTRALITE')) { die(); }
 // If another controller has already created a query, 
 // run with that, rather than create our own:
 if (!isset($image->thumbnails)) {
-	$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
+
+	
+	if ($site->pagination > 0)
+	{
+		
+		$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$time->current}'";
+		// Get total images publically available
+		$image->total = (int) $db->get_var($sql);
+		// Determine the total number of available pages
+		$image->total_pages = (int) ceil($image->total/$site->pagination);
+		
+		// The page doesn't exist!
+		if ($image->total_pages < $site->page) {
+			die("Sorry, we don't have anymore to show!");
+		}
+
+		// The database needs to know which row we need to start with:
+		$range  = (int) ($site->page-1) * $site->pagination;
+		
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC LIMIT $range, $site->pagination";
+	}
+	else
+	{
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
+	}
+	
+
 	
 	// Store the thumbnails array
 	$image->thumbnails = $db->get_results($sql);
+	
+	// var_dump($db);
 }
 
 // Tack on thumbnail data to the thumbnails array

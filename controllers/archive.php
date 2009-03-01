@@ -36,11 +36,11 @@ if (!isset($image->thumbnails)) {
 		// Get total images publically available
 		$image->total = (int) $db->get_var($sql);
 		// Determine the total number of available pages
-		$image->total_pages = (int) ceil($image->total/$site->pagination);
+		$site->total_pages = (int) ceil($image->total/$site->pagination);
 		
 		// The page doesn't exist!
-		if ($image->total_pages < $site->page) {
-			die("Sorry, we don't have anymore to show!");
+		if ($site->total_pages < $site->page) {
+			die("Sorry, we don't have anymore pages to show!");
 		}
 
 		// The database needs to know which row we need to start with:
@@ -71,6 +71,24 @@ foreach($image->thumbnails as $key => $thumbnail)
 	$image->thumbnails[$key]->width			=	$image_info[0]/4;
 	$image->thumbnails[$key]->height		=	$image_info[1]/4;
 	$image->thumbnails[$key]->dimensions	=	$image_info[3];
+}
+
+/**
+ * TEMPLATE TAGS
+ */
+
+
+function pp_thumbnails()
+{
+	global $image;
+	
+	foreach ($image->thumbnails as $thumbnail) {
+		echo(
+			"<a href=\"".url("view=post&id={$thumbnail->id}")."\">".
+				"<img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
+			"</a>\n"
+		);
+	}
 }
 
 ?>

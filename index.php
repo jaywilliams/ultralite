@@ -67,6 +67,8 @@ unregister_globals();
 
 // Initialize the config object and set a few default settings:
 $config->site->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
+// Total Number of pages for this view, set by the controller:
+$config->site->total_pages = 0;
 
 // Split up the config file by refrence for easy access
 $site     = & $config->site;
@@ -149,7 +151,7 @@ function url($url='',$echo=false)
 	if (array_key_exists('extra',$url) && array_key_exists('id',$url) && array_key_exists('view',$url))
 		$url_param['extra'] = $url['extra'];
 		
-	if (array_key_exists('page',$url) && $url['page'] > 1)
+	if (array_key_exists('page',$url) && ($url['page'] > 1 && $url['page'] <= $config->site->total_pages))
 		$url_param['page'] = $url['page'];
 	
 	// We can remove them from the $url array,

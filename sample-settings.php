@@ -19,6 +19,7 @@ $config->site->tagline    = "Guess what, it's open source, and it's ultralite!";
 $config->site->url	      = "http://example.com/ultralite/"; // Dont forget the last backslash!
 
 $config->site->template   = "greyspace";
+$config->site->pagination = 1;
 
 // Not implemented yet:
 $config->language->locale = "en-us";

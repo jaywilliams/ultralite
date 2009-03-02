@@ -20,9 +20,12 @@
 
 <div>
 
-<?php foreach ($image->thumbnails as $thumbnail): ?>
+<!-- Include Thumbnails, as a template tag -->
+<?php tt('thumbnails','mode=reverse'); ?>
+
+<!-- <?php foreach ($image->thumbnails as $thumbnail): ?>
 <?php echo "<a href=\"".url("view=post&id={$thumbnail->id}")."\"> <img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" /> </a>\n"; ?>
-<?php endforeach ?>
+<?php endforeach ?> -->
 
 <p>
 	<a href="<?php url("view=archive&page=".($site->page-1),true) ?>">Previous Page</a>

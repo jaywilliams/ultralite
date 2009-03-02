@@ -208,6 +208,33 @@ function url($url='',$echo=false)
 }
 
 /**
+ * Template Tag
+ * 
+ * Includes the specified template tag function.
+ * 
+ * For example, if you included this in a template:
+ * 		<?php tt('thumbnails'); ?>
+ * 
+ * It would cause the script to run the function:
+ * 		tt_thumbnails(); 
+ * 
+ * If that function didn't exist, it would return false.
+ *
+ * @param string $template_tag The name of the template tag function, minus the "tt_" prefix. 
+ * @param mixed $options Optional settings used to control the template tag
+ * @return void
+ * @author Jay Williams
+ */
+function tt($template_tag='',$options='')
+{
+	if (function_exists("tt_$template_tag")) {
+		eval("return tt_$template_tag(\$options);");
+	}
+	return false;
+}
+
+
+/**
  * Grab the current View, if the view isn't set, default to "post".
  * Note: Views must be lower case and contain only letters (a-z).
  */

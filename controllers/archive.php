@@ -78,11 +78,26 @@ foreach($image->thumbnails as $key => $thumbnail)
  */
 
 
-function pp_thumbnails()
+function tt_thumbnails($options='')
 {
 	global $image;
 	
-	foreach ($image->thumbnails as $thumbnail) {
+	/*
+		Default Options for this Template Tag
+	*/
+	$mode = 'forward';
+	// $echo = 'true';
+	
+	// Get the user-set options:
+	parse_str($options);
+	
+	if ($mode == 'reverse') {
+		$thumbnails = array_reverse($image->thumbnails);
+	}else {
+		$thumbnails = & $image->thumbnails;
+	}
+	
+	foreach ($thumbnails as $thumbnail) {
 		echo(
 			"<a href=\"".url("view=post&id={$thumbnail->id}")."\">".
 				"<img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".

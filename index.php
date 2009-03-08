@@ -4,16 +4,6 @@ error_reporting(E_ALL);
 
 !! ATTENTION !!
 
-This is just a bare-bones test of how a template file can be included.
-
-None of the variables passed from the DB to template are cleaned...
-
-ETC.
-
-We may aslo want to specify the image & theme folder path in the settings file instead of hard coding it.
-
-!! ALSO !!
-
 Lets try and keep variable names easy to understand and less cryptic!
 I want to be able to know what I'm dealing with just be reading the variable name...
 
@@ -25,13 +15,21 @@ I.E. :	Pixelpost 1.71 Uses the following variable, $cdate.
 		Much Better!
 
 
-!! MOVE !!
+Next Step:
+	
+	Clean up the code:
+	Move the functions to their own file, and go through the code to make sure it all makes sense.
+	Also be sure to add *helpful* comments were needed to better clarify what is going on.
 
-Yes, you heard right, we need to move controler specific logic out from the index.php file, 
-and move it into the correct controler. That way if you'r creating an RSS feed, 
-you won't have to execute other non-essential code.
+Future Tasks:
 
-Of course the best way to handle this is always up for debate. :)
+	The plugin system is probably going to be the next "big" thing, because we're going to need to 
+	add comments, categories and/or tags next, and those would best be served as plugins.
+
+	For a plugin system, perhaps we could list the plugins in the config file in some sort of array.
+	So the plugin could specify which controller it should be loaded for, that way it won't even be
+	included if it doesn't need to be in that controller, or if necessary, a plugin could be loaded 
+	for every controller.  Anything for speed right?
 
 */
 

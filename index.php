@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 /*
 
 !! ATTENTION !!
@@ -33,57 +32,65 @@ Future Tasks:
 
 */
 
-// Defined for use within included files.
+/**
+ * Enable this when developing/debugging 
+ */
+error_reporting(E_ALL);
+
+/**
+ * Some included files may require that this be set to prevent them being run outside of Ultralite.
+ */
 define('ULTRALITE',true);
 
 
-/**
- * Turn register globals off.
- *
- * @return null Will return null if register_globals PHP directive was disabled
- */
-function unregister_globals() {
-	if ( !ini_get('register_globals') )
-		return;
+require_once 'libraries/functions.php';
 
-	if ( isset($_REQUEST['GLOBALS']) )
-		die('GLOBALS overwrite attempt detected');
-
-	// Variables that shouldn't be unset
-	$noUnset = array('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES', 'table_prefix');
-
-	$input = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset($_SESSION) && is_array($_SESSION) ? $_SESSION : array());
-	foreach ( $input as $k => $v )
-		if ( !in_array($k, $noUnset) && isset($GLOBALS[$k]) ) {
-			$GLOBALS[$k] = NULL;
-			unset($GLOBALS[$k]);
-		}
-}
-
+// Remove register globals, if applicable: 
 unregister_globals();
 
 
-// Initialize the config object and set a few default settings:
+/**
+ * Initialize Configuration Class
+ * 
+ * And define the settings file defaults.
+ */
+$config = new stdClass();
+
+// Detects if mod_rewrite mode should be enabled
 $config->site->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
-// Total Number of pages for this view, set by the controller:
+
+// Default Page Settings
+$config->site->pagination = 0;
 $config->site->total_pages = 0;
 
-// Split up the config file by refrence for easy access
+// Default (fallback) Template
+$config->site->template   = "greyspace";
+
+// Split up the configuration object by reference for easy access
 $site     = & $config->site;
 $language = & $config->language;
 $time     = & $config->time;
 $database = & $config->database;
 
 // Load the settings (can override default settings):
-require_once 'settings.php';
+if (file_exists('settings.php')) {
+	require_once 'settings.php';
+}else {
+	die("Sorry, but we can't run Ultralite if <em>settings.php</em> hasn't been configured.");
+}
 
-// Determine the current datetime
+/**
+ * This option is used in the SQL queries to filter out future posts, 
+ * so it's important that the time offset is set correctly.
+ */
 $time->current = gmdate("Y-m-d H:i:s",time()+(3600 * (int) $time->offset));
 
 require_once 'libraries/db.php';
 
 /**
  * Load the correct database
+ * 
+ * Currently only two types of databases are supported, SQLite and mySQL.
  */
 switch($database->type)
 {
@@ -114,190 +121,118 @@ switch($database->type)
 }
 
 
-/**
- * Renders the URL in the proper format.
- * 
- * Examples:
- * url("view=rss");
- * url("view=post&id=3&extra=my-title");
- * url("view=post&id=3&extra=my-title&custom=true");
- *
- * @param string $url Query (do not include http:// or /)
- * @param bool $echo Disabled by default, this optional option will echo the result rather than return it silently.
- * @return string $output Properly formated URL
- */
-function url($url='',$echo=false)
-{
-	global $config,$view;
-	
-	/**
-	 * Prepare the variables we'll be using in this function
-	 */
-	$output    = "";
-	$url_param = array();
-	$url       = ltrim($url,"/");
-		         parse_str($url,$url);
-
-	if (array_key_exists('view',$url))
-		$url_param['view'] = $url['view'];
-	elseif(array_key_exists('id',$url))
-		$url_param['view'] = $url['view'] = $view;
-	
-	if (array_key_exists('id',$url) && array_key_exists('view',$url))
-		$url_param['id'] = $url['id'];
-	
-	if (array_key_exists('extra',$url) && array_key_exists('id',$url) && array_key_exists('view',$url))
-		$url_param['extra'] = $url['extra'];
-		
-	if (array_key_exists('page',$url) && ($url['page'] > 1 && $url['page'] <= $config->site->total_pages))
-		$url_param['page'] = $url['page'];
-	
-	// We can remove them from the $url array,
-	// as they now exist in the $url_param array.
-	unset($url['view'],$url['id'],$url['extra'],$url['page']);
-	
-	if (count($url) > 0)
-		$url_param['unknown'] = http_build_query($url);
-	
-	/**
-	 * Check to see if we are in mod_rewrite mode,
-	 * If so, convert the url to the clean URL format.
-	 * 
-	 * Otherwise, remove $url_param['unknown'] and merge
-	 * the remaining unknown parameters to create the url.
-	 */
-	if ($config->site->mod_rewrite)
-	{
-		foreach ($url_param as $key => $value) {
-			switch ($key) {
-				case 'view':
-					$output .= "$value";
-					break;
-				case 'id':
-				case 'extra':
-					$output .= "/$value";
-					break;
-				case 'page':
-					$output .= "/page/$value";
-					break;
-				case 'unknown':
-					$output .= "?$value";
-					break;
-			}
-		}
-	}
-	else
-	{
-		unset($url_param['unknown']);
-		$url_param = array_merge($url_param,$url);
-		
-		$output    = '?'.http_build_query($url_param);
-
-	}
-	
-	/**
-	 * Output the code
-	 * Or, if specified 
-	 */
-	if ($echo)
-		echo $output;
-	else
-		return $output;
-}
 
 /**
- * Template Tag
+ * View
+ * $site->view
  * 
- * Includes the specified template tag function.
+ * This is variable stores the current view mode, such as "post", "archive" or "rss".
+ * If no view is defined, it will fall back to "post".
  * 
- * For example, if you included this in a template:
- * 		<?php tt('thumbnails'); ?>
+ * Examples: 
+ * 		?view=post
+ * 		?view=rss
  * 
- * It would cause the script to run the function:
- * 		tt_thumbnails(); 
- * 
- * If that function didn't exist, it would return false.
- *
- * @param string $template_tag The name of the template tag function, minus the "tt_" prefix. 
- * @param mixed $options Optional settings used to control the template tag
- * @return mixed false if function doesn't exist
- */
-function tt($template_tag='',$options='')
-{
-	if (substr($template_tag,0,3) != 'tt_') {
-		$template_tag = "tt_$template_tag";
-	}
-	
-	if (function_exists("$template_tag")) {
-		return $template_tag($options);
-	}
-	
-	return false;
-}
-
-
-/**
- * echo with html entities conversion.
- * Useful for templates, and anywhere where you want to echo 
- * a string and make sure it creates correct HTML.
- *
- * @param string the value to echo
- */
-function eprint($value='')
-{
-	echo escape($value);
-}
-
-/**
- * echo with html entities conversion.
- * Useful for templates, and anywhere where you want to echo 
- * a string and make sure it creates correct HTML.
- *
- * @param string the value to echo
- */
-function escape($value='')
-{
-	return htmlentities($value,ENT_QUOTES);
-}
-
-
-/**
- * Grab the current View, if the view isn't set, default to "post".
- * Note: Views must be lower case and contain only letters (a-z).
+ * Views may contain lower case letters, numbers, hyphens, and underscores, although only letters are recommended.
  */
 $view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['view'])) : 'post';
-$site->view = $view;
+$site->view = & $view;
 
+/**
+ * ID
+ * $site->id
+ * 
+ * This is an optional parameter which can be used to define a specific post or category out of a view.
+ * Some views may use this to specify a specific mode, for the $extra parameter, such as "tagged".
+ * 
+ * Examples: 
+ * 		?view=post&id=5
+ * 		?view=archive&id=2009
+ * 
+ * IDs may contain lower case letters, numbers, hyphens, and underscores.
+ */
 $id = (isset($_GET['id']) && !empty($_GET['id']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['id'])) : '';
-$site->id = $id;
+$site->id = & $id;
 
-$extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra']) : array();
-// $extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? explode('/',preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra'])) : array();
-$site->extra = $extra;
+/**
+ * Extra
+ * $site->extra
+ * 
+ * This is an optional parameter which can be used to define a extra information for a specific View or ID.
+ * It can not be used if an ID has not been previous specified. Extras can also contains slashes which can
+ * be used to include even more information if necessary.
+ * 
+ * Examples: 
+ * 		?view=post&id=5&extra=my-image-title
+ * 		?view=archive&id=2009&extra=02
+ * 		?view=archive&id=tagged&extra=blue
+ * 		?view=universe&id=milky-way&extra=solar-system/earth
+ * 
+ * Extras may contain lower case letters, numbers, hyphens, underscores, and slashes.
+ * 
+ * 
+ * @todo Decide if $extra should be an array by default, or simply a string, like the other options.
+ */
+$extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra']) : array(); // String Version
+// $extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? explode('/',preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra'])) : array(); // Array Version 
+$site->extra = & $extra;
 
+
+/**
+ * Page
+ * $site->page
+ * 
+ * Some views will need to break content up into pages.  $page will always be an integer, and will default to 1.
+ * 
+ * Examples: 
+ * 		?view=archive&page=2
+ * 		?view=archive&id=2009&extra=02&page=4
+ * 		?view=universe&id=milky-way&extra=solar-system/earth&page=3
+ * 
+ * Pages may contain numbers only.
+ */
 $page = (isset($_GET['page']) && !empty($_GET['page']) ) ? (int) $_GET['page'] : 1;
-$site->page = $page;
+$site->page = & $page;
 
-// Check to see if the view controller exists, and if so, include it:
+
+
+/**
+ * Controller
+ * 
+ * The controller is where all of the "logic" code is stored for a specific view.
+ */
 if (file_exists("controllers/$view.php"))
 {
 	/**
-	 * @todo Include sub-views as well, possibly via a custom function.
+	 * @todo Possibly include sub-views?
 	 */
 	require_once "controllers/$view.php";
 }
 
-// If a template page exists for this view, include that as well:
+
+/**
+ * Template
+ * 
+ * The template page can use the variables and template tags created by the controller.
+ */
 if (file_exists("themes/{$site->template}/$view.php"))
 {
 	require_once "themes/{$site->template}/$view.php";
 }
 
-// If no view or controller exist, display an error:
+
+/**
+ * ERROR 404
+ * 
+ * If both the controller and the template page are missing, we need to display a legit, but helpful error 404 page.
+ * 
+ * @todo Possibly add some fancy error or splash page, so it doesn't look too unfriendly.
+ */
 if ( (! file_exists("controllers/$view.php")) && (! file_exists("themes/{$site->template}/$view.php")) )
 {
-	// Error? Splash Screen?
-	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
+	header("HTTP/1.1 404 Not Found");
+    header("Status: 404 Not Found");
+	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"{$config->site->url}\">home page</a>.");
 }
 
 

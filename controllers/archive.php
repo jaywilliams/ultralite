@@ -10,10 +10,10 @@
  * ?view=archive
  *
  * # Show archived images tagged as 'sports'
- * ?view=archive&tag=sports
+ * ?view=archive&id=tagged&view=sports
  * 
  * # Show archived images tagged as 'sports' (mod_rewrite)
- * /archive/sports
+ * /archive/tagged/sports
  *
  * 
  * @package ultralite
@@ -53,12 +53,9 @@ if (!isset($image->thumbnails)) {
 		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
 	}
 	
-
-	
 	// Store the thumbnails array
 	$image->thumbnails = $db->get_results($sql);
-	
-	// var_dump($db);
+
 }
 
 // Tack on thumbnail data to the thumbnails array

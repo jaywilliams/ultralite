@@ -1,29 +1,33 @@
 <?php
 
-/* E X A M P L E -----------------------------------------------
-    $feed = new RSS();
-    $feed->title       = 'RSS Feed Title';
-    $feed->link        = "http://website.com";
-    $feed->description = 'Recent articles on your website.';
-
-    $db->query($query);
-    $result = $db->result;
-    while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-    {
-        $item = new RSSItem();
-        $item->title = $title;
-        $item->link  = $link;
-        $item->setPubDate($create_date);
-        $item->description = $html;
-        $feed->addItem($item);
-    }
-    $feed->serve();
-
-    Or, you can eliminate the while loop above by using the
-    built-in loadRecordset() method. It takes a MySQL result
-    and the column names you want to use for the title, link,
-    description, and pub-date.
----------------------------------------------------------------- */
+/**
+ * RSS Feed Class
+ * 
+ * Example:
+ * 
+ * $feed = new RSS();
+ * $feed->title       = 'RSS Feed Title';
+ * $feed->link        = "http://website.com";
+ * $feed->description = 'Recent articles on your website.';
+ * 
+ * $db->query($query);
+ * $result = $db->result;
+ * while($row = mysql_fetch_array($result, MYSQL_ASSOC))
+ * {
+ *     $item = new RSSItem();
+ *     $item->title = $title;
+ *     $item->link  = $link;
+ *     $item->setPubDate($create_date);
+ *     $item->description = $html;
+ *     $feed->addItem($item);
+ * }
+ * $feed->serve();
+ * 
+ * @author Tyler Hall
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @copyright Copyright (c) 2006 - 2008, Simple PHP Framework <tylerhall@gmail.com>
+ * @link http://clickontyler.com/simple-php-framework/
+ **/
 
 class RSS
 {
@@ -65,19 +69,6 @@ class RSS
     function addTag($tag, $value)
     {
         $this->tags[$tag] = $value;
-    }
-
-    function loadRecordset($result, $title, $link, $description, $pub_date)
-    {
-        while($row = mysql_fetch_array($result, MYSQL_ASSOC))
-        {
-            $item = new RSSItem();
-            $item->title       = $row[$title];
-            $item->link        = $row[$link];
-            $item->description = "<![CDATA[ " . $row[$description] . "]]>";
-            $item->setPubDate($row[$pub_date]);
-            $this->addItem($item);
-        }
     }
 
     function out()

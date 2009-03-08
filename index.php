@@ -222,15 +222,44 @@ function url($url='',$echo=false)
  *
  * @param string $template_tag The name of the template tag function, minus the "tt_" prefix. 
  * @param mixed $options Optional settings used to control the template tag
- * @return void
- * @author Jay Williams
+ * @return mixed false if function doesn't exist
  */
 function tt($template_tag='',$options='')
 {
-	if (function_exists("tt_$template_tag")) {
-		eval("return tt_$template_tag(\$options);");
+	if (substr($template_tag,0,3) != 'tt_') {
+		$template_tag = "tt_$template_tag";
 	}
+	
+	if (function_exists("$template_tag")) {
+		return $template_tag($options);
+	}
+	
 	return false;
+}
+
+
+/**
+ * echo with html entities conversion.
+ * Useful for templates, and anywhere where you want to echo 
+ * a string and make sure it creates correct HTML.
+ *
+ * @param string the value to echo
+ */
+function eprint($value='')
+{
+	echo escape($value);
+}
+
+/**
+ * echo with html entities conversion.
+ * Useful for templates, and anywhere where you want to echo 
+ * a string and make sure it creates correct HTML.
+ *
+ * @param string the value to echo
+ */
+function escape($value='')
+{
+	return htmlentities($value,ENT_QUOTES);
 }
 
 

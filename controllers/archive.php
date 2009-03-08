@@ -64,12 +64,10 @@ if (!isset($image->thumbnails)) {
 // Tack on thumbnail data to the thumbnails array
 foreach($image->thumbnails as $key => $thumbnail)
 {
-	$image_info = getimagesize('images/'.$thumbnail->filename);
+	$image_info = getimagesize('thumbnails/thumb_'.$thumbnail->filename);
 		
-	// Image width and height are divided by 4 to make the image smaller.
-	// This is only a temp fix until actual thumbnailed images become a reality.
-	$image->thumbnails[$key]->width			=	$image_info[0]/4;
-	$image->thumbnails[$key]->height		=	$image_info[1]/4;
+	$image->thumbnails[$key]->width			=	$image_info[0];
+	$image->thumbnails[$key]->height		=	$image_info[1];
 	$image->thumbnails[$key]->dimensions	=	$image_info[3];
 }
 
@@ -100,7 +98,7 @@ function tt_thumbnails($options='')
 	foreach ($thumbnails as $thumbnail) {
 		echo(
 			"<a href=\"".url("view=post&id={$thumbnail->id}")."\">".
-				"<img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
+				"<img src=\"thumbnails/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
 			"</a>\n"
 		);
 	}

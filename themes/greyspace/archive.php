@@ -3,17 +3,18 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title><?php echo $site->title; ?> // Archive</title>
+	<title><?php eprint($site->title); ?> // Archive <?php if($site->page>1) echo "// Page $site->page of $site->total_pages"; ?></title>
 	
-	<base href="<?php echo $site->url; ?>" />
-	
-	<style type="text/css">
+	<base href="<?php eprint($site->url); ?>" />
+	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
+	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
+	<!-- <style type="text/css">
 		img {
 			border: 1px solid #aaa;
 			padding: 10px;
 			margin: 5px;
 		}
-	</style>
+	</style> -->
 </head>
 
 <body>
@@ -21,16 +22,43 @@
 <div>
 
 <!-- Include Thumbnails, as a template tag -->
-<?php tt('thumbnails','mode=reverse'); ?>
+<!-- <?php tt('thumbnails','mode=reverse'); ?> -->
 
-<!-- <?php foreach ($image->thumbnails as $thumbnail): ?>
-<?php echo "<a href=\"".url("view=post&id={$thumbnail->id}")."\"> <img src=\"images/{$thumbnail->filename}\" alt=\"{$thumbnail->title}\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" /> </a>\n"; ?>
-<?php endforeach ?> -->
+<ul id="thumbnails">
+<?php foreach ($image->thumbnails as $thumbnail): ?>
+<?php
 
-<p>
-	<a href="<?php url("view=archive&page=".($site->page-1),true) ?>">Previous Page</a>
-	<a href="<?php url("view=archive&page=".($site->page+1),true) ?>">Next Page</a>
-</p>
+// List the thumbnails as a list
+	echo
+	"<li><a href=\"".url("view=post&id={$thumbnail->id}")."\" class=\"thumbnail\">".
+		"<img src=\"thumbnails/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
+	"</a></li>\n";
+
+// List the thumbnails as images & links
+	// echo
+	// "<a href=\"".url("view=post&id={$thumbnail->id}")."\" class=\"thumbnail\">".
+	// 	"<img src=\"thumbnails/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
+	// "</a>";
+	
+?>
+<?php endforeach ?>
+</ul>
+
+<br class="clear"/>
+
+<ul>	
+	<?php if (($site->page) > 1): ?>
+		<li><a href="<?php url("view=archive&page=".($site->page-1),true) ?>" class="previous">Previous Page</a></li>
+	<?php else: ?>
+		<li><a class="previous disabled">Previous Page</a></li>
+	<?php endif ?>
+	
+	<?php if ($site->page < $site->total_pages): ?>
+		<li><a href="<?php url("view=archive&page=".($site->page+1),true) ?>" class="next">Next Page</a></li>
+	<?php else: ?>
+		<li><a class="next disabled">Next Page</a></li>
+	<?php endif ?>
+</ul>
 
 </div>
 

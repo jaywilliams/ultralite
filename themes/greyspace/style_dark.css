@@ -1,5 +1,6 @@
 /* @override 
 	http://192.168.1.200/ultralite/themes/greyspace/style.css
+	http://192.168.1.200/ultralite/themes/greyspace/style_dark.css
 */
 
 /* 
@@ -30,6 +31,9 @@ a{
 	outline: none;
 }
 
+.clear{
+	clear: both;
+}
 
 /* @end */
 
@@ -119,6 +123,25 @@ img#photo {
 
 #description p {
 	padding-top: 10px;
+}
+
+
+
+/* @end */
+
+/* @group Archive */
+
+#thumbnails {
+	list-style-type: none;
+}
+
+#thumbnails li a img{
+	background-color: #a3a2a2;
+	float: left;
+	border-width: 0;
+	border-style: none;
+	margin-bottom: 10px;
+	margin-right: 10px;
 }
 
 

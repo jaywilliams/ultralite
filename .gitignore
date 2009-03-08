@@ -1,0 +1,8 @@
+*.db
+*.tmproj
+*.sql
+*.ppr
+*.supported
+.gitignore
+.htaccess
+settings.php

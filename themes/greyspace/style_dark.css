@@ -42,11 +42,12 @@ body{
 	color: #282828;
 	background-color: #595959;
 }
-.published, .site.section .name, .site.section .name a{
+.page, .published, .site.section .name, .site.section .name a{
 	color: #808080;
 }
 
 .middle.section{
+	color: #808080;
 	background-color: #000;
 }
 
@@ -56,6 +57,10 @@ img#photo{
 
 .site.section .tagline {
 	color: #595959;
+}
+
+a{
+	color: #808080;
 }
 
 /* @end */
@@ -70,11 +75,36 @@ img#photo{
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	margin-top: 30px;
+	height: 25px;
 }
 
 .top.section .title {
 	font-size: 36px;
-	margin-bottom: 10px;
+	float: left;
+	height: 35px;
+}
+
+.top.section .nav {
+	float: right;
+	font-size: 14px;
+	text-align: right;
+	margin-top: 9px;
+}
+
+.top.section .nav a{
+	text-decoration: none;
+	color: #808080;
+	margin-left: 5px;
+	background-color: #4d4d4d;
+	padding: 3px 8px 6px;
+}
+
+.top.section .nav a:hover{
+	background-color: #262626;
+}
+.top.section .nav a:active,
+.top.section .nav a.active{
+	background-color: #000;
 }
 
 
@@ -131,20 +161,87 @@ img#photo {
 
 /* @group Archive */
 
-#thumbnails {
-	list-style-type: none;
+.thumbnails{
+	text-align: left;
 }
 
-#thumbnails li a img{
-	background-color: #a3a2a2;
-	float: left;
+.thumbnails a{
+}
+
+.thumbnails a img{
 	border-width: 0;
 	border-style: none;
-	margin-bottom: 10px;
-	margin-right: 10px;
+	margin: 5px;
 }
 
 
+.pagination{
+	text-align: center;
+}
+.pagination .page{
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	line-height: 30px;
+}
+.pagination a{
+	background-color: #000;
+	font-size: 14px;
+}
+
+
+.pagination a{
+	text-decoration: none;
+	color: #808080;
+	padding: 3px 8px 6px;
+	background-color: #4d4d4d;
+}
+
+.pagination a:hover{
+	background-color: #262626;
+}
+.pagination a:active,
+.pagination a.active{
+	background-color: #000;
+}
+
+.pagination a.disabled{
+	color: #595959;
+	background-color: #4d4d4d;
+}
+
+.pagination .previous{
+	float: left;
+}
+.pagination .next{
+	float: right;
+}
+
+
+
+/* @end */
+
+/* @group About */
+
+.about {
+	line-height: 24px;
+	text-align: left;
+	padding-top: 20px;
+}
+
+.subbox{
+	margin-top: 20px;
+}
+
+
+.col1, .col2, .col3{
+	width: 28%;
+	float: left;
+}
+
+.col2, .col3{
+	margin-left: 8%;
+}
 
 /* @end */
 

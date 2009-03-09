@@ -96,7 +96,7 @@ function tt_thumbnails($options='')
 		echo(
 			"<a href=\"".url("view=post&id={$thumbnail->id}")."\">".
 				"<img src=\"thumbnails/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
-			"</a>\n"
+			"</a>"
 		);
 	}
 }

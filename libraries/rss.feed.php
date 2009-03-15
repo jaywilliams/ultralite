@@ -35,6 +35,7 @@ class RSS
 	public $link;
 	public $description;
 	public $language = 'en-us';
+	public $namespace = 'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"';
 	public $pubDate;
 	public $items;
 	public $tags;
@@ -66,9 +67,9 @@ class RSS
             return $this->pubDate;
     }
 
-    function addTag($tag, $value)
+    function addTag($tag, $value, $attribute='')
     {
-        $this->tags[$tag] = $value;
+        $this->tags[$tag] = array('value'=>$value,'attribute'=>$attribute);
     }
 
     function out()
@@ -82,7 +83,14 @@ class RSS
         $out .= "<pubDate>" . $this->getPubDate() . "</pubDate>\n";
         $out .= '<atom:link href="' . $this->full_url() . '" rel="self" type="application/rss+xml" />' . "\n";
 
-        foreach($this->tags as $key => $val) $out .= "<$key>$val</$key>\n";
+        foreach($this->tags as $key => $tag)
+		{
+			if (empty($tag['value']))
+				$out .= "<$key $tag[attribute]/>\n";
+			else
+				$out .= "<$key $tag[attribute]>$tag[value]</$key>\n";	
+		}
+		
         foreach($this->items as $item) $out .= $item->out();
 
         $out .= "</channel>\n";
@@ -102,7 +110,7 @@ class RSS
     function header()
     {
         $out  = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-        $out .= '<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
+        $out .= '<rss version="2.0" '.$this->namespace.'>' . "\n";
         return $out;
     }
 
@@ -153,9 +161,9 @@ class RSSItem
             return $this->pubDate;
     }
 
-    function addTag($tag, $value)
+    function addTag($tag, $value, $attribute='')
     {
-        $this->tags[$tag] = $value;
+        $this->tags[$tag] = array('value'=>$value,'attribute'=>$attribute);
     }
 
     function out()
@@ -181,7 +189,13 @@ class RSSItem
         if($this->attachment != '')
             $out .= "<enclosure url='{$this->attachment}' length='{$this->length}' type='{$this->type}' />\n";
 
-        foreach($this->tags as $key => $val) $out .= "<$key>$val</$key>\n";
+        foreach($this->tags as $key => $tag)
+		{
+			if (empty($tag['value']))
+				$out .= "<$key $tag[attribute]/>\n";
+			else
+				$out .= "<$key $tag[attribute]>$tag[value]</$key>\n";	
+		}
         $out .= "</item>\n";
         return $out;
     }

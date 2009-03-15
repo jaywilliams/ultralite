@@ -4,10 +4,10 @@
  * Media RSS feed
  * 
  * # Show Media RSS Feed
- * ?view=mediarss
+ * ?view=mrss
  * 
  * # Show Media RSS Feed (mod_rewrite)
- * /mediarss
+ * /mrss
  * 
  * @package ultralite
  **/

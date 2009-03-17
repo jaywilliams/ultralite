@@ -22,8 +22,9 @@ $config->site->template   = "greyspace";
 // The language used on your photoblog:
 $config->language->locale = "en-us";
 
-// Time Zome Offset (from GMT/UTC):
-$config->time->offset     = "-5";
+// Time Zone:
+// For a lit of supported timezones please check http://www.php.net/manual/en/timezones.php
+$config->time->timezone     = "UCT";
 
 // How may image thumbnails per page:
 $config->site->pagination = 25; // Enter 0 to disable

@@ -66,6 +66,9 @@ $config->site->total_pages = 0;
 // Default (fallback) Template
 $config->site->template   = "greyspace";
 
+// Default timezone
+$config->time->timezone = date_default_timezone_get();
+
 // Split up the configuration object by reference for easy access
 $site     = & $config->site;
 $language = & $config->language;
@@ -83,7 +86,8 @@ if (file_exists('settings.php')) {
  * This option is used in the SQL queries to filter out future posts, 
  * so it's important that the time offset is set correctly.
  */
-$time->current = gmdate("Y-m-d H:i:s",time()+(3600 * (int) $time->offset));
+date_default_timezone_set($time->timezone);
+$time->current = date("Y-m-d H:i:s",time());
 
 require_once 'libraries/db.php';
 

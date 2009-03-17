@@ -86,8 +86,10 @@ if (file_exists('settings.php')) {
  */
 require_once 'libraries/plugins.php';
 $plugins = new plugins;
-// Plugins array
+// Plugins array (I'm not sure if this array ever makes into the class so it can be used. A corresponding vardumps shows that the config var is filled but the filters/actions are never applied)
 $config->plugins = $plugins->get();
+//var_dump($config->plugins);
+//die("OK");
 
 /**
  * This option is used in the SQL queries to filter out future posts, 

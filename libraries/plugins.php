@@ -98,7 +98,7 @@ class plugins
 			if (empty($plugin_data['Name']))
 				continue;
 
-			$plugins[$this->plugin_basename($plugin_file)] = $plugin_data;
+			$pluginlist[$this->plugin_basename($plugin_file)] = $plugin_data;
 
 
 			/**
@@ -113,11 +113,11 @@ class plugins
 		/**
 		 * Verify that we have legitimate plugins to include
 		 */
-		if (isset($plugins) && is_array($plugins))
+		if (isset($pluginlist) && is_array($pluginlist))
 		{
-			uasort($plugins, create_function('$a, $b',
+			uasort($pluginlist, create_function('$a, $b',
 				'return strnatcasecmp( $a["Name"], $b["Name"] );'));
-			return $plugins;
+			return $pluginlist;
 		} else
 		{
 			return false;

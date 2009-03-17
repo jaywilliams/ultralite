@@ -18,6 +18,7 @@
 	Author URI: http://pixelpost.org/
 */
 
+$plugins = new plugins;
 
 $plugins->add_filter('title', 'my_plugin_filer');
 $plugins->add_filter('tagline', 'my_plugin_filer');

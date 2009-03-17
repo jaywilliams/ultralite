@@ -49,12 +49,6 @@ require_once 'libraries/functions.php';
 unregister_globals();
 
 /**
- * Initialize Plugins Class
- */
-require_once 'libraries/plugins.php';
-$plugins = new plugins;
- 
-/**
  * Initialize Configuration Class
  * 
  * And define the settings file defaults.
@@ -74,9 +68,6 @@ $config->site->template   = "greyspace";
 // Default timezone
 $config->time->timezone = date_default_timezone_get();
 
-// Plugins array
-$config->plugins = $plugins->get();
-
 // Split up the configuration object by reference for easy access
 $site     = & $config->site;
 $language = & $config->language;
@@ -89,6 +80,14 @@ if (file_exists('settings.php')) {
 }else {
 	die("Sorry, but we can't run Ultralite if <em>settings.php</em> hasn't been configured.");
 }
+
+/**
+ * Initialize Plugins Class
+ */
+require_once 'libraries/plugins.php';
+$plugins = new plugins;
+// Plugins array
+$config->plugins = $plugins->get();
 
 /**
  * This option is used in the SQL queries to filter out future posts, 

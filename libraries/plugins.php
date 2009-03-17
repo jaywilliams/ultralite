@@ -17,9 +17,9 @@ class plugins
 	var $path = 'plugins'; //location of the pluginfolder (relative path)
 	var $config;
 
-	function __construct($config)
+	function __construct($config=null)
 	{
-		$this->$config = &$config;
+		$this->config = &$config;
 	}
 
 	/**
@@ -40,20 +40,20 @@ class plugins
 		 */
 
 		// since classes can be extended we have to make sure there is no trailing slash in the $directory
-		if ('/' == substr($path, strlen($path) - 1))
-			$path = substr_replace($path, '', strlen($path) - 1);
+		if ('/' == substr($this->path, strlen($this->path) - 1))
+			$this->path = substr_replace($this->path, '', strlen($this->path) - 1);
 
 		$plugin_files = array();
-		$plugins_dir = @opendir($path);
+		$plugins_dir = @opendir($this->path);
 		if ($plugins_dir)
 		{
 			while (($file = readdir($plugins_dir)) !== false)
 			{
 				if (substr($file, 0, 1) == '.')
 					continue;
-				if (is_dir($directory . '/' . $file))
+				if (is_dir($this->path . '/' . $file))
 				{
-					$plugins_subdir = @opendir($path . '/' . $file);
+					$plugins_subdir = @opendir($this->path . '/' . $file);
 					if ($plugins_subdir)
 					{
 						while (($subfile = readdir($plugins_subdir)) !== false)
@@ -87,10 +87,10 @@ class plugins
 		 */
 		foreach ($plugin_files as $plugin_file)
 		{
-			if (!is_readable($path . '/' . $plugin_file))
+			if (!is_readable($this->path . '/' . $plugin_file))
 				continue;
 
-			$plugin_data = get_plugin_data($path . '/' . $plugin_file);
+			$plugin_data = $this->get_plugin_data($this->path . '/' . $plugin_file);
 
 			/**
 			 * If the plugin doesn't have a defined name, don't load it!
@@ -98,7 +98,7 @@ class plugins
 			if (empty($plugin_data['Name']))
 				continue;
 
-			$plugins[plugin_basename($plugin_file)] = $plugin_data;
+			$plugins[$this->plugin_basename($plugin_file)] = $plugin_data;
 
 
 			/**
@@ -106,7 +106,7 @@ class plugins
 			 *
 			 * @todo Possibly move this to its own function? Have it run off of the $pp_cache[ 'plugins' ] array?
 			 */
-			include_once ($path . '/' . plugin_basename($plugin_file));
+			include_once ($this->path . '/' . $this->plugin_basename($plugin_file));
 
 		}
 
@@ -194,7 +194,7 @@ class plugins
 		 * Default priority for plugins is 8, PixelPost core files can use priority 9 which leaves priority 10
 		 * for plugins that needs to do things after PixelPost core code.
 		 */
-		return add_filter($hook, $function_to_add, $priority, $accept_args);
+		return $this->add_filter($hook, $function_to_add, $priority, $accept_args);
 	}
 
 	/**
@@ -253,7 +253,7 @@ class plugins
 		 * table the remove_filter call can be used to remove an action.
 		 */
 
-		return remove_filter($hook, $function_to_remove, $priority);
+		return $this->remove_filter($hook, $function_to_remove, $priority);
 	}
 
 	/**
@@ -491,13 +491,13 @@ class plugins
 	 *
 	 * @param string $file The filename of plugin.
 	 * @return string The name of a plugin.
-	 * @uses $path
+	 * @uses $this->path
 	 */
 	private function plugin_basename($file)
 	{
 		$file = str_replace('\\', '/', $file); // sanitize for Win32 installs
 		$file = preg_replace('|/+|', '/', $file); // remove any duplicate slash
-		$plugin_dir = str_replace('\\', '/', $path); // sanitize for Win32 installs
+		$plugin_dir = str_replace('\\', '/', $this->path); // sanitize for Win32 installs
 		$plugin_dir = preg_replace('|/+|', '/', $plugin_dir); // remove any duplicate slash
 		$file = preg_replace('|^' . preg_quote($plugin_dir, '|') . '/|', '', $file); // get relative path from plugins dir
 		return $file;

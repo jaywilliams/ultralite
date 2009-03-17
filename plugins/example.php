@@ -20,10 +20,8 @@
 // 
 // $plugins = new plugins;
 // 
-$plugins->add_filter('title', 'my_plugin_filer');
-$plugins->add_filter('tagline', 'my_plugin_filer');
-
-// var_dump($plugins);
+$this->add_filter('title', 'my_plugin_filer');
+$this->add_filter('tagline', 'my_plugin_filer');
 
 function my_plugin_filer($string)
 {
@@ -36,7 +34,7 @@ function my_plugin_filer($string)
 	return $string;
 }
 
-$plugins->add_action('home', 'my_plugin_action');
+$this->add_action('home', 'my_plugin_action');
 
 function my_plugin_action($string)
 {

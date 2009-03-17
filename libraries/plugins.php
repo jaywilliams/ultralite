@@ -14,115 +14,80 @@
 class plugins
 {
 
-	var $path = 'plugins'; //location of the pluginfolder (relative path)
+	/**
+	 * Relative path to plugin directory
+	 * Note: The trailing slash is required.
+	 *
+	 * @var string
+	 */
+	var $path = 'plugins/';
+	
+	/**
+	 * List of plugin filenames
+	 *
+	 * @var array
+	 */
+	var $plugins = array();
+	
+	/**
+	 * Stores stuff, mostly junk.
+	 * 
+	 * @var array
+	 */
 	var $config;
+	
 
-	function __construct($config=null)
+	function __construct($config=array())
 	{
 		$this->config = &$config;
 	}
 
 	/**
-	 * Currently this script loads all the available plugins in the directory
+	 * Include all available plugins
 	 *
-	 * @todo Only load "activated" plugins (Load a stored array via get_option())
-	 *
-	 * @since ???
-	 * @return array Returns an array with each file plugin file name
-	 *
+	 * @return array $this->plugins
 	 */
 	public function get()
-	{
-		global $plugins;
+	{		
 		/**
-		 * Create a list of every .php file in the plugins directory
-		 *
-		 * Note: any filenames (including php files) that begin with a "." (period) will not be included.
+		 * Verify that the plugin directory exists
 		 */
-
-		// since classes can be extended we have to make sure there is no trailing slash in the $directory
-		if ('/' == substr($this->path, strlen($this->path) - 1))
-			$this->path = substr_replace($this->path, '', strlen($this->path) - 1);
-
-		$plugin_files = array();
-		$plugins_dir = @opendir($this->path);
-		if ($plugins_dir)
-		{
-			while (($file = readdir($plugins_dir)) !== false)
-			{
-				if (substr($file, 0, 1) == '.')
-					continue;
-				if (is_dir($this->path . '/' . $file))
-				{
-					$plugins_subdir = @opendir($this->path . '/' . $file);
-					if ($plugins_subdir)
-					{
-						while (($subfile = readdir($plugins_subdir)) !== false)
-						{
-							if (substr($subfile, 0, 1) == '.')
-								continue;
-							if (substr($subfile, -4) == '.php')
-								$plugin_files[] = $file . '/' . $subfile;
-						}
-					}
-				} else
-				{
-					if (substr($file, -4) == '.php')
-						$plugin_files[] = $file;
-				}
-			}
-		}
-		@closedir($plugins_dir);
-		@closedir($plugins_subdir);
-
-
-		/**
-		 * If for some reason we couldn't find any plugins
-		 * or the plugin directory, return false.
-		 */
-		if (!$plugins_dir || !$plugin_files)
+		if (!(is_dir($this->path) && is_readable($this->path)))
 			return false;
+
+		/**
+		 * Hard coded plugin list
+		 * @todo to be replaced by a db or php function
+		 */
+		$this->plugins[] = 'example.php';
+		$this->plugins[] = 'example.php';
+		$this->plugins[] = 'example.php';
+		$this->plugins[] = 'example.php';
+		$this->plugins[] = 'example.php';
+
 
 		/**
 		 * Load the information for each plugin
 		 */
-		foreach ($plugin_files as $plugin_file)
+		foreach ($this->plugins as $id => $plugin)
 		{
-			if (!is_readable($this->path . '/' . $plugin_file))
+			if (!is_readable($this->path.$plugin))
 				continue;
-
-			$plugin_data = $this->get_plugin_data($this->path . '/' . $plugin_file);
-
-			/**
-			 * If the plugin doesn't have a defined name, don't load it!
-			 */
-			if (empty($plugin_data['Name']))
-				continue;
-
-			$pluginlist[$this->plugin_basename($plugin_file)] = $plugin_data;
-
 
 			/**
 			 * Include the Plugin
-			 *
-			 * @todo Possibly move this to its own function? Have it run off of the $pp_cache[ 'plugins' ] array?
 			 */
-			include_once ($this->path . '/' . $this->plugin_basename($plugin_file));
+			$result = include_once $this->path.$plugin;
 
+			/**
+			 * Verify that the file was included properly
+			 * If it wasn't, remove it from the list
+			 */
+			if ($result !== 1)
+				unset($this->plugins[$id]);
 		}
 
-		/**
-		 * Verify that we have legitimate plugins to include
-		 */
-		if (isset($pluginlist) && is_array($pluginlist))
-		{
-			uasort($pluginlist, create_function('$a, $b',
-				'return strnatcasecmp( $a["Name"], $b["Name"] );'));
-			return $pluginlist;
-		} else
-		{
-			return false;
-		}
+		return $this->plugins;
 	}
 
 	/**
@@ -138,8 +103,7 @@ class plugins
 	 * @return bool
 	 *
 	 */
-	public function add_filter($hook, $function_to_add, $priority = 8, $accept_args =
-		1)
+	public function add_filter($hook, $function_to_add, $priority = 8, $accept_args = 1)
 	{
 		/**
 		 * Priority is defined as a number 1 to 10, with 1 being the highest and 10 being the lowest.
@@ -183,8 +147,7 @@ class plugins
 	 * @return bool
 	 *
 	 */
-	public function add_action($hook, $function_to_add, $priority = 8, $accept_args =
-		1)
+	public function add_action($hook, $function_to_add, $priority = 8, $accept_args =1)
 	{
 		/**
 		 * Since filters and actions have a similar semantics and both use the same
@@ -390,118 +353,5 @@ class plugins
 		return $string;
 	}
 
-	/**
-	 * Check if plugin exists
-	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $plugin the name of the plugin
-	 *
-	 * @return bool
-	 *
-	 */
-	public function plugin_available($plugin)
-	{
-		return in_array($plugin, $this->config->plugins['plugins']);
-	}
-
-	/**
-	 * Get the data specified for the addon
-	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $plugin_file the name of the plugin_file
-	 *
-	 * @return array (Name, Title, Description, Author, Version)
-	 *
-	 */
-	private function get_plugin_data($plugin_file)
-	{
-		/**
-		 * Each plugin file has to have the Standard Plugin Information as defined in
-		 * the comment block below. This function will extract this information show it
-		 * can be used in various ways (e.g. shown in the addons list).
-		 */
-
-		/*
-		Plugin Name: Name Of The Plugin
-		Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
-		Description: A brief description of the plugin.
-		Version: The plugin's Version Number, e.g.: 1.0
-		Author: Name Of The Plugin Author
-		Author URI: http://URI_Of_The_Plugin_Author
-		*/
-
-		if (isset($this->config->plugins['plugin'][$plugin_file]))
-		{
-			/**
-			 * If the information has been stored in the Config then display the information.
-			 */
-			return $this->config->plugins['plugin'][$plugin_file];
-		}
-		/**
-		 * If no cached version is available extract the information from the file
-		 */
-		$plugin_data = implode('', file($plugin_file));
-		preg_match('|Plugin Name:(.*)$|mi', $plugin_data, $plugin_name);
-		preg_match('|Plugin URI:(.*)$|mi', $plugin_data, $plugin_uri);
-		preg_match('|Description:(.*)$|mi', $plugin_data, $description);
-		preg_match('|Author:(.*)$|mi', $plugin_data, $author_name);
-		preg_match('|Author URI:(.*)$|mi', $plugin_data, $author_uri);
-		if (preg_match("|Version:(.*)|i", $plugin_data, $version))
-			$version = trim($version[1]);
-		else
-			$version = '';
-
-		$description = @trim($description[1]);
-
-		$name = @$plugin_name[1];
-		$name = trim($name);
-		$plugin = $name;
-		/**
-		 * Create HTML output with links to the homepage of the plugin or author homepage
-		 */
-
-		if ('' != @trim($plugin_uri[1]) && '' != $name)
-		{
-			$plugin = '<a href="' . trim($plugin_uri[1]) .
-				'" title="Visit plugin homepage">' . $plugin . '</a>';
-		}
-
-		if (empty($author_uri[1]))
-		{
-			$author = @trim($author_name[1]);
-		} else
-		{
-			$author = '<a href="' . @trim($author_uri[1]) .
-				'" title="Visit author homepage">' . @trim($author_name[1]) . '</a>';
-		}
-
-		return array('Name' => $name, 'Title' => $plugin, 'Description' => $description,
-			'Author' => $author, 'Version' => $version);
-	}
-
-	/**
-	 * plugin_basename() - Gets the basename of a plugin.
-	 *
-	 * This method extracts the name of a plugin from its filename.
-	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @access private
-	 *
-	 * @param string $file The filename of plugin.
-	 * @return string The name of a plugin.
-	 * @uses $this->path
-	 */
-	private function plugin_basename($file)
-	{
-		$file = str_replace('\\', '/', $file); // sanitize for Win32 installs
-		$file = preg_replace('|/+|', '/', $file); // remove any duplicate slash
-		$plugin_dir = str_replace('\\', '/', $this->path); // sanitize for Win32 installs
-		$plugin_dir = preg_replace('|/+|', '/', $plugin_dir); // remove any duplicate slash
-		$file = preg_replace('|^' . preg_quote($plugin_dir, '|') . '/|', '', $file); // get relative path from plugins dir
-		return $file;
-	}
 
 }

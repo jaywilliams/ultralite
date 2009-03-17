@@ -33,6 +33,7 @@ class plugins
 	 */
 	public function get()
 	{
+		global $plugins;
 		/**
 		 * Create a list of every .php file in the plugins directory
 		 *

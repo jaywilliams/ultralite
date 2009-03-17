@@ -17,11 +17,13 @@
 	Author: Team Pixelpost
 	Author URI: http://pixelpost.org/
 */
-
-$plugins = new plugins;
-
+// 
+// $plugins = new plugins;
+// 
 $plugins->add_filter('title', 'my_plugin_filer');
 $plugins->add_filter('tagline', 'my_plugin_filer');
+
+// var_dump($plugins);
 
 function my_plugin_filer($string)
 {
@@ -29,7 +31,7 @@ function my_plugin_filer($string)
 	// $string = "$string (= Plugin Fun)";
 	
 	// Multi-Lingual:
-	$string = $string . ' ' . __('+ Plugin Fun');
+	$string = $string . ' ' . '+ Plugin Fun';
 	
 	return $string;
 }

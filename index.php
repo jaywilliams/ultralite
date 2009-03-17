@@ -48,7 +48,12 @@ require_once 'libraries/functions.php';
 // Remove register globals, if applicable: 
 unregister_globals();
 
-
+/**
+ * Initialize Plugins Class
+ */
+require_once 'libraries/plugins.php';
+$plugins = new plugins;
+ 
 /**
  * Initialize Configuration Class
  * 
@@ -69,6 +74,9 @@ $config->site->template   = "greyspace";
 // Default timezone
 $config->time->timezone = date_default_timezone_get();
 
+// Plugins array
+$config->plugins = $plugins->get();
+
 // Split up the configuration object by reference for easy access
 $site     = & $config->site;
 $language = & $config->language;
@@ -84,7 +92,8 @@ if (file_exists('settings.php')) {
 
 /**
  * This option is used in the SQL queries to filter out future posts, 
- * so it's important that the time offset is set correctly.
+ * so it's important that the time offset is set correctly. After setting 
+ * this every date/time function will use the correct timezone.
  */
 date_default_timezone_set($time->timezone);
 $time->current = date("Y-m-d H:i:s",time());

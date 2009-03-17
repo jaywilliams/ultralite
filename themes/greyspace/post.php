@@ -32,8 +32,8 @@
 	<div class="middle section">
 		<a href="<?php url("id={$next_image->id}",true); ?>"><img src="images/<?php eprint($image->filename); ?>" alt="<?php eprint($image->title); ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 		<div class="site section">
-			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($site->title); ?></a></h2>
-			<em class="tagline"><?php eprint($site->tagline); ?></em>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($plugins->apply_filters('title',$site->title)); ?></a></h2>
+			<em class="tagline"><?php eprint($plugins->apply_filters('tagline',$site->tagline)); $plugins->do_action('home'); ?></em>
 		</div>
 	</div>
 

@@ -17,27 +17,25 @@
 	Author: Team Pixelpost
 	Author URI: http://pixelpost.org/
 */
-// 
-// $plugins = new plugins;
-// 
-$this->add_filter('title', 'my_plugin_filer');
-$this->add_filter('tagline', 'my_plugin_filer');
+$this->add_filter('title', 'my_plugin_filer',10);
+$this->add_filter('tagline', 'my_plugin_filer',10);
 
-function my_plugin_filer($string)
+function my_plugin_filer($input)
 {
-	// Simple:
-	// $string = "$string (= Plugin Fun)";
+
+	// Simple Adjustment:
+	$input = "$input + Plugin Fun";
 	
-	// Multi-Lingual:
-	$string = $string . ' ' . '+ Plugin Fun';
-	
-	return $string;
+	// No need to return anyting, since the first 
+	// varialbe is passed via reference:
+	// return $string;
 }
 
-$this->add_action('home', 'my_plugin_action');
+$this->add_action('home', 'my_plugin_action',10,2);
 
-function my_plugin_action($string)
+function my_plugin_action($test,$false)
 {
+	$test = 'ha ha';
 	echo "\n<h2>I love plugins, and so should you!</h2>\n";
 }
 

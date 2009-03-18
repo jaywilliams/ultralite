@@ -23,7 +23,7 @@ $config->site->template   = "greyspace";
 $config->language->locale = "en-us";
 
 // Time Zone:
-// For a lit of supported timezones please check http://www.php.net/manual/en/timezones.php
+// For a list of supported timezones please see: http://www.php.net/manual/en/timezones.php
 $config->time->timezone     = "UCT";
 
 // How may image thumbnails per page:
@@ -32,6 +32,17 @@ $config->site->pagination = 25; // Enter 0 to disable
 // Ultralite will auto-detect whether or not clean URLs should be used.
 // But if you want to overide the auto-detect, you can do so here:
 // $config->site->mod_rewrite     = true;
+
+/**
+ * Plugin Configuration
+ * 
+ * Specify the plugins you wish to load here.
+ * This isn't a perfect solution, but it's the best
+ * we have for now.
+ */
+
+// $config->plugins[] = 'filename.php';
+$config->plugins[] = 'example.php';
 
 
 /**

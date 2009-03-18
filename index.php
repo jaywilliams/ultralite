@@ -82,14 +82,21 @@ if (file_exists('settings.php')) {
 }
 
 /**
- * Initialize Plugins Class
+ * Plugins Class
  */
 require_once 'libraries/plugins.php';
-$plugins = new plugins;
-// Plugins array (I'm not sure if this array ever makes into the class so it can be used. A corresponding vardumps shows that the config var is filled but the filters/actions are never applied)
-$config->plugins = $plugins->get();
-// var_dump($config->plugins);
-//die("OK");
+
+$plugins = new plugins();
+// Load list of plugins from config:
+$plugins->plugins = & $config->plugins;
+$plugins->get();
+
+/**
+ * Apply Filters (by reference)
+ */
+$plugins->apply_filters('title',&$site->title);
+$plugins->apply_filters('tagline',&$site->tagline);
+
 
 /**
  * This option is used in the SQL queries to filter out future posts, 

@@ -29,6 +29,9 @@ class plugins
 	 */
 	var $plugins = array();
 	
+	
+	var $actions = array();
+	
 	/**
 	 * Stores stuff, mostly junk.
 	 * 
@@ -90,134 +93,52 @@ class plugins
 		return $this->plugins;
 	}
 
+
 	/**
-	 * Add a filter to a specified hook
+	 * Add a plugin callback function to the specified action
 	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $hook the name of the hook to bind to
-	 * @param string $function_to_add the function to call for the hook
-	 * @param int $priority OPTIONAL priority of execution (1 is highest, 10 is lowest)
-	 * @param int $accept_args OPTIONAL number of accepted arguments
-	 *
+	 * @param string $hook The Hook to tie into
+	 * @param string $function_to_add The name of the plugin function to call
+	 * @param int $priority (optional) Ability to apply before or after another function
+	 * @param int $accept_args (optional) The number of arguments the plugin function will accept
 	 * @return bool
-	 *
 	 */
-	public function add_filter($hook, $function_to_add, $priority = 8, $accept_args = 1)
+	public function add_action($hook, $callback_function, $priority = 10, $accept_args = 0)
 	{
-		/**
-		 * Priority is defined as a number 1 to 10, with 1 being the highest and 10 being the lowest.
-		 * Functions with priority == 1 will be executed first.
-		 * Default priority for plugins is 8, PixelPost core files can use priority 9 which leaves priority 10
-		 * for plugins that needs to do things after PixelPost core code.
-		 */
-
-		$priority = (int)$priority;
-		$accept_args = (int)$accept_args;
-
-		/**
-		 * Make sure a given function is not accidentally added twice to the hook.
-		 * If this happens return 'false'.
-		 */
-		if (isset($this->config->plugins['plugin_functions'][$hook][$priority]) &&
-			array_key_exists($function_to_add, $this->config->plugins['plugin_functions'][$hook][$priority]))
-		{
+		if (!function_exists($callback_function))
 			return false;
-		}
 
-		/**
-		 * Add given function to the hook.
-		 */
-		$this->config->plugins['plugin_functions'][$hook][$priority][$function_to_add] =
-			array('function' => $function_to_add, 'accept_args' => $accept_args);
+		$priority    = (int) $priority;
+		$accept_args = (int) $accept_args;
 
+		$this->actions[$hook][$priority][$callback_function] = array( 	'function' => $callback_function, 
+																		'accept_args' => $accept_args );
 		return true;
 	}
 
-	/**
-	 * Add an action to a specified hook
-	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $hook the name of the hook to bind to
-	 * @param string $function_to_add the function to call for the hook
-	 * @param int $priority OPTIONAL priority of execution (1 is highest, 10 is lowest)
-	 * @param int $accept_args OPTIONAL number of accepted arguments
-	 *
-	 * @return bool
-	 *
-	 */
-	public function add_action($hook, $function_to_add, $priority = 8, $accept_args =1)
-	{
-		/**
-		 * Since filters and actions have a similar semantics and both use the same
-		 * table the add_filter call can be used to add an action.
-		 *
-		 * Priority is defined as a number 1 to 10, with 1 being the highest and 10 being the lowest.
-		 * Functions with priority == 1 will be executed first.
-		 * Default priority for plugins is 8, PixelPost core files can use priority 9 which leaves priority 10
-		 * for plugins that needs to do things after PixelPost core code.
-		 */
-		return $this->add_filter($hook, $function_to_add, $priority, $accept_args);
-	}
 
 	/**
-	 * Remove a filter from a specified hook
+	 * Remove a plugin callback function from the specified action
 	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $hook the name of the hook to bind to
-	 * @param string $function_to_remove function to remove for the hook
-	 * @param int $priority OPTIONAL priority of execution (1 is highest, 10 is lowest)
-	 *
+	 * @param string $hook The Hook, nuff said
+	 * @param string $function_to_add The name of the plugin function to remove
+	 * @param int $priority (optional) Ability to apply before or after another function
 	 * @return bool
-	 *
 	 */
-	public function remove_filter($hook, $function_to_remove, $priority = 8)
+	public function remove_action($hook, $callback_function, $priority = 10)
 	{
-		$removed = false; //gives information if the function was removed or not
-		if (isset($this->config->plugins['plugin_functions'][$hook][$priority]))
-		{
-			if (array_key_exists($function_to_remove, $this->config->plugins['plugin_functions'][$hook][$priority]))
-			{
-				/**
-				 * If the function was found then unset it from the array.
-				 */
-				unset($this->config->plugins['plugin_functions'][$hook][$priority][$function_to_remove]);
-				$removed = true;
-				/**
-				 * If the removal of the function leaves the priority container empty, remove
-				 * this as well.
-				 */
-				if (empty($this->config->plugins['plugin_functions'][$hook][$priority]))
-				{
-					unset($this->config->plugins['plugin_functions'][$hook][$priority]);
-				}
-			}
+
+		$priority    = (int) $priority;
+
+		if (array_key_exists($callback_function, $this->actions[$hook][$priority][$callback_function])) {
+			
+			unset($this->actions[$hook][$priority][$callback_function]);
+
+			if (empty($this->actions[$hook][$priority]))
+				unset($this->actions[$hook][$priority]);
 		}
-		return $removed;
-	}
 
-	/**
-	 * Remove an action from a specified hook
-	 *
-	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $hook the name of the hook to bind to
-	 * @param string $function_to_remove function to remove for the hook
-	 * @param int $priority OPTIONAL priority of execution (1 is highest, 10 is lowest)
-	 *
-	 * @return bool
-	 *
-	 */
-	public function remove_action($hook, $function_to_remove, $priority = 8)
-	{
-		/**
-		 * Since filters and actions have a similar semantics and both use the same
-		 * table the remove_filter call can be used to remove an action.
-		 */
-
-		return $this->remove_filter($hook, $function_to_remove, $priority);
+		return true;
 	}
 
 	/**
@@ -231,53 +152,77 @@ class plugins
 	 * @return depending on action
 	 *
 	 */
-	public function do_action($hook, $arg = '')
+	public function do_action($hook)
 	{
-		$extra_args = array_slice(func_get_args(), 2);
-		$args = array_merge(array($arg), $extra_args);
 
 		/**
-		 * If no plugins are using this hook, return null.
-		 * Otherwise, if there are plugins using the hook,
-		 * sort them and start running through them.
+		 * First, check to see if any plugins are using this hook:
 		 */
-		if (!isset($this->config->plugins['plugin_functions'][$hook]))
-		{
-			return null;
-		} else
-		{
-			ksort($this->config->plugins['plugin_functions'][$hook]);
-		}
-		foreach ($this->config->plugins['plugin_functions'][$hook] as $priority => $functions)
-		{
-			if (!is_null($functions))
-			{
-				foreach ($functions as $function)
-				{
-					$func_name = $function['function'];
-					$accept_args = $function['accept_args'];
+		if (!isset($this->actions[$hook]))
+			return false;
+		
+		/**
+		 * Verify all of the $priorities are in order
+		 */
+		ksort($this->actions[$hook]);
+
+		/**
+		 * Get the hook arguments to accompany to the hook
+		 */
+		$args = func_get_args();
+		
+		/**
+		 * Remove the first one, because it's only the hook name
+		 */
+		array_shift($args);
+		
+		/**
+		 * Does this hook even use arguments?
+		 */
+		$args_exist = (count($args) > 0)? true : false;
+
+
+		/**
+		 * Now for the magic, lets bring the plugins to life:
+		 */
+		foreach ($this->actions[$hook] as  $priority => &$functions) {
+			foreach ($functions as &$function) {
+				
+				$func_name   = & $function['function'];
+				$accept_args = & $function['accept_args'];
+
+				if ($args_exist && $accept_args > 0) {
+					
+					/**
+					 * Functions can be funny, they can be particular with the number of arguments they accept, 
+					 * so we'll be nice and only give it the number of arguments they request.
+					 */
+					$the_args = array_slice($args, 0, $accept_args);
+					
+					/**
+					 * If the function only accepts one argument,
+					 * we can save some time by calling the function directly.
+					 */
 					if ($accept_args == 1)
-					{
-						$the_args = array($arg);
-					} elseif ($accept_args > 1)
-					{
-						/**
-						 * If the function accepts more than 1 argument make sure we only extract
-						 * the number of arguments allowed by the function.
-						 */
-						$the_args = array_slice($args, 0, $accept_args);
-					} elseif ($accept_args == 0)
-					{
-						$the_args = null;
-					} else
-					{
-						$the_args = $args;
-					}
-					$output[$func_name] = call_user_func_array($func_name, $the_args);
+						$func_name($the_args);
+					else
+						call_user_func_array($func_name, $the_args);
+					
+				}else {
+					
+					/**
+					 * Simple and sweet,
+					 * this calls our plugin,
+					 * into action
+					 */
+					$func_name();	
 				}
+				
+				
 			}
 		}
-		return $output;
+		
+		return true;
 	}
 
 	/**

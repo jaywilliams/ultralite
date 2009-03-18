@@ -92,10 +92,23 @@ $plugins->plugins = & $config->plugins;
 $plugins->get();
 
 /**
- * Apply Filters (by reference)
+ * Apply Filters (by reference) to the entire $config object!
+ * 
+ * This is mostly just a tech-demo, we probably won't keep this actual code.
+ * You can apply filters from a plugin, like so:
+ * 
+ * $this->add_filter('site-title', 'my_plugin_filer',10);
+ * (This will modify the $site->title option)
+ * 
  */
-$plugins->apply_filters('title',&$site->title);
-$plugins->apply_filters('tagline',&$site->tagline);
+
+foreach ($config as $section => &$options) {
+	foreach ($options as $key => &$value) {
+		$plugins->apply_filters("$section-$key",&$value);
+		// var_dump("$section-$key",$value);
+	}
+}
+
 
 
 /**

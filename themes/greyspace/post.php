@@ -15,6 +15,7 @@
 			width: <?php echo $image->width; ?>px;
 		}
 	</style>
+	<?php $plugins->do_action('head','post');  ?>
 </head>
 
 <body>
@@ -32,8 +33,8 @@
 	<div class="middle section">
 		<a href="<?php url("id={$next_image->id}",true); ?>"><img src="images/<?php eprint($image->filename); ?>" alt="<?php eprint($image->title); ?>" <?php echo $image->dimensions; ?> id="photo" /></a>
 		<div class="site section">
-			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($plugins->apply_filters('title',$site->title)); ?></a></h2>
-			<em class="tagline"><?php eprint($plugins->apply_filters('tagline',$site->tagline)); $plugins->do_action('home'); ?></em>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($site->title); ?></a></h2>
+			<em class="tagline"><?php eprint($site->tagline); ?></em>
 		</div>
 	</div>
 
@@ -45,6 +46,6 @@
 	</div>
 
 </div>
-
+<?php $plugins->do_action('body','post');  ?>
 </body>
 </html>

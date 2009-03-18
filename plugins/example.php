@@ -17,8 +17,8 @@
 	Author: Team Pixelpost
 	Author URI: http://pixelpost.org/
 */
-$this->add_filter('title', 'my_plugin_filer',10);
-$this->add_filter('tagline', 'my_plugin_filer',10);
+$this->add_filter('site-title', 'my_plugin_filer',10);
+$this->add_filter('site-tagline', 'my_plugin_filer',10);
 
 function my_plugin_filer($input)
 {
@@ -31,12 +31,12 @@ function my_plugin_filer($input)
 	// return $string;
 }
 
-$this->add_action('home', 'my_plugin_action',10,2);
+$this->add_action('body', 'my_plugin_action',10,1);
 
-function my_plugin_action($test,$false)
+function my_plugin_action($mode)
 {
-	$test = 'ha ha';
-	echo "\n<h2>I love plugins, and so should you!</h2>\n";
+	
+	echo "\n<h2 style=\"text-align:center\">We are currently in $mode!</h2>\n";
 }
 
 

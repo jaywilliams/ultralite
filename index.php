@@ -235,12 +235,12 @@ $site->page = & $page;
  * 
  * The controller is where all of the "logic" code is stored for a specific view.
  */
-if (file_exists("controllers/$view.php"))
+if (file_exists("controllers/controller_$view.php"))
 {
 	/**
 	 * @todo Possibly include sub-views?
 	 */
-	require_once "controllers/$view.php";
+	require_once "controllers/controller_$view.php";
 }
 
 
@@ -249,9 +249,9 @@ if (file_exists("controllers/$view.php"))
  * 
  * The template page can use the variables and template tags created by the controller.
  */
-if (file_exists("themes/{$site->template}/$view.php"))
+if (file_exists("themes/{$site->template}/theme_$view.php"))
 {
-	require_once "themes/{$site->template}/$view.php";
+	require_once "themes/{$site->template}/theme_$view.php";
 }
 
 
@@ -262,7 +262,7 @@ if (file_exists("themes/{$site->template}/$view.php"))
  * 
  * @todo Possibly add some fancy error or splash page, so it doesn't look too unfriendly.
  */
-if ( (! file_exists("controllers/$view.php")) && (! file_exists("themes/{$site->template}/$view.php")) )
+if ( (! file_exists("controllers/controller_$view.php")) && (! file_exists("themes/{$site->template}/theme_$view.php")) )
 {
 	header("HTTP/1.1 404 Not Found");
     header("Status: 404 Not Found");

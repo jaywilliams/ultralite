@@ -68,30 +68,17 @@ class plugins
 			return false;
 
 		/**
-		 * Hard coded plugin list
-		 * @todo to be replaced by a db or php function
-		 */
-/*
-		$this->plugins[] = 'example.php';
-		$this->plugins[] = 'example.php';
-		$this->plugins[] = 'example.php';
-		$this->plugins[] = 'example.php';
-		$this->plugins[] = 'example.php';
-*/
-
-
-		/**
 		 * Load the information for each plugin
 		 */
 		foreach ((array) $this->plugins as $id => $plugin)
 		{
-			if (!is_readable($this->path.$plugin))
+			if (!is_readable("{$this->path}plugin_$plugin.php"))
 				continue;
 
 			/**
 			 * Include the Plugin
 			 */
-			$result = include_once $this->path.$plugin;
+			$result = include_once "{$this->path}plugin_$plugin.php";
 
 			/**
 			 * Verify that the file was included properly

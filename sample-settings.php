@@ -39,10 +39,13 @@ $config->site->pagination = 25; // Enter 0 to disable
  * Specify the plugins you wish to load here.
  * This isn't a perfect solution, but it's the best
  * we have for now.
+ * 
+ * Filename: plugin_myname.php
+ * Plugin Name: myname
  */
 
-// $config->plugins[] = 'filename.php';
-$config->plugins[] = 'example.php';
+// $config->plugins[] = 'myname';
+$config->plugins[] = 'example';
 
 
 /**

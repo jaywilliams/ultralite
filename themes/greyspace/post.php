@@ -15,7 +15,7 @@
 			width: <?php echo $image->width; ?>px;
 		}
 	</style>
-	<?php $plugins->do_action('head','post');  ?>
+	<?php $plugins->do_action('head');  ?>
 </head>
 
 <body>
@@ -46,6 +46,9 @@
 	</div>
 
 </div>
-<?php $plugins->do_action('body','post');  ?>
+<?php $myMode='post'; $plugins->do_action('body',$myMode);  ?>
+
+
+<?php echo $myMode; ?>
 </body>
 </html>

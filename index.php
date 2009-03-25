@@ -104,7 +104,7 @@ $plugins->get();
 
 foreach ($config as $section => &$options) {
 	foreach ($options as $key => &$value) {
-		$plugins->apply_filters("$section-$key",&$value);
+		$plugins->apply_filters("$section-$key",$value);
 		// var_dump("$section-$key",$value);
 	}
 }

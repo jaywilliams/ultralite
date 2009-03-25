@@ -161,7 +161,7 @@ class plugins
 	 * @param string $hook Action hook name
 	 * @return bool|mixed
 	 */
-	public function do_action($hook,$string=true)
+	public function do_action($hook,&$string=true)
 	{
 
 		/**
@@ -215,7 +215,7 @@ class plugins
 					 * we can save some time by calling the function directly.
 					 */
 					if ($accept_args == 1)
-						$func_name(&$string);
+						$func_name($string);
 					else
 						call_user_func_array($func_name, array_merge(array(&$string), $the_args));
 					
@@ -293,7 +293,7 @@ public function remove_filter($hook, $callback_function, $priority = 10)
  * @param string $string Raw input string
  * @return string $string Filtered output string
  */
-public function apply_filters($hook,$string)
+public function apply_filters($hook,&$string)
 {
 
 	/**
@@ -352,7 +352,7 @@ public function apply_filters($hook,$string)
 				 * we can save some time by calling the function directly.
 				 */
 				if ($accept_args == 2)
-					$func_name(&$string,$the_args);
+					$func_name($string,$the_args);
 				else
 					call_user_func_array($func_name, array_merge(array(&$string), $the_args));
 				
@@ -363,7 +363,7 @@ public function apply_filters($hook,$string)
 				 * this calls our filter,
 				 * into action.
 				 */
-				$func_name(&$string);
+				$func_name($string);
 			}
 			
 			

@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php eprint($language->locale); ?>">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php eprint($config->locale); ?>">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title>About / <?php eprint($site->title); ?></title>
+	<title>About / <?php eprint($config->title); ?></title>
 	
-	<base href="<?php eprint($site->url); ?>" />
+	<base href="<?php eprint($config->url); ?>" />
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php eprint($site->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
+	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
 	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<!-- <style type="text/css">
@@ -69,8 +69,8 @@
 		</div>
 		
 		<div class="site section">
-			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($site->title); ?></a></h2>
-			<em class="tagline"><?php eprint($site->tagline); ?></em>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->title); ?></a></h2>
+			<em class="tagline"><?php eprint($config->tagline); ?></em>
 		</div>
 	</div>
 

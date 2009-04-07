@@ -38,7 +38,7 @@ function unregister_globals() {
  */
 function url($url='',$echo=false)
 {
-	global $config,$view;
+	global $config;
 	
 	/**
 	 * Prepare the variables we'll be using in this function
@@ -51,7 +51,7 @@ function url($url='',$echo=false)
 	if (array_key_exists('view',$url))
 		$url_param['view'] = $url['view'];
 	elseif(array_key_exists('id',$url))
-		$url_param['view'] = $url['view'] = $view;
+		$url_param['view'] = $url['view'] = $config->view;
 	
 	if (array_key_exists('id',$url) && array_key_exists('view',$url))
 		$url_param['id'] = $url['id'];
@@ -59,7 +59,7 @@ function url($url='',$echo=false)
 	if (array_key_exists('extra',$url) && array_key_exists('id',$url) && array_key_exists('view',$url))
 		$url_param['extra'] = $url['extra'];
 		
-	if (array_key_exists('page',$url) && ($url['page'] > 1 && $url['page'] <= $config->site->total_pages))
+	if (array_key_exists('page',$url) && ($url['page'] > 1 && $url['page'] <= $config->total_pages))
 		$url_param['page'] = $url['page'];
 	
 	// We can remove them from the $url array,
@@ -76,7 +76,7 @@ function url($url='',$echo=false)
 	 * Otherwise, remove $url_param['unknown'] and merge
 	 * the remaining unknown parameters to create the url.
 	 */
-	if ($config->site->mod_rewrite)
+	if ($config->mod_rewrite)
 	{
 		foreach ($url_param as $key => $value) {
 			switch ($key) {

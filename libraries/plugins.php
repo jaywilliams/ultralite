@@ -35,7 +35,7 @@ class plugins
 	 * @access protected
 	 * @var array
 	 */
-	protected $actions = array();
+	var $actions = array();
 	
 	/**
 	 * Internal storage of filter hooks
@@ -43,7 +43,7 @@ class plugins
 	 * @access protected
 	 * @var array
 	 */
-	protected $filters = array();
+	var $filters = array();
 
 
 /*

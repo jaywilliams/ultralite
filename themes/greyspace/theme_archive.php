@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php eprint($language->locale); ?>">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php eprint($config->locale); ?>">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title>Archive / <?php eprint($site->title); ?> <?php if($site->page>1) echo "/ Page $site->page"; ?></title>
+	<title>Archive / <?php eprint($config->title); ?> <?php if($config->page > 1) echo "/ Page $config->page"; ?></title>
 	
-	<base href="<?php eprint($site->url); ?>" />
+	<base href="<?php eprint($config->url); ?>" />
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php eprint($site->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
+	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
 	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<!-- <style type="text/css">
@@ -24,7 +24,7 @@
 	<div class="top section">
 		<span class="published">Archive</span>
 		<div class="nav"><a href="./">Home</a> <a href="archive" class="active">Archive</a> <a href="about">About</a></div>
-		<h1 class="title">The Past</h1>
+		<h1 class="title"><?php eprint($archive->title); ?></h1>
 		<br class="clear"/>
 	</div>
 
@@ -37,27 +37,27 @@
 		</div>
 		
 		<div class="site section">
-			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($site->title); ?></a></h2>
-			<em class="tagline"><?php eprint($site->tagline); ?></em>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->title); ?></a></h2>
+			<em class="tagline"><?php eprint($config->tagline); ?></em>
 		</div>
 	</div>
 
 	<div class="bottom section">
-		<?php if ($site->pagination > 0): ?>
+		<?php if ($config->pagination > 0): ?>
 		<div class="pagination">	
-			<?php if (($site->page) > 1): ?>
-				<a href="<?php url("view=archive&page=".($site->page-1),true) ?>" class="previous">&#x2190; Previous Page</a>
+			<?php if (($config->page) > 1): ?>
+				<a href="<?php url("view=archive&page=".($config->page-1),true) ?>" class="previous">&#x2190; Previous Page</a>
 			<?php else: ?>
 				<a class="previous disabled">&#x2190; Previous Page</a>
 			<?php endif ?>
 
-			<?php if ($site->page < $site->total_pages): ?>
-				<a href="<?php url("view=archive&page=".($site->page+1),true) ?>" class="next">Next Page &#x2192;</a>
+			<?php if ($config->page < $config->total_pages): ?>
+				<a href="<?php url("view=archive&page=".($config->page+1),true) ?>" class="next">Next Page &#x2192;</a>
 			<?php else: ?>
 				<a class="next disabled">Next Page &#x2192;</a>
 			<?php endif ?>
 			
-			<span class="page"><?php echo "Page $site->page of $site->total_pages"; ?></span>
+			<span class="page"><?php echo "Page $config->page of $config->total_pages"; ?></span>
 			
 			<br class="clear"/>
 		</div>

@@ -9,7 +9,7 @@ I want to be able to know what I'm dealing with just be reading the variable nam
 I.E. :	Pixelpost 1.71 Uses the following variable, $cdate.
 		
 		While all us devs know what it is by repeated use, it may seem less obvious to others,
-		so... take the extra second to spell it out: $time->current
+		so... take the extra second to spell it out: $config->current
 		
 		Much Better!
 
@@ -56,23 +56,23 @@ unregister_globals();
 $config = new stdClass();
 
 // Detects if mod_rewrite mode should be enabled
-$config->site->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
+$config->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
 
 // Default Page Settings
-$config->site->pagination = 0;
-$config->site->total_pages = 0;
+$config->pagination = 0;
+$config->total_pages = 0;
 
 // Default (fallback) Template
-$config->site->template   = "greyspace";
+$config->template   = "greyspace";
 
 // Default timezone
-$config->time->timezone = date_default_timezone_get();
+$config->timezone = date_default_timezone_get();
 
 // Split up the configuration object by reference for easy access
-$site     = & $config->site;
-$language = & $config->language;
-$time     = & $config->time;
-$database = & $config->database;
+// $config     = & $config->site;
+// $language = & $config->language;
+// $config     = & $config->time;
+// $database = & $config->database;
 
 // Load the settings (can override default settings):
 if (file_exists('settings.php')) {
@@ -91,33 +91,15 @@ $plugins = new plugins();
 $plugins->plugins = & $config->plugins;
 $plugins->get();
 
-/**
- * Apply Filters (by reference) to the entire $config object!
- * 
- * This is mostly just a tech-demo, we probably won't keep this actual code.
- * You can apply filters from a plugin, like so:
- * 
- * $this->add_filter('site-title', 'my_plugin_filer',10);
- * (This will modify the $site->title option)
- * 
- */
-
-foreach ($config as $section => &$options) {
-	foreach ($options as $key => &$value) {
-		$plugins->apply_filters("$section-$key",$value);
-		// var_dump("$section-$key",$value);
-	}
-}
-
-
+$plugins->do_action('global_pre');
 
 /**
  * This option is used in the SQL queries to filter out future posts, 
  * so it's important that the time offset is set correctly. After setting 
  * this every date/time function will use the correct timezone.
  */
-date_default_timezone_set($time->timezone);
-$time->current = date("Y-m-d H:i:s",time());
+date_default_timezone_set($config->timezone);
+$config->current_time = date("Y-m-d H:i:s",time());
 
 require_once 'libraries/db.php';
 
@@ -126,7 +108,7 @@ require_once 'libraries/db.php';
  * 
  * Currently only two types of databases are supported, SQLite and mySQL.
  */
-switch($database->type)
+switch($config->database_type)
 {
 	case 'sqlite':
 	
@@ -137,7 +119,7 @@ switch($database->type)
 		
 		// Make sure the file is writable, otherwise php will error out,
 		// and won't be able to add anyting to the database.
-		$db->connect("sqlite:{$database->sqlite->database}");
+		$db->connect("sqlite:{$config->sqlite_database}");
 		break;
 		
 	case 'mysql':
@@ -147,10 +129,10 @@ switch($database->type)
 		
 		// Initialize ezSQL for mySQL
 		$db = new ezSQL_mysql();
-		$db->quick_connect($database->mysql->username, 
-						   $database->mysql->password, 
-						   $database->mysql->database, 
-						   $database->mysql->hostname);
+		$db->quick_connect($config->mysql_username, 
+						   $config->mysql_password, 
+						   $config->mysql_database, 
+						   $config->mysql_hostname);
 		break;
 }
 
@@ -158,7 +140,7 @@ switch($database->type)
 
 /**
  * View
- * $site->view
+ * $config->view
  * 
  * This is variable stores the current view mode, such as "post", "archive" or "rss".
  * If no view is defined, it will fall back to "post".
@@ -169,12 +151,12 @@ switch($database->type)
  * 
  * Views may contain lower case letters, numbers, hyphens, and underscores, although only letters are recommended.
  */
-$view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['view'])) : 'post';
-$site->view = & $view;
+$config->view = (isset($_GET['view']) && !empty($_GET['view']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['view'])) : 'post';
+// $plugins->apply_filters('view',$config->view);
 
 /**
  * ID
- * $site->id
+ * $config->id
  * 
  * This is an optional parameter which can be used to define a specific post or category out of a view.
  * Some views may use this to specify a specific mode, for the $extra parameter, such as "tagged".
@@ -185,12 +167,12 @@ $site->view = & $view;
  * 
  * IDs may contain lower case letters, numbers, hyphens, and underscores.
  */
-$id = (isset($_GET['id']) && !empty($_GET['id']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['id'])) : '';
-$site->id = & $id;
+$config->id = (isset($_GET['id']) && !empty($_GET['id']) ) ? preg_replace('/[^a-z0-9+_\-]/','', strtolower($_GET['id'])) : '';
+// $plugins->apply_filters('id',$config->id);
 
 /**
  * Extra
- * $site->extra
+ * $config->extra
  * 
  * This is an optional parameter which can be used to define a extra information for a specific View or ID.
  * It can not be used if an ID has not been previous specified. Extras can also contains slashes which can
@@ -207,14 +189,13 @@ $site->id = & $id;
  * 
  * @todo Decide if $extra should be an array by default, or simply a string, like the other options.
  */
-$extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra']) : array(); // String Version
+$config->extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra']) : ''; // String Version
 // $extra = (isset($_GET['extra']) && !empty($_GET['extra']) ) ? explode('/',preg_replace('/[^a-z0-9+_\-\/]/','',$_GET['extra'])) : array(); // Array Version 
-$site->extra = & $extra;
-
+// $plugins->apply_filters('extra',$config->extra);
 
 /**
  * Page
- * $site->page
+ * $config->page
  * 
  * Some views will need to break content up into pages.  $page will always be an integer, and will default to 1.
  * 
@@ -225,33 +206,69 @@ $site->extra = & $extra;
  * 
  * Pages may contain numbers only.
  */
-$page = (isset($_GET['page']) && !empty($_GET['page']) ) ? (int) $_GET['page'] : 1;
-$site->page = & $page;
+$config->page = (isset($_GET['page']) && !empty($_GET['page']) ) ? (int) $_GET['page'] : 1;
+// $plugins->apply_filters('page',$config->page);
 
+/**
+ * Apply Filters (by reference) to the entire $config object!
+ * 
+ * This is mostly just a tech-demo, we probably won't keep this actual code.
+ * You can apply filters from a plugin, like so:
+ * 
+ * $this->add_filter('config_title', 'my_plugin_filer',10);
+ * (This will modify the $config->title option)
+ * 
+ */
 
+foreach ($config as $key => &$value) {
+	$plugins->apply_filters("config_$key",$value);
+}
 
 /**
  * Controller
  * 
  * The controller is where all of the "logic" code is stored for a specific view.
  */
-if (file_exists("controllers/controller_$view.php"))
+$plugins->do_action('controller_pre');
+$plugins->do_action($config->view.'_pre');
+if (file_exists("controllers/controller_$config->view.php"))
 {
 	/**
 	 * @todo Possibly include sub-views?
 	 */
-	require_once "controllers/controller_$view.php";
+	require_once "controllers/controller_$config->view.php";
 }
 
+
+/**
+ * Apply Filters (by reference) to the entire controller object!
+ * 
+ * $this->add_filter('post_title', 'my_plugin_filer',10);
+ * (This will modify the $post->title variable)
+ * 
+ */
+
+eval("if(isset(\$$config->view)){\$controller = & \$$config->view;}else{\$controller = false;}");
+
+if ($controller) {
+	foreach ($controller as $key => &$value) {
+		$plugins->apply_filters("{$config->view}_$key",$value);
+		// var_dump("{$config->view}_$key",$value);
+	}
+}
+
+
+$plugins->do_action($config->view.'_post');
+$plugins->do_action('controller_post');
 
 /**
  * Template
  * 
  * The template page can use the variables and template tags created by the controller.
  */
-if (file_exists("themes/{$site->template}/theme_$view.php"))
+if (file_exists("themes/{$config->template}/theme_$config->view.php"))
 {
-	require_once "themes/{$site->template}/theme_$view.php";
+	require_once "themes/{$config->template}/theme_$config->view.php";
 }
 
 
@@ -262,12 +279,13 @@ if (file_exists("themes/{$site->template}/theme_$view.php"))
  * 
  * @todo Possibly add some fancy error or splash page, so it doesn't look too unfriendly.
  */
-if ( (! file_exists("controllers/controller_$view.php")) && (! file_exists("themes/{$site->template}/theme_$view.php")) )
+if ( (! file_exists("controllers/controller_$config->view.php")) && (! file_exists("themes/{$config->template}/theme_$config->view.php")) )
 {
 	header("HTTP/1.1 404 Not Found");
     header("Status: 404 Not Found");
-	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"{$config->site->url}\">home page</a>.");
+	die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"{$config->url}\">home page</a>.");
 }
 
+$plugins->do_action('global_post');
 
 ?>

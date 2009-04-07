@@ -17,33 +17,66 @@
 	Author: Team Pixelpost
 	Author URI: http://pixelpost.org/
 */
-$this->add_filter('site-title', 'my_plugin_filer',10);
-$this->add_filter('site-tagline', 'my_plugin_filer',10);
+
+
+
+/**
+ * Change the site title, and the title for the archive and post pages.
+ */
+$this->add_filter('config_title', 'my_plugin_filer',10);
+$this->add_filter('post_title', 'my_plugin_filer',10);
+$this->add_filter('archive_title', 'my_plugin_filer',10);
 
 function my_plugin_filer(&$input)
 {
 	
 
 	// Simple Adjustment:
-	$input = "$input + Plugin Fun";
+	$input = $input . ' Mod';
 	
 	// No need to return anyting, since the first 
 	// varialbe is passed via reference:
 	// return $string;
 }
 
-$this->add_action('body', 'my_plugin_action',10,1);
 
-function my_plugin_action(&$mode)
+
+
+/**
+ * This function takes the raw date/time and changes the format, 
+ * so it looks better for the template.
+ */
+$this->add_filter('post_published', 'date_formatter');
+
+function date_formatter(&$date)
 {
-	global $config;
-	// var_dump($config);
+	$unixtime = strtotime($date);
+	$date = date("M n Y",$unixtime);
+}
+
+
+
+
+$this->add_action('controller_post', 'adjust_title');
+$this->add_action('theme_head', 'echo_head');
+$this->add_action('theme_body', 'echo_body');
+
+function adjust_title()
+{
+	// global $site;
 	
-	$config->site->title = 'New Title';
-	
-	$mode = "my $mode";
-	
-	echo "\n<h2 style=\"text-align:center\">We are currently in $mode!</h2>\n";
+	// $site->title = "$site->title - Modified";
+}
+
+function echo_head()
+{	
+	echo "\n<!-- Header Code! -->\n";
+}
+
+
+function echo_body()
+{	
+	echo "\n<h2 style=\"text-align:center\">Theme body!</h2>\n";
 }
 
 

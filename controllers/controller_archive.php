@@ -24,48 +24,50 @@
 if(!defined('ULTRALITE')) { die(); }
 
 
+$archive->title = 'The Past';
+
 // If another controller has already created a query, 
 // run with that, rather than create our own:
-if (!isset($image->thumbnails)) {
-
+if (!isset($archive->thumbnails)) {
 	
-	if ($site->pagination > 0)
+	
+	if ($config->pagination > 0)
 	{
 		
-		$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$time->current}'";
+		$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$config->current_time}'";
 		// Get total images publically available
 		$image->total = (int) $db->get_var($sql);
 		// Determine the total number of available pages
-		$site->total_pages = (int) ceil($image->total/$site->pagination);
+		$config->total_pages = (int) ceil($image->total/$config->pagination);
 		
 		// The page doesn't exist!
-		if ($site->total_pages < $site->page) {
+		if ($config->total_pages < $config->page) {
 			die("Sorry, we don't have anymore pages to show!");
 		}
 
 		// The database needs to know which row we need to start with:
-		$range  = (int) ($site->page-1) * $site->pagination;
+		$range  = (int) ($config->page-1) * $config->pagination;
 		
-		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC LIMIT $range, $site->pagination";
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$config->current_time}' ORDER BY `published` ASC LIMIT $range, $config->pagination";
 	}
 	else
 	{
-		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$time->current}' ORDER BY `published` ASC";
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$config->current_time}' ORDER BY `published` ASC";
 	}
 	
 	// Store the thumbnails array
-	$image->thumbnails = $db->get_results($sql);
+	$archive->thumbnails = $db->get_results($sql);
 
 }
 
 // Tack on thumbnail data to the thumbnails array
-foreach($image->thumbnails as $key => $thumbnail)
+foreach($archive->thumbnails as $key => $thumbnail)
 {
 	$image_info = getimagesize('thumbnails/thumb_'.$thumbnail->filename);
 		
-	$image->thumbnails[$key]->width			=	$image_info[0];
-	$image->thumbnails[$key]->height		=	$image_info[1];
-	$image->thumbnails[$key]->dimensions	=	$image_info[3];
+	$archive->thumbnails[$key]->width		=	$image_info[0];
+	$archive->thumbnails[$key]->height		=	$image_info[1];
+	$archive->thumbnails[$key]->dimensions	=	$image_info[3];
 }
 
 /**
@@ -75,7 +77,7 @@ foreach($image->thumbnails as $key => $thumbnail)
 
 function tt_thumbnails($options='')
 {
-	global $image;
+	global $archive;
 	
 	/*
 		Default Options for this Template Tag
@@ -87,9 +89,9 @@ function tt_thumbnails($options='')
 	parse_str($options);
 	
 	if ($mode == 'reverse') {
-		$thumbnails = array_reverse($image->thumbnails);
+		$thumbnails = array_reverse($archive->thumbnails);
 	}else {
-		$thumbnails = & $image->thumbnails;
+		$thumbnails = & $archive->thumbnails;
 	}
 	
 	foreach ($thumbnails as $thumbnail) {

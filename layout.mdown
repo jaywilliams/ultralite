@@ -1,0 +1,70 @@
+Ultralite
+=========
+
+Proposed Folder Structure
+-------------------------
+
+	admin/
+		index.php
+	app/
+		addons/
+			example/
+				example.php
+				info.ini
+				locales/
+		Bootstrap.php
+		cache/
+		classes/
+			Pixelpost/
+				Config/
+				Config.php
+				Db/
+					Mysqli.php
+					Sqlite.php
+				Db.php
+				Feed.php
+				Plugin.php
+		configs/
+			pixelpost.ini.php
+		controllers/
+			ArchiveController.php
+			ErrorController.php
+			FeedController.php
+			InfoController.php
+			PostController.php
+		includes/
+		locales/
+			en-us.ini
+			en-us.php
+		templates/
+			default/
+				images/
+				info.ini
+				javascripts/
+					theme.js
+				locales/
+				screenshot.png
+				stylesheets/
+					print.css
+					screen.css
+				templates/
+					about.php
+					archive.php
+					footer.php
+					header.php
+					post.php
+	images/
+	index.php
+	
+
+Hooks (aka Triggers) used in Git
+--------------------------------
+* update
+* post-update
+* pre-applypatch
+* applypatch-msg
+* pre-commit
+* post-commit
+* commit-msg
+* post-receive
+* pre-rebase

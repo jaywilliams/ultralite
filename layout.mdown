@@ -59,6 +59,9 @@ Proposed Folder Structure
 
 Hooks (aka Triggers) used in Git
 --------------------------------
+
+We might want to structure the Ultralite hooks off of these: 
+
 * update
 * post-update
 * pre-applypatch

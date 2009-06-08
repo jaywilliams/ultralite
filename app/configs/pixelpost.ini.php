@@ -1,12 +1,12 @@
 ; <?php die('Direct Access Forbidden'); ?>
 
-[ultralite]
+[site]
 
 title      = "My Ultralite Photoblog"
 tagline    = "Guess what, it's open source, and it's ultralite!"
 url        = "http://192.168.1.200/ultralite/" ; Don't forget the last backslash!
 
-template   = "grayspace"
+template   = "default"
 
 ; The language used on your photoblog:
 ; Specify Off to disable

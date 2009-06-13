@@ -60,18 +60,20 @@ class Pixelpost_Config
 	 * @param bool $overwrite If the setting exists and is the same value, should it be overwritten?
 	 * @return bool true if changed
 	 */
-	public function set($setting, $value, $overwrite = true)
+	public static function set($setting, $value, $overwrite = false)
 	{
-		if (isset($this->$setting) and $this->$setting == $value and !$overwrite)
+		 $self = self::current();
+		
+		if (isset($self->$setting) and $self->$setting == $value and !$overwrite)
 			return false;
 		
 		# Add the setting
-		$this->config[$setting] = $this->$setting = $value;
+		$self->config[$setting] = $self->$setting = $value;
 		
 		if (class_exists("Trigger"))
 			Trigger::current()->call("change_setting", $setting, $value, $overwrite);
 			
-		if (!$this->store()) {
+		if (!$self->store()) {
 			/**
 			 * @todo Display warning that the setting wasn't saved!
 			 */
@@ -86,16 +88,18 @@ class Pixelpost_Config
 	 * @param string $setting he name of the setting to remove.
 	 * @return bool true if removed
 	 */
-	public function remove($setting)
+	public static function remove($setting)
 	{
-		if (!isset($this->$setting))
+		$self = self::current();
+		
+		if (!isset($self->$setting))
 			return false;
 		
 		// Remove the setting
-		unset($this->config[$setting]);
-		unset($this->$setting);
+		unset($self->config[$setting]);
+		unset($self->$setting);
 		
-		return $this->store();
+		return $self->store();
 	}
 	
 	/**

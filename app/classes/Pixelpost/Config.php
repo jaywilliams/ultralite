@@ -1,114 +1,165 @@
 <?php
- 
 
-    /**
-     * Class: Pixelpost_Config
-     * Holds all of the configuration variables for the entire site, as well as Module settings.
-     */
-    class Pixelpost_Config {
-        # Variable: $yaml
-        # Holds all of the YAML settings as a $key => $val array.
-        private $yaml = array();
+/**
+ * Holds all of the configuration variables for the entire site, as well as addon settings.
+ * 
+ * This class is based off of the work of Alex Suraci's Chyrp application.
+ *
+ * @package Pixelpost
+ * @subpackage Config
+ * @author Alex Suraci and individual contributors
+ * @author Jay Williams
+ */
+class Pixelpost_Config
+{
+	
+	/**
+	 * Holds all of the settings as a $key => $val
+	 *
+	 * @var $config array
+	 */
+	private $config = array();
+	
+	/**
+	 * Config file path
+	 *
+	 * @var string
+	 */
+	private $file = "";
 
-        /**
-         * Function: __construct
-         * Loads the configuration YAML file.
-         */
-        private function __construct() {
-            if (!file_exists(APPLICATION_PATH."/configs/pixelpost.yaml.php"))
-                return false;
+	/**
+	 * Initializes and loads the configuration file.
+	 */
+	private function __construct()
+	{
+		
+		if(!defined('ULTRALITE')) define('ULTRALITE',TRUE);
+		
+		$this->file = APPLICATION_PATH."/configs/pixelpost.php";
+		
+		if (!$this->load())
+			return false;
+		
+		$arrays = array("enabled_plugins", "routes");
+		foreach ($this->config as $setting => $value)
+			if (in_array($setting, $arrays) and empty($value))
+				$this->$setting = array();
+			elseif (!is_int($setting))
+				$this->$setting = $value;
+			
+		/**
+		 * @todo Possibly add some error checking, to make sure the required settings exist
+		 */
+	}
+	
+	/**
+	 * Adds or replaces a configuration setting with the given value.
+	 *
+	 * @param string $setting The setting name.
+	 * @param mixed $value The value.
+	 * @param bool $overwrite If the setting exists and is the same value, should it be overwritten?
+	 * @return bool true if changed
+	 */
+	public function set($setting, $value, $overwrite = true)
+	{
+		if (isset($this->$setting) and $this->$setting == $value and !$overwrite)
+			return false;
+		
+		# Add the setting
+		$this->config[$setting] = $this->$setting = $value;
+		
+		if (class_exists("Trigger"))
+			Trigger::current()->call("change_setting", $setting, $value, $overwrite);
+			
+		if (!$this->store()) {
+			/**
+			 * @todo Display warning that the setting wasn't saved!
+			 */
+			return false;
+		} else
+			return true;
+	}
+	
+	/**
+	 * Removes a configuration setting.
+	 *
+	 * @param string $setting he name of the setting to remove.
+	 * @return bool true if removed
+	 */
+	public function remove($setting)
+	{
+		if (!isset($this->$setting))
+			return false;
+		
+		// Remove the setting
+		unset($this->config[$setting]);
+		unset($this->$setting);
+		
+		return $this->store();
+	}
+	
+	/**
+	 * Returns a singleton reference to the current configuration.
+	 *
+	 * @return $instance
+	 */
+	public static function & current()
+	{
+		static $instance = null;
+		return $instance = (empty($instance)) ? new self() : $instance ;
+	}
+	
+	
+	/**
+	 * Loads the configuration file.
+	 *
+	 * @return bool true if loaded successfully
+	 */
+	private function load()
+	{
+		
+		if(file_exists($this->file)){
+			$this->config = include $this->file;
+			return true;
+		}else
+			return false;
+	}
+	
+	/**
+	 * Stores the configuration file.
+	 *
+	 * @return bool true if stored successfully
+	 */
+	private function store()
+	{
+		
+		// Convert the settings to a PHP parsable array
+		$contents = var_export($this->config, true);
 
-            $contents = str_replace("<?php header(\"Status: 403\"); exit(\"Access denied.\"); ?>\n",
-                                    "",
-                                    file_get_contents(APPLICATION_PATH."/configs/pixelpost.yaml.php"));
+		$contents = <<<CONFIG
+<?php if(!defined('ULTRALITE')) { @header("Status: 403"); exit("Access denied."); } // Prevent direct file access. 
 
-            $this->yaml = Horde_Yaml::load($contents);
+/**
+ * Welcome to the Ultralite configuration file.
+ * Here you can customize your photoblog with ease!
+ * 
+ * Just scroll down to see what you can change, 
+ * and save the changes once you're done.
+ * 
+ * One thing to keep in mind, this file will be 
+ * overwritten by Ultralite if you change your 
+ * settings via the web admin.
+ **/
 
-            $arrays = array("enabled_modules", "enabled_feathers", "routes");
-            foreach ($this->yaml as $setting => $value)
-                if (in_array($setting, $arrays) and empty($value))
-                    $this->$setting = array();
-                elseif (!is_int($setting))
-                    $this->$setting = (is_string($value)) ? stripslashes($value) : $value ;
+return $contents
 
-            // fallback($this->url, $this->chyrp_url);
-        }
-
-        /**
-         * Function: set
-         * Adds or replaces a configuration setting with the given value.
-         *
-         * Parameters:
-         *     $setting - The setting name.
-         *     $value - The value.
-         *     $overwrite - If the setting exists and is the same value, should it be overwritten?
-         */
-        public function set($setting, $value, $overwrite = true) {
-            if (isset($this->$setting) and $this->$setting == $value and !$overwrite)
-                return false;
-
-            if (isset($this->file) and file_exists($this->file)) {
-                $contents = str_replace("<?php header(\"Status: 403\"); exit(\"Access denied.\"); ?>\n",
-                                        "",
-                                        file_get_contents($this->file));
-
-                $this->yaml = Horde_Yaml::load($contents);
-            }
-
-            # Add the setting
-            $this->yaml[$setting] = $this->$setting = $value;
-
-            if (class_exists("Trigger"))
-                Trigger::current()->call("change_setting", $setting, $value, $overwrite);
-
-            # Add the PHP protection!
-            $contents = "<?php header(\"Status: 403\"); exit(\"Access denied.\"); ?>\n";
-
-            # Generate the new YAML settings
-            $contents.= Horde_Yaml::dump($this->yaml);
-
-            if (!@file_put_contents(APPLICATION_PATH."/configs/pixelpost.yaml.php", $contents)) {
-                Flash::warning(_f("Could not set \"<code>%s</code>\" configuration setting because <code>%s</code> is not writable.",
-                                  array($setting, "/app/configs/pixelpost.yaml.php")));
-                return false;
-            } else
-                return true;
-        }
-
-        /**
-         * Function: remove
-         * Removes a configuration setting.
-         *
-         * Parameters:
-         *     $setting - The name of the setting to remove.
-         */
-        public function remove($setting) {
-            if (isset($this->file) and file_exists($this->file)) {
-                $contents = str_replace("<?php header(\"Status: 403\"); exit(\"Access denied.\"); ?>\n",
-                                        "",
-                                        file_get_contents($this->file));
-
-                $this->yaml = Horde_Yaml::load($contents);
-            }
-
-            # Add the setting
-            unset($this->yaml[$setting]);
-
-            # Add the PHP protection!
-            $contents = "<?php header(\"Status: 403\"); exit(\"Access denied.\"); ?>\n";
-
-            # Generate the new YAML settings
-            $contents.= Horde_Yaml::dump($this->yaml);
-
-            file_put_contents(APPLICATION_PATH."/configs/pixelpost.yaml.php", $contents);
-        }
-
-        /**
-         * Function: current
-         * Returns a singleton reference to the current configuration.
-         */
-        public static function & current() {
-            static $instance = null;
-            return $instance = (empty($instance)) ? new self() : $instance ;
-        }
-    }
+?>
+CONFIG;
+		
+		if(!@file_put_contents($this->file, $contents))
+			return false;
+		else
+			return true;
+	}
+	
+}

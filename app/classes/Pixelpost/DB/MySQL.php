@@ -11,8 +11,9 @@
  * @link www.nsslive.net 
  */
 
-class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
+class Pixelpost_DB_MySQL extends Pixelpost_DB_Core
 {
+
 	
 	/**
 	 * Constructor, connects to database immediately, unless $dbname is blank
@@ -39,7 +40,7 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	/**
 	 * Explicitly close the connection on destruct
 	 */
-	
+	 
 	public function __destruct()
 	{
 		$this->close();
@@ -58,7 +59,8 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 	{
 		$this->__construct($dbuser, $dbpassword, $dbname, $dbhost);
-	}	
+	}
+
 	
 	/**
 	 * Connect to MySQL, but not to a database
@@ -71,19 +73,14 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	 */
 	public function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 	{
-		$this->dbh =  new mysqli($dbhost, $dbuser, $dbpassword);
-		
-		if(mysqli_connect_errno() != 0)
+		if(!$this->dbh = @mysql_connect($dbhost, $dbuser, $dbpassword, true))
 		{
-			$this->register_error(mysqli_connect_error(), mysqli_connect_errno());
+			$this->register_error(mysql_error(), mysql_errno());
 			return false;
 		}
-		else
-		{
-			$this->clear_errors();
-			return true;
-		}
 		
+	
+		$this->clear_errors();
 		return true;
 	}
 	
@@ -100,26 +97,22 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 		if ($dbname == '')
 		{
 			$this->register_error('No database name specified!');
+			return false;
 		}
-		
 		// Must have an active database connection
-		if(!$this->dbh)
+		if (!$this->dbh)
 		{
 			$this->register_error('Can\'t select database, invalid or inactive connection', -1);
 			return false;
 		}
-		
-		if(!$this->dbh->select_db($dbname))
+
+		if(!@mysql_select_db($dbname, $this->dbh))
 		{
-			$this->register_error($this->dbh->error, $this->dbh->errno);
+			$this->register_error(mysql_error($this->dbh), mysql_errno($this->dbh));
 			return false;
 		}
-		else
-		{
-			$this->clear_errors();
-			return true;
-		}
 		
+		$this->clear_errors();
 		return true;
 	}
 	
@@ -128,7 +121,7 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	 */
 	public function close()
 	{
-		return @$this->dbh->close();
+		return @mysql_close($this->dbh);
 	}
 	
 	/**
@@ -141,7 +134,7 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	 */
 	public function escape($str)
 	{
-		return $this->dbh->real_escape_string($str);
+		return mysql_real_escape_string(stripslashes($str), $this->dbh);
 	}
 	
 	/**
@@ -154,7 +147,7 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	{
 		return 'NOW()';
 	}
-	
+
 	/**
 	 * Run the SQL query, and get the result. Returns false on failure
 	 *  Check $this->error() and $this->errno() functions for any errors
@@ -163,67 +156,57 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 	 * @param string $query SQL Query
 	 * @return mixed Return values
 	 *
-	 */	
+	 */
 	public function query($query)
 	{
-		// Initialise return
-		$return_val = true;
-		
 		// Flush cached values..
 		$this->flush();
-		
+
 		// For reg expressions
 		$query = trim($query);
-		
-		// Log how the function was called
-		$this->func_call = "\$db->query(\"$query\")";
-		
-		// Keep track of the last query for debug..
 		$this->last_query = $query;
-		
+
 		// Count how many queries there have been
 		$this->num_queries++;
-		
+
 		// Use core file cache function
 		if($cache = $this->get_cache($query))
 		{
 			return $cache;
 		}
-		
-		// If there is no existing database connection then try to connect
-		if ( ! isset($this->dbh) || ! $this->dbh )
+
+		// Make sure connection is ALIVEE!
+		if (!isset($this->dbh) || !$this->dbh )
 		{
 			$this->register_error('There is no active database connection!');
 			return false;
 		}
-		
-		// Perform the query via std mysql_query function..
-		$result = $this->dbh->query($query);
 
-		if(is_bool($result))
+		// Perform the query via std mysql_query function..
+		$this->result = @mysql_query($query);
+
+		// If there is an error then take note of it..
+		if(!$this->result && mysql_errno() != 0)
 		{
-			if($result === false)
-			{
-				$this->register_error($this->dbh->error, $this->dbh->errno);
-			}
-			else
-			{
-				$this->clear_errors();
-			}
-			
-			return $result;
+			// Something went wrong				
+			$this->register_error(mysql_error(), $errno);
+			return false;
 		}
-				
+		else
+		{
+			$this->clear_errors();
+		}
+
 		// Query was an insert, delete, update, replace
 		$is_insert = false;
-		if (preg_match("/^(insert|delete|update|replace)\s+/i",$query))
+		if(preg_match("/^(insert|delete|update|replace)\s+/i",$query))
 		{
-			$this->rows_affected = $this->dbh->affected_rows;
+			$this->rows_affected = @mysql_affected_rows();
 			$this->num_rows = $this->rows_affected;
-					
-			if($this->dbh->insert_id > 0)
+						
+			if(mysql_insert_id() > 0)
 			{
-				$this->insert_id = $this->dbh->insert_id;
+				$this->insert_id = @mysql_insert_id();
 				$is_insert = true;
 			}
 			
@@ -236,70 +219,38 @@ class Pixelpost_DB_MySQLi extends Pixelpost_DB_Core
 			// Take note of column info
 			$i=0;
 			
-			if($result)
+			while ($i < @mysql_num_fields($this->result))
 			{
-				while ($finfo = $result->fetch_field())
-				{
-					$this->col_info[$i] = $finfo;
-					$i++;
-				}
-		
-				// Store Query Results
-				$num_rows=0;
-				while($row = $result->fetch_object())
-				{
-					$this->last_result[$num_rows] = $row;
-					$num_rows++;
-				}
-				
-				$result->close();
+				$this->col_info[$i] = @mysql_fetch_field($this->result);
+				$i++;
 			}
+			
+			// Store Query Results
+			$num_rows=0;
+			
+			while($row = @mysql_fetch_object($this->result))
+			{
+				// Store relults as an objects within main array
+				$this->last_result[$num_rows] = $row;
+				$num_rows++;
+			}
+
+			@mysql_free_result($this->result);
 			
 			// Log number of rows the query returned
 			$this->rows_affected = $num_rows;
 			$this->num_rows = $num_rows;
-			
+
 			// Return number of rows selected
 			$return_val = $this->num_rows;
 		}
-		
+
 		// disk caching of queries
 		$this->store_cache($query,$is_insert);
-		
+
 		// If debug ALL queries
 		$this->trace || $this->debug_all ? $this->debug() : null ;
-		
+
 		return $return_val;
 	}
-	
-	
-	/* this is mysqli only
-	 * incomplete implementation
-	 *//*
-	function execute($query, $params)
-	{
-		if($this->mysql_version!=5 || $query == '' || $params == '')
-			return;
-
-		$stmt =  $this->dbh->stmt_init();
-		if(!$stmt->prepare($query))
-			return false;
-
-		//bind our parameters
-		while(list($key, $value) = each($params))
-		{
-			if(is_double($value))
-				$type = 'd';
-			elseif(is_integer($value) || is_numeric($value))
-				$type = 'i';
-			else
-				$type = 's';
-
-			$stmt->bind_param($type, $value);
-		}
-
-		$stmt->execute();
-
-	
-	}*/
 }

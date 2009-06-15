@@ -198,6 +198,11 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 
 		// For reg expressions
 		$query = trim($query);
+		
+		// Log how the function was called
+		$this->func_call = "\$db->query(\"$query\")";
+		
+		// Keep track of the last query for debug..
 		$this->last_query = $query;
 
 		// Count how many queries there have been

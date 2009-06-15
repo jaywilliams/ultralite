@@ -590,7 +590,7 @@ class Pixelpost_DB_Core
 		echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 		echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
 		echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
-		echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
+		echo "</font></pre></font></blockquote></td></tr></table>";
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
 		// Stop output buffering and capture debug HTML
@@ -712,7 +712,7 @@ class Pixelpost_DB_Core
 			echo "<font face=arial size=2>No Results</font>";
 		}
 		
-		echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
+		echo "</blockquote></blockquote><hr noshade color=dddddd size=1>";
 		
 		// Stop output buffering and capture debug HTML
 		$html = ob_get_contents();

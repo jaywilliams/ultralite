@@ -149,19 +149,18 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 	}
 
 	/**
-	 * Hooks into PDO error system and reports it to user
+	 * Hooks into PDO error system and logs any errors
 	 *
 	 * @return bool True if an error occurred
 	 */
 	function catch_error()
 	{
 		$error_str = 'No error info';
-					
+		
 		$err_array = $this->dbh->errorInfo();
 		
-		// If this the error code is '00000', we can safely skip the error.
+		// If this the error code is '00000', the query was a success
 		if ($err_array[0] === '00000') {
-			$this->clear_errors();
 			return false;
 		}
 		

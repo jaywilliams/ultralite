@@ -82,6 +82,15 @@ class Pixelpost_DB
 				return false;
 			}
 		}
+		elseif($type == 'pdo')
+		{
+			if(!self::$DB = new Pixelpost_DB_PDO())
+			{
+				self::$error = self::$DB->error;
+				self::$errno = self::$DB->errno;
+				return false;
+			}
+		}
 		elseif($type == 'oracle')
 		{
 			if(!self::$DB = new Pixelpost_DB_Oracle())

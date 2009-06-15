@@ -44,6 +44,7 @@ class Pixelpost_DB_Core
 	public $cache_timeout    = 24; // hours
 	public $insert_id;
 	
+	public $dsn = false;
 	public $dbuser = false;
 	public $dbpassword = false;
 	public $dbname = false;

@@ -134,7 +134,7 @@ class Pixelpost_DB_MySQL extends Pixelpost_DB_Core
 	 */
 	public function escape($str)
 	{
-		return mysql_real_escape_string(stripslashes($str), $this->dbh);
+		return mysql_real_escape_string($str, $this->dbh);
 	}
 	
 	/**

@@ -7,8 +7,9 @@
  *
  */
 /**
- * @author Justin Vincent <justin@visunet.ie>,  Modifications by Nabeel Shahzad <nabeel@nsslive.net>
+ * @author Justin Vincent <justin@visunet.ie>,  Modifications by Nabeel Shahzad <nabeel@nsslive.net> and Jay Williams <jaywilliams@pixelpost.org>
  * @link www.nsslive.net 
+ * @link www.pixelpost.org
  */
 
 class Pixelpost_DB_PDO extends Pixelpost_DB_Core

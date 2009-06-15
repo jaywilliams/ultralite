@@ -304,7 +304,7 @@ class Pixelpost_DB_Core
 			{
 				$sql.= "$key=";
 				
-				if(is_numeric($value) || $value == 'NOW()')
+				if(is_numeric($value) || $value == $this->sysdate())
 					$sql.=$value.',';
 				else
 					$sql.="'$value',";
@@ -344,6 +344,7 @@ class Pixelpost_DB_Core
 	
 		$sql = 'INSERT '. $flags .' INTO '.$table.' ';
 
+		$cols = $col_values = '';
 		if(is_array($fields))
 		{
 			foreach($fields as $key=>$value)
@@ -352,7 +353,7 @@ class Pixelpost_DB_Core
 				$cols .= $key.',';
 							
 				// Quotes or none based on value
-				if(is_numeric($value) || $value == 'NOW()')
+				if(is_numeric($value) || $value == $this->sysdate())
 					$col_values .= "$value,";
 				else
 				{

@@ -401,6 +401,11 @@ class Pixelpost_DB
 		return self::$DB->escape($val);
 	}
 	
+	public static function sysdate()
+	{
+		return self::$DB->sysdate();
+	}
+	
 	public static function debug($return = false)
 	{
 		return self::$DB->debug($return);

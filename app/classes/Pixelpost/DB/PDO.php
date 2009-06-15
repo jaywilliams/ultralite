@@ -14,16 +14,13 @@
 class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 {
 
-	
 	/**
-	 * Constructor, connects to database immediately, unless $dbname is blank
+	 * Constructor, connects to database immediately, unless $dsn is blank
 	 *
-	 * @param string $dbuser Database username
-	 * @param string $dbpassword Database password
-	 * @param string $dbname Database name (if blank, will not connect)
-	 * @param string $dbhost Hostname, optional, default is 'localhost'
+	 * @param string $dsn Data Source Name
+	 * @param string $dbuser Database username, optional
+	 * @param string $dbpassword Database password, optional
 	 * @return bool Connect status
-	 *
 	 */
 	public function __construct($dsn='', $dbuser='', $dbpassword='')
 	{
@@ -47,29 +44,29 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 	}
 	
 	/**
-	 * Connects to database immediately, unless $dbname is blank
+	 * Connects to database immediately, unless $dsn is blank
+	 * 
+	 * In the case of SQLite quick_connect is not really needed
+	 * because std. connect already does what quick connect does - 
+	 * but for the sake of consistency it has been included
 	 *
-	 * @param string $dbuser Database username
-	 * @param string $dbpassword Database password
-	 * @param string $dbname Database name (if blank, will not connect)
-	 * @param string $dbhost Hostname, optional, default is 'localhost'
+	 * @param string $dsn Data Source Name
+	 * @param string $dbuser Database username, optional
+	 * @param string $dbpassword Database password, optional
 	 * @return bool Connect status
-	 *
 	 */
 	public function quick_connect($dsn='', $dbuser='', $dbpassword='')
 	{
 		$this->__construct($dsn, $dbuser, $dbpassword);
 	}
 
-	
 	/**
-	 * Connect to MySQL, but not to a database
+	 * Connects to database immediately, unless $dsn is blank
 	 *
-	 * @param string $dbuser Username
-	 * @param string $dbpassword Password
-	 * @param string $dbhost Host, optional, default is localhost
-	 * @return bool Success
-	 *
+	 * @param string $dsn Data Source Name
+	 * @param string $dbuser Database username, optional
+	 * @param string $dbpassword Database password, optional
+	 * @return bool Connect status
 	 */
 	public function connect($dsn='', $dbuser='', $dbpassword='')
 	{
@@ -86,13 +83,18 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 		$this->clear_errors();
 		return true;
 	}
-	
+
 	/**
-	 * Select a MySQL Database
+	 * Connects to database immediately, unless $dsn is blank
+	 * If the database is already connected, it will simply return true.
+	 * 
+	 * No real equivalent of mySQL select in SQLite 
+	 * once again, function included for the sake of consistency
 	 *
-	 * @param string $dbname Database name
-	 * @return bool Success or not
-	 *
+	 * @param string $dsn Data Source Name
+	 * @param string $dbuser Database username, optional
+	 * @param string $dbpassword Database password, optional
+	 * @return bool Connect status
 	 */
 	public function select($dsn='', $dbuser='', $dbpassword='')
 	{
@@ -112,8 +114,7 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 	}
 	
 	/**
-	 * Format a mySQL string correctly for safe mySQL insert
-	 *  (no matter if magic quotes are on or not)
+	 * Format a SQLite string correctly for safe SQLite insert
 	 *
 	 * @param string $str String to escape
 	 * @return string Returns the escaped string
@@ -146,15 +147,22 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 		return 'datetime(\'now\')';
 	}
 
-	/**********************************************************************
-	*  Hooks into PDO error system and reports it to user
-	*/
-
+	/**
+	 * Hooks into PDO error system and reports it to user
+	 *
+	 * @return bool True if an error occurred
+	 */
 	function catch_error()
 	{
 		$error_str = 'No error info';
 					
 		$err_array = $this->dbh->errorInfo();
+		
+		// If this the error code is '00000', we can safely skip the error.
+		if ($err_array[0] === '00000') {
+			$this->clear_errors();
+			return false;
+		}
 		
 		// Note: Ignoring error - bind or column index out of range
 		if ( isset($err_array[1]) && $err_array[1] != 25)
@@ -173,13 +181,11 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 		}
 		
 		return false;
-
 	}
 
 	/**
 	 * Run the SQL query, and get the result. Returns false on failure
 	 *  Check $this->error() and $this->errno() functions for any errors
-	 *  MySQL returns errno() == 0 for no error. That's the most reliable check
 	 *
 	 * @param string $query SQL Query
 	 * @return mixed Return values
@@ -210,7 +216,6 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 			return false;
 		}
 
-
 		// Query was an insert, delete, update, replace
 		$is_insert = false;
 		if(preg_match("/^(insert|delete|update|replace|drop|create)\s+/i",$query))
@@ -221,7 +226,7 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 			$this->num_rows = $this->rows_affected;
 			
 			// If there is an error then take note of it..
-			if($this->catch_error())
+			if(!$this->rows_affected && $this->catch_error())
 			{
 				// Something went wrong
 				return false;
@@ -243,10 +248,11 @@ class Pixelpost_DB_PDO extends Pixelpost_DB_Core
 		// Query was a select
 		else
 		{
+			// Perform the query and log number of affected rows
 			$this->result = $this->dbh->query($query);
 			
 			// If there is an error then take note of it..
-			if($this->catch_error())
+			if(!$this->result && $this->catch_error())
 			{
 				// Something went wrong
 				return false;

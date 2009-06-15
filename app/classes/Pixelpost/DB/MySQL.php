@@ -186,7 +186,7 @@ class Pixelpost_DB_MySQL extends Pixelpost_DB_Core
 		$this->result = @mysql_query($query);
 
 		// If there is an error then take note of it..
-		if(!$this->result && mysql_errno() != 0)
+		if(!$this->result && $errno = mysql_errno() != 0)
 		{
 			// Something went wrong				
 			$this->register_error(mysql_error(), $errno);

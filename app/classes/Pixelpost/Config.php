@@ -40,11 +40,7 @@ class Pixelpost_Config
 		if (!$this->load())
 			return false;
 		
-		$arrays = array("enabled_plugins", "routes");
 		foreach ($this->config as $setting => $value)
-			if (in_array($setting, $arrays) and empty($value))
-				$this->$setting = array();
-			elseif (!is_int($setting))
 				$this->$setting = $value;
 			
 		/**
@@ -64,14 +60,14 @@ class Pixelpost_Config
 	{
 		 $self = self::current();
 		
-		if (isset($self->$setting) and $self->$setting == $value and !$overwrite)
+		if (!$overwrite and isset($self->$setting) and $self->$setting == $value)
 			return false;
 		
 		# Add the setting
 		$self->config[$setting] = $self->$setting = $value;
 		
-		if (class_exists("Trigger"))
-			Trigger::current()->call("change_setting", $setting, $value, $overwrite);
+		// if (class_exists("Trigger"))
+			// Trigger::current()->call("change_setting", $setting, $value, $overwrite);
 			
 		if (!$self->store()) {
 			/**
@@ -107,12 +103,16 @@ class Pixelpost_Config
 	 *
 	 * @return $instance
 	 */
-	public static function & current()
+	public static function & current($reset=false)
 	{
+
 		static $instance = null;
+
+		if ($reset)
+				settype(&$instance, 'null');
+		
 		return $instance = (empty($instance)) ? new self() : $instance ;
 	}
-	
 	
 	/**
 	 * Loads the configuration file.

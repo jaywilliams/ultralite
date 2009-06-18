@@ -321,7 +321,7 @@ class Pixelpost_DB_Core
 		if($cond != '')
 			$sql .= ' WHERE '.$cond;
 		
-		return $this->query($sql, $type);
+		return $this->query($sql);
 	}
 	
 	

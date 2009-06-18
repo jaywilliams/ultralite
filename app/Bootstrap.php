@@ -11,11 +11,11 @@ $autoloader->registerNamespace('Horde_');
 
 
 
-// Pixelpost_DB::init('mysql'); 
-Pixelpost_DB::init('pdo'); 
+Pixelpost_DB::init('mysql'); 
+// Pixelpost_DB::init('pdo'); 
 
-// Pixelpost_DB::connect('root', '', 'ultralite', 'localhost'); 
-Pixelpost_DB::connect('sqlite:'.APPLICATION_PATH.'/pixelpost.sqlite3'); 
+Pixelpost_DB::connect('root', '', 'ultralite', 'localhost'); 
+// Pixelpost_DB::connect('sqlite:'.APPLICATION_PATH.'/pixelpost.sqlite3'); 
 
 
 
@@ -31,7 +31,13 @@ Pixelpost_DB::connect('sqlite:'.APPLICATION_PATH.'/pixelpost.sqlite3');
 	Select DB test
 */
 $fields = array('*');
-$results = Pixelpost_DB::quick_select('pixelpost', '*');
+$results = Pixelpost_DB::quick_select('pixelpost_options', '*');
+// var_dump($results);
+
+
+$fields = array('option_value'=>'greyspace'.rand());
+$results = Pixelpost_DB::quick_update('pixelpost_options', $fields, "option_name='theme'");
+Pixelpost_DB::vardump();
 var_dump($results);
 
 
@@ -54,6 +60,7 @@ var_dump($results);
 
 #1
 // $config =  Pixelpost_Config::current();
+// var_dump($config);
 // var_dump($config->theme);
 
 #2

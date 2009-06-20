@@ -20,16 +20,15 @@
  */
 
 /**
- * @see Zend_Exception
+ * @see Exception
  */
-require_once 'Zend/Exception.php';
 
 /**
  * @category   Zend
  * @package    Zend_Loader
- * @uses       Zend_Exception
+ * @uses       Exception
  * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Loader_Exception extends Zend_Exception 
+class Zend_Loader_Exception extends Exception
 {}

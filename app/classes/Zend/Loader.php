@@ -47,7 +47,7 @@ class Zend_Loader
      * @param string|array $dirs - OPTIONAL Either a path or an array of paths
      *                             to search.
      * @return void
-     * @throws Zend_Exception
+     * @throws Exception
      */
     public static function loadClass($class, $dirs = null)
     {
@@ -56,8 +56,7 @@ class Zend_Loader
         }
 
         if ((null !== $dirs) && !is_string($dirs) && !is_array($dirs)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('Directory argument must be a string or an array');
+            throw new Exception('Directory argument must be a string or an array');
         }
 
         // autodiscover the path from the class name
@@ -84,8 +83,7 @@ class Zend_Loader
         }
 
         if (!class_exists($class, false) && !interface_exists($class, false)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception("File \"$file\" does not exist or class \"$class\" was not found in the file");
+            throw new Exception("File \"$file\" does not exist or class \"$class\" was not found in the file");
         }
     }
 
@@ -110,7 +108,7 @@ class Zend_Loader
      *                       to search.
      * @param  boolean       $once
      * @return boolean
-     * @throws Zend_Exception
+     * @throws Exception
      */
     public static function loadFile($filename, $dirs = null, $once = false)
     {
@@ -199,22 +197,20 @@ class Zend_Loader
      * @param string $class (optional)
      * @param boolean $enabled (optional)
      * @return void
-     * @throws Zend_Exception if spl_autoload() is not found
+     * @throws Exception if spl_autoload() is not found
      * or if the specified class does not have an autoload() method.
      */
     public static function registerAutoload($class = 'Zend_Loader', $enabled = true)
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use Zend_Loader_Autoloader instead', E_USER_NOTICE);
         if (!function_exists('spl_autoload_register')) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('spl_autoload does not exist in this PHP installation');
+            throw new Exception('spl_autoload does not exist in this PHP installation');
         }
 
         self::loadClass($class);
         $methods = get_class_methods($class);
         if (!in_array('autoload', (array) $methods)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception("The class \"$class\" does not have an autoload() method");
+            throw new Exception("The class \"$class\" does not have an autoload() method");
         }
 
         if ($enabled === true) {
@@ -229,7 +225,7 @@ class Zend_Loader
      *
      * @param  string $filename
      * @return void
-     * @throws Zend_Exception
+     * @throws Exception
      */
     protected static function _securityCheck($filename)
     {
@@ -237,8 +233,7 @@ class Zend_Loader
          * Security check
          */
         if (preg_match('/[^a-z0-9\\/\\\\_.:-]/i', $filename)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('Security check: Illegal character in filename');
+            throw new Exception('Security check: Illegal character in filename');
         }
     }
 

@@ -2,6 +2,7 @@
 
 header('Content-Type: text/html; charset=utf-8');
 
+// phpinfo();
 
 require_once 'Zend/Loader/Autoloader.php';
 
@@ -9,7 +10,10 @@ $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('Pixelpost_');
 $autoloader->registerNamespace('Horde_');
 
-
+var_dump(APPLICATION_PATH);
+$test = Zend_Auth::getInstance();
+var_dump($test);
+var_dump('hi');
 
 Pixelpost_DB::init('mysql'); 
 // Pixelpost_DB::init('pdo'); 

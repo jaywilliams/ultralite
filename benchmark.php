@@ -21,7 +21,7 @@ $autoloader->registerNamespace('Horde_');
 
 
 
-// Test Source
+
 function Test1_1() {
 
     /* The Test */
@@ -36,7 +36,6 @@ function Test1_1() {
     return (microtime(true) - $t);
 }
 
-// Test Source
 function Test1_2() {
 
     /* The Test */
@@ -51,30 +50,27 @@ function Test1_2() {
     return (microtime(true) - $t);
 }
 
-
-
-// Test Source
 function Test2_1() {
 
     /* The Test */
     $t = microtime(true);
 
 	$i = 0;
-	while ($i <= 10000) {
-		
+	
 		Pixelpost_DB::init('mysqli'); 
 		Pixelpost_DB::connect('root', '', 'ultralite', 'localhost');
+	while ($i <= 10000) {
+		
+	
 		$fields = array('option_name', 'option_value');
 		Pixelpost_DB::quick_select('pixelpost_options', $fields);
-		Pixelpost_DB::close();
+	
 		$i++;
 	}
-
+	Pixelpost_DB::close();
     return (microtime(true) - $t);
 }
 
-
-// Test Source
 function Test2_2() {
 
     /* The Test */
@@ -95,22 +91,21 @@ function Test2_2() {
     return (microtime(true) - $t);
 }
 
-
 echo "Load entire config file, 10,000 times:\n";
 echo round(Test1_1(),4) . ' seconds';
 
-sleep(30);
+sleep(5);
 
 echo "\n\nSave an option to the config file, 10,000 times:\n";
 echo round(Test1_2(),4) . ' seconds';
 
-sleep(30);
+sleep(5);
 
 
 echo "\n\nLoad entire config database, 10,000 times:\n";
 echo round(Test2_1(),4) . ' seconds';
 
-sleep(30);
+sleep(5);
 
 echo "\n\nSave an option to the config database, 10,000 times:\n";
 echo round(Test2_2(),4) . ' seconds';

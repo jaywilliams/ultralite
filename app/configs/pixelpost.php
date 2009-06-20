@@ -27,7 +27,7 @@ return array (
   'url' => 'http://192.168.1.200/ultralite',
   'email' => 'user@domain.com',
   'locale' => 'en_US',
-  'theme' => 'default',
+  'theme' => 'greyspace1322354182',
   'posts_per_page' => 5,
   'feed_items' => 20,
   'clean_urls' => true,
@@ -60,6 +60,8 @@ return array (
   ),
   'comments_per_page' => 25,
   'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',
+  'my-bool' => false,
+  'mytest' => 'Ovver',
 )
 
 ?>

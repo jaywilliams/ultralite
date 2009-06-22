@@ -1,0 +1,87 @@
+#Plugin Hooks
+
+(Deprecated)
+
+## global_pre
+
+Run at the very top
+
+
+## controller_pre
+
+Run before the controller is included, for all views
+
+
+##(controller name)_pre
+
+Run at the very top of the included controller
+
+
+Examples:
+
+* post_pre
+* archive_pre
+* about_pre
+
+
+
+##(controller name)_(controller hook)
+
+Custom hooks run inside of the controller
+
+Examples:
+
+* post_image
+* archive_query
+* rss_enclosures
+
+
+##(controller name)_post
+
+Run at the very end of the included controller
+
+
+Examples:
+
+* post_post
+* archive_post
+* about_post
+
+
+## controller_post
+
+Run after the controller is finished, for all views,
+before the template is loaded
+
+## theme_head
+
+Echo code into the theme's `<head>` tag.
+
+## theme_body
+
+Echo code into the theme's `<body>` tag.
+
+## global_post
+
+Very last thing that is run, before the script exits
+
+
+------
+
+# Other Hook Ideas
+Borrowed from CakePHP:
+
+* beforeFilter(), executed before any controller action logic
+* beforeRender(), executed after controller logic, but before the view is rendered
+* afterFilter(), executed after all controller logic, including the view render. There may be no difference between afterRender() and afterFilter() unless you’ve manually made a call to render() in your controller action and have included some logic after that call.
+
+
+* beforeFind()
+* afterFind()
+* beforeValidate()
+* beforeSave()
+* afterSave()
+* beforeDelete()
+* afterDelete()
+
+The names of these methods should be descriptive enough to let you know what they do.

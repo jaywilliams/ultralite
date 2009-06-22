@@ -1,0 +1,19 @@
+Pagination Properties
+=====================
+
+	Property			Description  
+	
+	first				First page number (i.e., 1)  
+	firstItemNumber		Absolute number of the first item on this page  
+	firstPageInRange	First page in the range returned by the scrolling style  
+	current				Current page number  
+	currentItemCount	Number of items on this page  
+	itemCountPerPage	Maximum number of items available to each page  
+	last				Last page number  
+	lastItemNumber		Absolute number of the last item on this page  
+	lastPageInRange		Last page in the range returned by the scrolling style  
+	next				Next page number  
+	pageCount			Number of pages  
+	pagesInRange		Array of pages returned by the scrolling style  
+	previous			Previous page number  
+	totalItemCount		Total number of items  

@@ -1,6 +1,6 @@
 <?php
 
-error_reporting(E_ALL && E_STRICT);
+error_reporting( E_ALL | E_STRICT );
 
 
 // $feed = new Pixelpost_Feed;
@@ -15,6 +15,17 @@ echo Pixelpost_Feed::build($feed_array,'    ');
 
 // echo($feed->xml);
 
+/**
+ * Array to XML Class
+ * Used to generate RSS/ATOM feeds.
+ * 
+ * Usage:
+ *     echo Pixelpost_Feed::build($array);
+ * 
+ *
+ * @package Pixelpost
+ * @author Jay Williams
+ */
 class Pixelpost_Feed
 {
 	/**
@@ -27,7 +38,7 @@ class Pixelpost_Feed
 	public static $indent;
 	
 	/**
-	 * Turn a properly formatted array into standard compliant XML.
+	 * Turn a properly formatted array into standards compliant XML.
 	 *
 	 * @param array $feed The array containing all of the XML tags
 	 * @param string $indent (optional) Preferred indentation character(s)
@@ -41,12 +52,12 @@ class Pixelpost_Feed
 	}
 	
 	/**
-	 * undocumented function
+	 * Convert a multi-dimensional array to XML.
 	 *
-	 * @param string $array 
-	 * @param string $level 
-	 * @param string $parent 
-	 * @return void
+	 * @param array $array source array (recurring)
+	 * @param int $level the indent level to start at
+	 * @param bool|string $parent manually specify the tag
+	 * @return string $xml
 	 */
 	private static function encode($array=array(), $level=0, $parent=false)
 	{

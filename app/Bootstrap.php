@@ -5,20 +5,29 @@ header('Content-Type: text/html; charset=utf-8');
 // phpinfo();
 
 require_once 'Zend/Loader/Autoloader.php';
-
 $autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('Pixelpost_');
-$autoloader->registerNamespace('Horde_');
 
-var_dump(APPLICATION_PATH);
-$test = Zend_Auth::getInstance();
-var_dump($test);
-var_dump('hi');
+$namespaces[] = 'Pixelpost_';
+$namespaces[] = 'Horde_';
+$autoloader->registerNamespace($namespaces);
 
-Pixelpost_DB::init('mysql'); 
+
+// Media RSS Feed Test:
+$feed_array = include('media_rss_example.php');
+echo Pixelpost_Feed::build($feed_array);
+
+
+
+
+// var_dump(APPLICATION_PATH);
+// $test = New_Tet::getInstance();
+// var_dump($test);
+// var_dump('hi');
+
+// Pixelpost_DB::init('mysql'); 
 // Pixelpost_DB::init('pdo'); 
 
-Pixelpost_DB::connect('root', '', 'ultralite', 'localhost'); 
+// Pixelpost_DB::connect('root', '', 'ultralite', 'localhost'); 
 // Pixelpost_DB::connect('sqlite:'.APPLICATION_PATH.'/pixelpost.sqlite3'); 
 
 
@@ -34,15 +43,15 @@ Pixelpost_DB::connect('root', '', 'ultralite', 'localhost');
 /*
 	Select DB test
 */
-$fields = array('*');
-$results = Pixelpost_DB::quick_select('pixelpost_options', '*');
+// $fields = array('*');
+// $results = Pixelpost_DB::quick_select('pixelpost_options', '*');
 // var_dump($results);
 
 
-$fields = array('option_value'=>'greyspace'.rand());
-$results = Pixelpost_DB::quick_update('pixelpost_options', $fields, "option_name='theme'");
-Pixelpost_DB::vardump();
-var_dump($results);
+// $fields = array('option_value'=>'greyspace'.rand());
+// $results = Pixelpost_DB::quick_update('pixelpost_options', $fields, "option_name='theme'");
+// Pixelpost_DB::vardump();
+// var_dump($results);
 
 
 # Display all DB Errors:

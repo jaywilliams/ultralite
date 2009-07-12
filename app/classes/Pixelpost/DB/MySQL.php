@@ -43,7 +43,7 @@ class Pixelpost_DB_MySQL extends Pixelpost_DB_Core
 	 
 	public function __destruct()
 	{
-		$this->close();
+		//$this->close();
 	}
 	
 	/**

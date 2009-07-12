@@ -13,5 +13,5 @@ set_include_path(implode(PATH_SEPARATOR, array(
 )));
 
 
-require_once APPLICATION_PATH . '/Bootstrap.php';
-
+//require_once APPLICATION_PATH . '/Bootstrap.php';
+require_once APPLICATION_PATH . '/Login_test.php';

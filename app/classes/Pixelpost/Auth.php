@@ -53,6 +53,7 @@ class Pixelpost_Auth
 		// convert the plaintext password to a SHA1 encoded string
 		$password = hash('sha1',$password);
 		$username = Pixelpost_DB::escape($username);
+		$old_sess_id = session_id();
 		
 		// First check if there is a session available with a login_hash. 
 		if ($this->session->get('login_vars'))
@@ -64,12 +65,9 @@ class Pixelpost_Auth
 			{
 				// The given data corresponds with the data stored in the session
 				// Next step is to establish if the hash can be confirmed
-				//$old_sess_id = session_id();
 				session_regenerate_id();
-				//$this->session->db_write(session_id(),$_SESSION);
-				//$this->session->db_destroy($old_sess_id);
-				//unset($old_sess_id);
-				// COMMENT: I'm not sure if the session handler is smart enough to do this
+				$this->session->db_destroy($old_sess_id);
+				unset($old_sess_id);
 				return $this->confirmAuth();
 			}
 			else
@@ -88,7 +86,10 @@ class Pixelpost_Auth
 			if ($status == 1) {
     			// We're good to go!
     			// Store the username, password and hash into the session
-    			session_regenerate_id();
+				session_regenerate_id();
+				$this->session->db_destroy($old_sess_id);
+				unset($old_sess_id);
+
 				$this->storeAuth($username, $password);
     			return true;
 			}else {

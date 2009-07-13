@@ -6,8 +6,8 @@
  * 
  * Usage:
  *     Pixelpost_Auth::login($username, $password);
- *     Pixelpost_Auth::logout;
- * 	   confirmAuth	
+ *     Pixelpost_Auth::logout();
+ * 	   Pixelpost_Auth::confirmAuth()
  * 
  *
  * @package Pixelpost
@@ -34,7 +34,7 @@ class Pixelpost_Auth
 	
 	/**
 	 * Auth constructor
-	 * Checks for valid user automatically
+	 * 
 	 * @return boolean
 	 * @access public
 	 */

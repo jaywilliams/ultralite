@@ -113,18 +113,39 @@ class Pixelpost_Session
 	}
 
 	/**
-	 * Starts a session
+	 * Starts or resume a session
 	 * @return void
 	 * @access public
 	 */
 	public function start()
 	{
+		// clean up the session table. Delete all sessions older than 7 days
+		$ttl = 60*60*24*7;
+		$this->db_gc($ttl);
+		
 		session_name('pixelpost');
 		// try to get the session from the cookie
 		if (isset($_COOKIE[session_name()]))
 		{
-			// try resuming the previous session
-			session_id($_COOKIE[session_name()]);
+			// try resuming the previous session. If the previous session was destroyed then
+			// there is no problem, this is an unique id.
+			// First check against the database if it is a valid id
+			$sess_id = Pixelpost_DB::escape($_COOKIE[session_name()]);
+			$row = Pixelpost_DB::get_row("SELECT `sess_data`, `sess_ip`,`sess_servervars` FROM `sessions` WHERE `sess_id` = '{$sess_id}' LIMIT 1");
+			if ($row)
+			{
+				// There seems to be a session that is valid, now we perform various checks
+				if ($this->getIP()==$row->sess_ip)
+				{
+					// We have a valid IP that matches the data stored in the db
+					if ($_SERVER['HTTP_USER_AGENT']==$row->sess_servervars)
+					{
+						// The user agent is correct as well. Resume session
+						session_id($sess_id);
+					}
+				
+				}
+			}
 		}
 		session_start();
 	}
@@ -132,7 +153,7 @@ class Pixelpost_Session
 	/**
 	 * Sets a session cookie
 	 * 
-	 * @param lifetime (time()+60*60*24*30 == 30 days)
+	 * @param lifetime (time()+60*60*24*7 == 7 days)
 	 * @return void
 	 * @access public
 	 */
@@ -213,13 +234,8 @@ class Pixelpost_Session
 		// get the data associated with the session from the table
 		$row = Pixelpost_DB::get_row("SELECT `sess_data`, `sess_ip` FROM `sessions` WHERE `sess_id` = '{$sess_id}' LIMIT 1");
 		//Pixelpost_DB::debug();
-		$row = get_object_vars($row);
-		// only return the sessiondata if the ip is a match. If the user is on a different IP then
-		// a new session should be stored.
-		if ($this->getIP()==$row['sess_ip']){
-			if ($row) return isset($row['sess_data']) ? $row['sess_data'] : '';
-			else  return '';
-		} else return '';
+		if ($row) return isset($row->sess_data) ? $row->sess_data : '';
+		else  return '';
 	}
 
 	/**
@@ -237,7 +253,6 @@ class Pixelpost_Session
 		$datetime = Pixelpost_DB::sysdate(); // use datetime('now','localtime') to store it not in UTC
 		// get the data associated with the session from the table
 		$row = Pixelpost_DB::get_row("SELECT `sess_data` FROM `sessions` WHERE `sess_id` = '{$sess_id}' LIMIT 1");
-		$row = get_object_vars($row);
 		//Pixelpost_DB::debug();
 		if ($row)
 		{
@@ -248,10 +263,13 @@ class Pixelpost_Session
 		else
 		{
 			$ip = $this->getIP();
+			// we store the $servervars so we can check various things while resuming a session from
+			// a cookie, in this case we only check against the HTTP_USER_AGENT
+			$servervars = Pixelpost_DB::escape($_SERVER['HTTP_USER_AGENT']);
 			// should be an if statement here to check if the session vars of the login have been set
 			// so we can grab the username and store it in the table. Reason being you can easily see
 			// all open sessions in a sessionmanager by selecting on username.
-			$sql = "INSERT INTO `sessions`(`sess_id`, `sess_start`, `sess_last_acc`, `sess_data`, `sess_ip`) VALUES ('{$sess_id}', {$datetime}, {$datetime}, '{$data}', '{$ip}')";
+			$sql = "INSERT INTO `sessions`(`sess_id`, `sess_start`, `sess_last_acc`, `sess_data`, `sess_ip`, `sess_servervars`) VALUES ('{$sess_id}', {$datetime}, {$datetime}, '{$data}', '{$ip}', '{$servervars}')";
 			$result = Pixelpost_DB::query($sql);
 			//Pixelpost_DB::debug();
 		}

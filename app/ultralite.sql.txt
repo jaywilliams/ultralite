@@ -1,0 +1,63 @@
+-- phpMyAdmin SQL Dump
+-- version 2.11.7
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Jul 13, 2009 at 09:34 PM
+-- Server version: 5.0.51
+-- PHP Version: 5.2.6
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `ultralite`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sessions`
+--
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `sess_id` varchar(255) NOT NULL,
+  `sess_start` datetime NOT NULL,
+  `sess_last_acc` datetime NOT NULL,
+  `sess_data` text NOT NULL,
+  `sess_ip` varchar(255) NOT NULL,
+  `sess_bind_ip` tinyint(1) NOT NULL,
+  `sess_servervars` text NOT NULL,
+  PRIMARY KEY  (`sess_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `ID` int(11) NOT NULL auto_increment,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `registered` datetime NOT NULL,
+  `display_name` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  PRIMARY KEY  (`ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`ID`, `username`, `password`, `email`, `url`, `registered`, `display_name`, `status`) VALUES
+(1, 'ultralite', '0ded343ab336b396d7b938edfbaf4afcd3b4cf84', 'test@ultralite.org', 'http://www.ultralite.org', '2009-07-11 20:16:32', 'Ultralite Administrator', 1);

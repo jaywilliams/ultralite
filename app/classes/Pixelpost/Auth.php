@@ -64,6 +64,12 @@ class Pixelpost_Auth
 			{
 				// The given data corresponds with the data stored in the session
 				// Next step is to establish if the hash can be confirmed
+				//$old_sess_id = session_id();
+				session_regenerate_id();
+				//$this->session->db_write(session_id(),$_SESSION);
+				//$this->session->db_destroy($old_sess_id);
+				//unset($old_sess_id);
+				// COMMENT: I'm not sure if the session handler is smart enough to do this
 				return $this->confirmAuth();
 			}
 			else
@@ -82,7 +88,8 @@ class Pixelpost_Auth
 			if ($status == 1) {
     			// We're good to go!
     			// Store the username, password and hash into the session
-    			$this->storeAuth($username, $password);
+    			session_regenerate_id();
+				$this->storeAuth($username, $password);
     			return true;
 			}else {
     			// Login invalid, or the user is banned

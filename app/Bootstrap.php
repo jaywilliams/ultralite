@@ -13,8 +13,8 @@ $autoloader->registerNamespace($namespaces);
 
 
 // Media RSS Feed Test:
-$feed_array = include('media_rss_example.php');
-echo Pixelpost_Feed::build($feed_array);
+$table_array = include('table_array_example.php');
+echo Pixelpost_HTML::buildTable($table_array);
 
 
 

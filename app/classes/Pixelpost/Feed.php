@@ -44,7 +44,7 @@ class Pixelpost_Feed
 	 * @param bool|string $parent manually specify the tag
 	 * @return string $xml
 	 */
-	private static function encode($array=array(), $level=0, $parent=false)
+	protected static function encode($array=array(), $level=0, $parent=false)
 	{
 		// Initialize Variables
 		$xml    = '';
@@ -135,7 +135,7 @@ class Pixelpost_Feed
 	 * @param array $array The array to check
 	 * @return bool true if sequential only
 	 */
-	private static function is_sequential($array)
+	protected static function is_sequential($array)
 	{
 		return ( is_array($array) && !empty($array) && 0 == count(array_diff_key($array,array_keys(array_keys($array)))) );
 	}
@@ -146,7 +146,7 @@ class Pixelpost_Feed
 	 * @param string $value Tag/Attribute name
 	 * @return string XML-Safe name
 	 */
-	private static function escape_key($value)
+	protected static function escape_key($value)
 	{
 		return preg_replace( '/[^a-z0-9\-\_\.\:]/i', '', $value );
 	}
@@ -160,7 +160,7 @@ class Pixelpost_Feed
 	 * @param string $value unsafe string
 	 * @return string XML-Safe string
 	 */
-	private static function escape_value($value)
+	protected static function escape_value($value)
 	{
 		return htmlentities( $value, ENT_QUOTES, 'UTF-8' );
 	}

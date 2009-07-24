@@ -171,7 +171,7 @@ if (file_exists("app/controllers/{$config->view}Controller.php"))
 	require_once "app/controllers/{$config->view}Controller.php";
 }
 else{
-	die("controllers/{$config->view}Controller.php");
+	die("I'm sorry, I couldn't seem to find the following controller: {$config->view}Controller.php");
 }
 
 

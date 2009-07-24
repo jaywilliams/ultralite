@@ -11,6 +11,7 @@
  * @package Pixelpost
  * @author Dennis Mooibroek
  */
+
 class Pixelpost_HTML extends Pixelpost_Feed
 {
 	/**

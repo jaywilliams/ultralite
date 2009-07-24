@@ -8,8 +8,8 @@
 	<base href="<?php eprint($config->url); ?>" />
 	
 	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
-	<link rel="stylesheet" href="<?php eprint($config->url); ?>/content/themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
-	<link rel="alternate stylesheet" href="<?php eprint($config->url); ?>/content/themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
+	<link rel="stylesheet" href="content/themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
+	<link rel="alternate stylesheet" href="content/themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<style type="text/css">
 		.section{
 			width: <?php echo $post->width; ?>px;
@@ -31,7 +31,7 @@
 
 	
 	<div class="middle section">
-		<a href="<?php url("id={$next_image->id}",true); ?>"><img src="<?php eprint($config->url); ?>/content/images/<?php eprint($post->filename); ?>" alt="<?php eprint($post->title); ?>" <?php echo $post->dimensions; ?> id="photo" /></a>
+		<a href="<?php url("id={$next_image->id}",true); ?>"><img src="content/images/<?php eprint($post->filename); ?>" alt="<?php eprint($post->title); ?>" <?php echo $post->dimensions; ?> id="photo" /></a>
 		<div class="site section">
 			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->name); ?></a></h2>
 			<em class="tagline"><?php eprint($config->description); ?></em>

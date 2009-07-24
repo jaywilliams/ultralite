@@ -25,7 +25,7 @@ return array (
   ),
   'name' => 'My Ultralite Photoblog2',
   'description' => 'Guess what, it\'s open source, and it\'s ultralite!',
-  'url' => 'http://localhost/ultralite_rebase',
+  'url' => 'http://localhost/ultralite_rebase/',
   'email' => 'user@domain.com',
   'locale' => 'en_US',
   'theme' => 'default',

@@ -7,9 +7,9 @@
 	
 	<base href="<?php eprint($config->url); ?>" />
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
-	<link rel="stylesheet" href="<?php eprint($config->url); ?>/content/themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
-	<link rel="alternate stylesheet" href="<?php eprint($config->url); ?>/content/themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
+	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
+	<link rel="stylesheet" href="content/themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
+	<link rel="alternate stylesheet" href="content/themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<!-- <style type="text/css">
 		.section{
 			width: 650px;

@@ -77,7 +77,7 @@ foreach($archive->thumbnails as $key => $thumbnail)
 
 function tt_thumbnails($options='')
 {
-	global $archive, $config;
+	global $archive;
 	
 	/*
 		Default Options for this Template Tag
@@ -97,7 +97,7 @@ function tt_thumbnails($options='')
 	foreach ($thumbnails as $thumbnail) {
 		echo(
 			"<a href=\"".url("view=post&id={$thumbnail->id}")."\">".
-				"<img src=\"{$config->url}/content/images/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
+				"<img src=\"content/images/thumb_{$thumbnail->filename}\" alt=\"".escape($thumbnail->title)."\" width=\"{$thumbnail->width}\" height=\"{$thumbnail->height}\" />".
 			"</a>"
 		);
 	}

@@ -31,6 +31,7 @@
 if(!defined('ULTRALITE')) { die(); }
 
 
+$post = new stdClass;
 // Clean the image id number. Set to int 0 if invalid OR empty.
 $post->id = (isset($_GET['id']) && (int) $_GET['id'] > 0 ) ? (int) $_GET['id'] : 0;
 

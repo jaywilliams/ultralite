@@ -1,0 +1,85 @@
+######### Ultralite .htaccess Code
+# Generated on: 02/09/09
+# 
+# Rename this file to ".htaccess" if you wish to use clean URLs.
+
+# FollowSymLinks is required for mod_rewrite to function properly.
+# -Indexes is optional, but prevents people from seeing all of the
+# files in a directory, which adds a little extra security.
+Options FollowSymLinks -Indexes
+
+<IfModule mod_rewrite.c>
+# Enable mod_rewrite:
+RewriteEngine On
+
+
+######### Rewrite Base
+# 
+# On some servers it's very important that you manually define 
+# which folder contains Ultralite.
+# 
+# If you have Ultralite installed in your main directory,
+# set the RewriteBase to "/", as shown in the example below:
+# 
+# http://example.com/
+#                   ^Your Base
+# RewriteBase /
+# 
+# Alternatively, if you have Ultralite in its own sub-folder,
+# You will need to specify that sub-folder as the RewriteBase.
+# 
+# http://example.com/photoblog/
+#                     ^Your Base
+# RewriteBase /photoblog/
+# 
+# Please specify the RewriteBase below:
+RewriteBase /
+
+
+# Added Security, block people from 
+# directly accessing the SQLite database:
+RewriteRule (\.sqlite3?(\.php)?|\.db|\.htaccess)$ - [F,L]
+
+
+# If the request is for an actual file 
+# or directory, don't rewrite it:
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L]
+
+
+######### Clean URL Format Guide
+# 
+# /post/123/my-title/page/3
+#  ^1   ^2   ^3       ^4
+# 
+# 1 - View mode (required)
+# 		Possibilities could be: post, rss, archive, etc.
+# 
+# 2 - Post ID (optional)
+# 		This could also be used as a search query
+# 
+# 3 - Extra information (optional)
+# 		This can be used to store any additional data that you'd like to include in the URL.
+# 		Some possibilities are the post title, or for an archive page, sub categories or tags
+# 
+# 4 - Current Page
+# 		If you want to specify a page, other than page 1, you should append the suffix "/page/#" to your url.
+# 		You can append it to any url, either short or long. 
+# 
+########## Examples of Properly formatted Clean URLs
+# 
+# /rss
+# /post/2
+# /post/5/my-title
+# /archive/2005
+# /archive/2007/12
+# /archive/page/3
+# /tag/orange
+# /search/my+query/page/2
+# 
+
+RewriteRule ^$ index.php?mod_rewrite=true [NC,QSA,L]
+RewriteRule ^([a-z0-9+_\-]+)(/([a-z0-9+_\-]+))?(/(.*))?(/page/([0-9]+))$ index.php?view=$1&id=$3&extra=$5&page=$7&mod_rewrite=true [NC,QSA,L]
+RewriteRule ^([a-z0-9+_\-]+)(/([a-z0-9+_\-]+))?(/(.*))?$ index.php?view=$1&id=$3&extra=$5&page=1&mod_rewrite=true [NC,QSA,L]
+</IfModule>

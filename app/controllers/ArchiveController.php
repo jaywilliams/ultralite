@@ -23,7 +23,7 @@
 // Prevent direct file access.
 if(!defined('ULTRALITE')) { die(); }
 
-
+$archive = new stdClass;
 $archive->title = 'The Past';
 
 // If another controller has already created a query, 

@@ -170,7 +170,8 @@ if (file_exists("app/controllers/{$config->view}Controller.php"))
 	 */
 	require_once "app/controllers/{$config->view}Controller.php";
 }
-else{
+else
+{
 	die("I'm sorry, I couldn't seem to find the following controller: {$config->view}Controller.php");
 }
 
@@ -201,9 +202,13 @@ $plugins->do_action('controller_post');
  * 
  * The template page can use the variables and template tags created by the controller.
  */
-if (file_exists("content/themes/{$config->template}/theme_$config->view.php"))
+if (file_exists("content/themes/{$config->template}/theme_" . strtolower($config->view) . ".php"))
 {
-	require_once "content/themes/{$config->template}/theme_$config->view.php";
+	require_once "content/themes/{$config->template}/theme_" . strtolower($config->view) . ".php";
+}
+else
+{
+	die("I'm sorry, I couldn't seem to find the following template file: content/themes/{$config->template}/theme_" . strtolower($config->view) . ".php");
 }
 
 

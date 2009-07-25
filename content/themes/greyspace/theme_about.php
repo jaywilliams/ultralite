@@ -3,13 +3,13 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title>About / <?php eprint($config->title); ?></title>
+	<title>About / <?php eprint($config->name); ?></title>
 	
 	<base href="<?php eprint($config->url); ?>" />
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->title); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
-	<link rel="stylesheet" href="themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
-	<link rel="alternate stylesheet" href="themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
+	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="<?php url("view=rss",true); ?>" />
+	<link rel="stylesheet" href="content/themes/greyspace/style_dark.css" type="text/css" charset="utf-8" title="Dark" />
+	<link rel="alternate stylesheet" href="content/themes/greyspace/style_light.css" type="text/css" charset="utf-8" title="Light" />
 	<!-- <style type="text/css">
 		.section{
 			width: 650px;
@@ -69,8 +69,8 @@
 		</div>
 		
 		<div class="site section">
-			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->title); ?></a></h2>
-			<em class="tagline"><?php eprint($config->tagline); ?></em>
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->name); ?></a></h2>
+			<em class="tagline"><?php eprint($config->description); ?></em>
 		</div>
 	</div>
 

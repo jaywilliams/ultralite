@@ -11,6 +11,8 @@
  *
  */
 
+namespace web2bb;
+
 class View
 {
 	/**

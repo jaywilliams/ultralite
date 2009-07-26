@@ -11,5 +11,6 @@
  *
  */
 
+namespace web2bb;
 
 interface IController {}

@@ -1,4 +1,13 @@
 <?php
+/**
+ * File containing the index controller
+ *
+ * @package WEB2BB
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ */
+
+namespace web2bb;
 
 class indexController extends baseController implements IController
 {

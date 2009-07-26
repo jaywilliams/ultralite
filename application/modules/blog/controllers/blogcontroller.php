@@ -1,5 +1,6 @@
 <?php
 
+namespace web2bb;
 
 class blogController extends baseController implements IController
 {

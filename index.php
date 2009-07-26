@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File containing the index for system.
  *
@@ -7,6 +8,8 @@
  * @filesource
  *
  */
+
+namespace web2bb;
 
 session_start();
 
@@ -34,7 +37,7 @@ try
 	// model loader
 	function modelLoader($class)
 	{
-		$class = strtolower( $class );
+		$class = strtolower( str_replace( 'web2bb\\', '', $class ) );
 		$models = array('icontroller.php', 'frontcontroller.php', 'view.php');
 		$class = strtolower( $class );
                 $filename = $class . '.php';
@@ -51,13 +54,14 @@ try
                         return false;
                 }
 
-		include $file;
+		include_once $file;
 	}
 
 
 	// autoload controllers
 	function controllerLoader($class)
 	{
+		$class = str_replace( 'web2bb\\', '', $class );
 		$module = str_replace( 'Controller', '', $class );
 		$filename = $class . '.php';
 		$file = strtolower( __APP_PATH . "/modules/$module/controllers/$filename" );
@@ -65,44 +69,35 @@ try
 		{
 			return false;
 		}
-		include $file;
+		include_once $file;
 	}
 
 	// autoload libs
-	function libLoader($class)
+	function libLoader( $class )
 	{
-		$filename = strtolower($class) . '.class.php';
+		$class = str_replace( 'web2bb\\', '', $class );
+		$filename = strtolower( $class ) . '.class.php';
+		// hack to remove namespace 
 		$file = __APP_PATH . '/lib/' . $filename;
 		if (file_exists($file) == false)
 		{
 			return false;
 		}
-		include $file;
+		include_once $file;
 	}
 
-	// autoload languages
-	function langLoader($class)
-	{
-		$config = config::getInstance();
-		$lang = $config->config_values['application']['language'];
+	spl_autoload_register( __NAMESPACE__ . '\libLoader' );
+	spl_autoload_register( __NAMESPACE__ . '\modelLoader' );
+	spl_autoload_register( __NAMESPACE__ . '\controllerLoader' );
 
-		$filename = strtolower($lang) . '.lang.php';
-		$file = __APP_PATH . '/lang/' . $filename;
-		if (file_exists($file) == false)
-		{
-			return false;
-		}
-		include $file;
-		class_alias($lang, 'lang');
-	}
+	$config = \web2bb\config::getInstance();
+        $lang = $config->config_values['application']['language'];
+        $filename = strtolower($lang) . '.lang.php';
+        $file = __APP_PATH . '/lang/' . $filename;
+        include $file;
+        // alias the lang class
+	class_alias(__NAMESPACE__ . '\\' . $lang, __NAMESPACE__ . '\lang');
 
-	spl_autoload_register('libLoader');
-	spl_autoload_register('modelLoader');
-	spl_autoload_register('controllerLoader');
-	spl_autoload_register('langLoader');
-
-	// set config
-	$config = config::getInstance();
 
 	// set the timezone
 	date_default_timezone_set($config->config_values['application']['timezone']);

@@ -1,5 +1,7 @@
 <?php
 
+namespace web2bb;
+
 class config
 {
 	/*

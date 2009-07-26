@@ -7,6 +7,8 @@
  *
  */
 
+namespace web2bb;
+
 class en
 {
 	const __ADMIN = 'Admin';

@@ -13,6 +13,7 @@ The documentation of WEB2BB is an on-going process with some features better doc
 <dt><a href="mail.php">Mail</a></dt>
 <dt><a href="lang.php">Language</a></dt>
 <dt><a href="logging.php">Logging</a></dt>
+<dt><a href="namespaces.php">Namespaces</a></dt>
 <dt><a href="modules.php">Modules</a></dt>
 <dt><a href="caching_and_templating.php">Caching and Templating</dt>
 <dt><a href="uri.php">URI</a></dt>

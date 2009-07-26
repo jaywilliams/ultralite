@@ -11,6 +11,9 @@
  * @Author Kevin Waterson
  *
  */
+
+namespace web2bb;
+
 class FrontController
 {
 
@@ -30,7 +33,7 @@ class FrontController
 
 	private function __construct()
 	{
-		/*** set the controller ***/
+		// set the controller
 		$this->_uri = uri::getInstance();
 		if($this->_uri->fragment(0))
 		{
@@ -38,14 +41,14 @@ class FrontController
 		}
 		else
 		{
-			/*** get the default controller ***/
+			// get the default controller
 			$config = config::getInstance();
 			$default = $config->config_values['application']['default_controller'].'Controller';
 			$this->_controller = $default;
 		}
 
 
-		/*** the action ***/
+		// the action
 		if($this->_uri->fragment(1))
 		{
 			$this->_action = $this->_uri->fragment(1);
@@ -64,39 +67,31 @@ class FrontController
  	 */
 	public function route()
 	{
-		/*** check if the controller exists ***/
-		if( class_exists( $this->getController() ) )
+		// check if the controller exists
+		$con = $this->getController();
+		$rc = new \ReflectionClass( 'web2bb\\'.$con );
+		// if the controller exists and implements IController
+		if( $rc->implementsInterface( 'web2bb\IController' ) )
 		{
-			/*** check if controller exists ***/
-			$rc = new ReflectionClass($this->getController());
-
-			/*** if the controller exists and implements IController ***/
-			if($rc->implementsInterface('IController'))
+			$controller = $rc->newInstance();
+			// check if method exists 
+			if( $rc->hasMethod( $this->getAction() ) )
 			{
-				$controller = $rc->newInstance();
-				/*** check if method exists ***/
-				if( $rc->hasMethod( $this->getAction() ) )
-				{
-					/*** if all is well, load the action ***/
-					$method = $rc->getMethod( $this->getAction() );
-				}
-				else
-				{
-					/*** load the default action metho ***/
-					$config = config::getInstance();
-					$default = $config->config_values['application']['default_action'];
-					$method = $rc->getMethod( $default );
-				}
-				$method->invoke( $controller );
+				// if all is well, load the action
+				$method = $rc->getMethod( $this->getAction() );
 			}
 			else
 			{
-				throw new Exception("Interface");
+				// load the default action method
+				$config = config::getInstance();
+				$default = $config->config_values['application']['default_action'];
+				$method = $rc->getMethod( $default );
 			}
-		} 
+			$method->invoke( $controller );
+		}
 		else
 		{
-			throw new Exception("Controller");
+			throw new \Exception("Interface iController must be implemented");
 		}
 	}
 
@@ -107,9 +102,17 @@ class FrontController
 	}
 	*/
 
+	/**
+	*
+	* Gets the controller, sets to default if not available
+	*
+	* @access	public
+	* @return	string	The name of the controller
+	*
+	*/
 	public function getController()
 	{
-		if( class_exists( $this->_controller ) )
+		if( class_exists( 'web2bb\\'.$this->_controller ) )
 		{
 			return $this->_controller;
 		}
@@ -119,9 +122,16 @@ class FrontController
 			$default = $config->config_values['application']['default_controller'].'Controller';
 			return $default;
 		}
-
 	}
 
+	/**
+	*
+	* Get the action
+	*
+	* @access	public
+	* @return	string	the Name of the action
+	*
+	*/
 	public function getAction()
 	{
 		return $this->_action;
@@ -137,4 +147,4 @@ class FrontController
 		$this->_body = $body;
 	}
 
-} /*** end of class ***/
+} // end of class

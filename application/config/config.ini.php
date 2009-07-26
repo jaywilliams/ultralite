@@ -17,8 +17,7 @@ db_port = 3306
 
 [template]
 template_dir = "templates"
-cache_dir = "cache"
-caching = true
+cache_dir = "/tmp/cache"
 cache_lifetime = 3600
 
 [mail]

@@ -9,6 +9,7 @@ try
 	/*** the application directory path ***/
 	define ('__APP_PATH', __SITE_PATH.'/application');
 
+	/*** set the web root path ***/
 	$path = str_replace($_SERVER['DOCUMENT_ROOT'], '', __SITE_PATH);
 	define('__DOC_ROOT', $path);
 

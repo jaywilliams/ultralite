@@ -1,18 +1,36 @@
 <?php
 /** 
- *
+
  * View Class
+ *
+ * A simple template class for separating layout and php logic.
+ * It still uses PHP inside of the templates, but the actual
+ * program logic remains outside of the template.
+ *
+ * @author Kevin Waterson <kevin@phpro.org>
+ * @copyright2007 PHPRO 
+ * @versionCVS: $Id:$
+ * @sinceClass available since Release 0.0.1
  */
 
-class View extends ArrayObject
+class View
 {
+	/**
+	 *
+	 * The constructor, duh
+	 *
+	 */
+	public function __construct()
+	{
+		// parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
+		$this->setCacheDir();
+	}
 
 	/**
 	 * The variable property contains the variables
 	 * that can be used inside of the templates.
 	 *
 	 * @access private
-	 *
 	 * @var array
 	 */
 	private $variables = array();
@@ -21,7 +39,6 @@ class View extends ArrayObject
 	 * The directory where the templates are stored
 	 *
 	 * @access private
-	 *
 	 * @var string
 	 */
 	private $template_dir = null;
@@ -49,10 +66,6 @@ class View extends ArrayObject
 	 */
 	private $cache_lifetime = 300;
 	
-	public function __construct()
-	{
-		parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
-	}
 	
 	/**
 	 * Adds a variable that can be used by the templates.
@@ -79,7 +92,7 @@ class View extends ArrayObject
 	/**
 	 * @Returns names of all the added variables
 	 *
-	 * Returns a numeric array containing the names of all
+	 * Returns a numeral array containing the names of all
 	 * added variables.
 	 *
 	 * @access public
@@ -112,7 +125,7 @@ class View extends ArrayObject
 	 * @see fetch
 	 *
 	 */
-	public function display($file, $id = null)
+	public function render($file, $id = null)
 	{
 		echo $this->fetch($file, $id);
 	}
@@ -138,6 +151,7 @@ class View extends ArrayObject
 		{
 			$template_file = realpath($this->template_dir) . '/' . $template_file;
 		}
+
 		/*** get the cached file contents ***/
 		if ($this->caching == true && $this->isCached($template_file, $id))
 		{
@@ -168,7 +182,7 @@ class View extends ArrayObject
 	 * @see fetch, display
 	 *
 	 */
-	public function render($template_file)
+	private function getOutput($template_file)
 	{
 		/*** extract all the variables ***/
 		extract($this->variables);
@@ -177,12 +191,14 @@ class View extends ArrayObject
 		{
 			ob_start();
 			include($template_file);
-			return ob_get_clean();
+			$output = ob_get_contents();
+			ob_end_clean();
 		}
 		else
 		{
 			throw new Exception("The template file '$template_file' does not exist");
 		}
+		return !empty($output) ? $output : false;
 	}
 
 	/**
@@ -222,17 +238,22 @@ class View extends ArrayObject
 	 * @see setCacheLifetime
 	 *
 	 */
-	function setCacheDir($cacheDir)
+	function setCacheDir($cacheDir = null)
 	{
-		// $cacheDir = realpath($dir);
-
+		if( is_null( $cacheDir ) )
+		{
+			$config = config::getInstance();
+			$cacheDir = $config->config_values['template']['cache_dir'];
+		}
+	
 		if (is_dir($cacheDir) && is_writable($cacheDir))
 		{
+			$config = config::getInstance();
 			$this->cache_dir = $cacheDir;
 		}
 		else
 		{
-			/*** log error here FIX ME ***/
+			/*** TODO log error here FIX ME ***/
 			throw new Exception("The cache directory '$cacheDir' either does not exist, or is not writable");
 		}
 	}
@@ -268,7 +289,7 @@ class View extends ArrayObject
 	 */
 	public function setCaching($state=false)
 	{
-			$this->caching = $state;
+		$this->caching = $state;
 	}
 
 	/**
@@ -326,7 +347,10 @@ class View extends ArrayObject
 		$directory = $this->cache_dir . '/' . $cacheId;
 
 		/*** create the cache directory ***/
-		mkdir($directory, 0775);
+		if( !is_dir( $directory ) )
+		{
+			mkdir ($directory, 0775 );
+		}
 
 		/*** write to the cache ***/
 		if(file_put_contents($filename, $content) == FALSE)
@@ -431,3 +455,5 @@ class View extends ArrayObject
 	}
 
 } /*** end of class ***/
+
+?>

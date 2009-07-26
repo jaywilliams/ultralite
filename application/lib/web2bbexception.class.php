@@ -11,9 +11,9 @@
  *
  */
 
-namespace web2bb;
+// namespace web2bb;
 
-class web2bbException extends \Exception
+class web2bbException extends Exception
 {
 	/**
 	*

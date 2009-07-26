@@ -1,6 +1,6 @@
 <?php
 
-namespace web2bb;
+// namespace web2bb;
 
 class contactController extends baseController implements IController
 {

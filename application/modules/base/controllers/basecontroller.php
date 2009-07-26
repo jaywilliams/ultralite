@@ -1,6 +1,6 @@
 <?php
 
-namespace web2bb;
+// namespace web2bb;
 
 class baseController
 {
@@ -8,10 +8,10 @@ class baseController
 
 	public function __construct()
 	{
-		$this->view = new \web2bb\view;
+		$this->view = new view;
 
 		/*** create the bread crumbs ***/
-		$bc = new \web2bb\breadcrumbs;
+		$bc = new breadcrumbs;
 		// $bc->setPointer('->');
 		$bc->crumbs();
 		$this->view->breadcrumbs = $bc->breadcrumbs;

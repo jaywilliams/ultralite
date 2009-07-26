@@ -12,7 +12,7 @@
  *
  */
 
-namespace web2bb;
+// namespace web2bb;
 
 class FrontController
 {
@@ -69,9 +69,9 @@ class FrontController
 	{
 		// check if the controller exists
 		$con = $this->getController();
-		$rc = new \ReflectionClass( 'web2bb\\'.$con );
+		$rc = new ReflectionClass($con );
 		// if the controller exists and implements IController
-		if( $rc->implementsInterface( 'web2bb\IController' ) )
+		if( $rc->implementsInterface( 'IController' ) )
 		{
 			$controller = $rc->newInstance();
 			// check if method exists 
@@ -91,7 +91,7 @@ class FrontController
 		}
 		else
 		{
-			throw new \Exception("Interface iController must be implemented");
+			throw new Exception("Interface iController must be implemented");
 		}
 	}
 
@@ -112,7 +112,7 @@ class FrontController
 	*/
 	public function getController()
 	{
-		if( class_exists( 'web2bb\\'.$this->_controller ) )
+		if( class_exists($this->_controller ) )
 		{
 			return $this->_controller;
 		}

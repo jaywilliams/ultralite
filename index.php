@@ -9,7 +9,7 @@
  *
  */
 
-namespace web2bb;
+// namespace web2bb;
 
 session_start();
 
@@ -26,8 +26,10 @@ try
 	set_include_path( __APP_PATH );
 	set_include_path( __SITE_PATH );
 
+	define ('__DOC_ROOT',$_SERVER['DOCUMENT_ROOT']);
+
 	// set the public web root path
-	$path = str_replace($_SERVER['DOCUMENT_ROOT'], '', __SITE_PATH);
+	$path = str_replace(__DOC_ROOT, '', __SITE_PATH);
 	define('__PUBLIC_PATH', $path);
 
 	spl_autoload_register(null, false);
@@ -37,7 +39,7 @@ try
 	// model loader
 	function modelLoader($class)
 	{
-		$class = strtolower( str_replace( 'web2bb\\', '', $class ) );
+		$class = strtolower( $class );
 		$models = array('icontroller.php', 'frontcontroller.php', 'view.php');
 		$class = strtolower( $class );
                 $filename = $class . '.php';
@@ -61,7 +63,7 @@ try
 	// autoload controllers
 	function controllerLoader($class)
 	{
-		$class = str_replace( 'web2bb\\', '', $class );
+		// $class = str_replace( 'web2bb\\', '', $class );
 		$module = str_replace( 'Controller', '', $class );
 		$filename = $class . '.php';
 		$file = strtolower( __APP_PATH . "/modules/$module/controllers/$filename" );
@@ -75,7 +77,7 @@ try
 	// autoload libs
 	function libLoader( $class )
 	{
-		$class = str_replace( 'web2bb\\', '', $class );
+		// $class = str_replace( 'web2bb\\', '', $class );
 		$filename = strtolower( $class ) . '.class.php';
 		// hack to remove namespace 
 		$file = __APP_PATH . '/lib/' . $filename;
@@ -86,17 +88,17 @@ try
 		include_once $file;
 	}
 
-	spl_autoload_register( __NAMESPACE__ . '\libLoader' );
-	spl_autoload_register( __NAMESPACE__ . '\modelLoader' );
-	spl_autoload_register( __NAMESPACE__ . '\controllerLoader' );
+	spl_autoload_register( 'libLoader' );
+	spl_autoload_register( 'modelLoader' );
+	spl_autoload_register( 'controllerLoader' );
 
-	$config = \web2bb\config::getInstance();
+	$config = config::getInstance();
         $lang = $config->config_values['application']['language'];
         $filename = strtolower($lang) . '.lang.php';
         $file = __APP_PATH . '/lang/' . $filename;
         include $file;
         // alias the lang class
-	class_alias(__NAMESPACE__ . '\\' . $lang, __NAMESPACE__ . '\lang');
+	// class_alias( $lang, '\lang');
 
 
 	// set the timezone

@@ -15,7 +15,7 @@
  *
  */
 
-namespace web2bb;
+// namespace web2bb;
 
 class breadcrumbs{
 

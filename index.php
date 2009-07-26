@@ -129,6 +129,7 @@ catch(web2bbException $e)
 	//show a 404 page here
 	echo 'FATAL:<br />';
 	echo $e->getMessage();
+	echo $e->getLine();
 }
 catch( Exception $e )
 {

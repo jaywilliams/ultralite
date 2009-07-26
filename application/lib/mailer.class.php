@@ -24,6 +24,8 @@
  *
  */
 
+namespace web2bb;
+
 class mailer{
 
 	/*

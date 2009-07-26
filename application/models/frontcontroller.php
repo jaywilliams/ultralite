@@ -119,7 +119,7 @@ class FrontController
 		else
 		{
 			$config = config::getInstance();
-			$default = $config->config_values['application']['default_controller'].'Controller';
+			$default = $config->config_values['application']['error_controller'].'Controller';
 			return $default;
 		}
 	}

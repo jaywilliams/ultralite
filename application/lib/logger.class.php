@@ -17,6 +17,9 @@
  * @see config.class.php
  *
  */
+
+namespace web2bb;
+
 class logger
 {
 

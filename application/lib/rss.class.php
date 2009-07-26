@@ -11,6 +11,9 @@
  * @license BSD
  *
  */
+
+namespace web2bb;
+
 class rss extends DomDocument
 {
 	/**

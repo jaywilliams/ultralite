@@ -8,6 +8,9 @@
 * @version:	$ID$
 (
 */
+
+namespace web2bb;
+
 class validation
 {
 	/**

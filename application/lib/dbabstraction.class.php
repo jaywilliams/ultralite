@@ -5,14 +5,14 @@
  *
  * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
  *
- * @version //autogentag//
  * @license new bsd http://www.opensource.org/licenses/bsd-license.php
  * @filesource
- * @package Breadcrumbs
+ * @package Database
  * @Author Kevin Waterson
  *
  */
 
+namespace web2bb;
 
 class dbAbstraction{
 

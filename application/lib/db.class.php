@@ -13,6 +13,8 @@
  *
  */
 
+namespace web2bb;
+
 class db{
 
 	/**

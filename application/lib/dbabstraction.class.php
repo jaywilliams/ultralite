@@ -1,4 +1,18 @@
 <?php
+/**
+ *
+ * @Lite weight Database abstraction layer
+ *
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @version //autogentag//
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @filesource
+ * @package Breadcrumbs
+ * @Author Kevin Waterson
+ *
+ */
+
 
 class dbAbstraction{
 
@@ -63,7 +77,7 @@ class dbAbstraction{
 	{
 		try
 		{
-			/*** get the primary key name ***/
+			// get the primary key name
 			$pk = $this->getPrimaryKey($table);
 			$sql = "DELETE FROM $table WHERE $pk=:$pk";
 			$db = db::getInstance();
@@ -109,13 +123,13 @@ class dbAbstraction{
 			}
 			$stmt = $db->prepare($sql);
 
-			/*** bind the params ***/
+			// bind the params
 			foreach($values as $k=>$v)
 			{
 				$stmt->bindParam(':'.$k, $v);
 			}
 			$stmt->execute($values);
-			/*** return the last insert id ***/
+			// return the last insert id
 			return $db->lastInsertId();
 		}
 		catch(Exception $e)
@@ -140,13 +154,12 @@ class dbAbstraction{
 		$values = is_null($values) ? $this->values : $values;
 		try
 		{
-			/*** get the primary key ***/
+			// get the primary key/
 			$pk = $this->getPrimaryKey($table);
 	
-			/*** set the primary key in the values array ***/
+			// set the primary key in the values array
 			$values[$pk] = $id;
 
-			/*** create a caching iterator ***/
 			$obj = new CachingIterator(new ArrayIterator($values));
 
 			$db = db::getInstance();
@@ -160,16 +173,16 @@ class dbAbstraction{
 			$sql .= " WHERE $pk=$id";
 			$stmt = $db->prepare($sql);
 
-			/*** bind the params ***/
+			// bind the params
 			foreach($values as $k=>$v)
 			{
 				$stmt->bindParam(':'.$k, $v);
 			}
-			/*** bind the primary key and the id ***/
+			// bind the primary key and the id
 			$stmt->bindParam($pk, $id);
 			$stmt->execute($values);
 
-			/*** return the affected rows ***/
+			// return the affected rows
 			return $stmt->rowCount();
 		}
 		catch(Exception $e)
@@ -193,7 +206,7 @@ class dbAbstraction{
 	{
 		try
 		{
-			/*** get the db name from the config.ini file ***/
+			// get the db name from the config.ini file
 			$config = configuration::getInstance();
 			$db_name = $config->config_values['database']['db_name']; 
 
@@ -317,6 +330,6 @@ class dbAbstraction{
 	{
 		$this->sql .= " ORDER BY $fieldname $order";
 	}
-} /*** end of class ***/
+} // end of class
 
 ?>

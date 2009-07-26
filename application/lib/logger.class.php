@@ -59,9 +59,9 @@ class logger
 			switch( $config->config_values['logging']['log_handler'] )
 			{
 				case 'file':
-				/*** set the log date/time ***/
+				// set the log date/time
 				$line['log_time'] = date( DATE_ISO8601 );
-				/*** encode the line ***/
+				// encode the line
 				$json = json_encode( $line )."\n";
 
 				if ($handle = fopen( $config->config_values['logging']['log_file'], "a+") )
@@ -86,6 +86,7 @@ class logger
 	}
 
 	/**
+	 *
 	 * Clone is set to private to stop cloning
 	 *
 	 */
@@ -93,6 +94,6 @@ class logger
 	{
 	}
 	
-} /*** end of log class ***/
+} // end of log class
 
 ?>

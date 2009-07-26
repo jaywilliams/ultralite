@@ -1,143 +1,51 @@
-html {
-
-	height:100%; 
-	max-height:100%; 
-	padding:0; 
-	margin:0; 
-	border:0; 
-	background-color:#ffffff;
-	font-size:76%; 
-	font-family:georgia, palatino linotype, times new roman, serif;
-	/* hide overflow:hidden from IE5/Mac */ 
-	/* \*/ 
-	overflow: hidden; 
-	/* */ 
-	}
-body {
-	height:100%; 
-	max-height:100%; 
-	overflow:hidden; 
-	padding:0; 
-	margin:0; 
-	border:0;
-	background-color:#ffffff;
-	}
-
-
-#content {
-	width: 100%;
-	display:block; 
-	overflow:auto; 
-	position:absolute; 
-	z-index:3; 
-	top:80px; 
-	bottom:82px; 
-	border-left:1px solid #000;
-	border-right:1px solid #000;
-	background-color:#fffff;
-	color: black;
-}
-
-
-
-* html #content {
-	top:0; 
-	bottom:0; 
-	height:100%;
-	border-top:154px solid #fff; 
-	border-bottom:50px solid #fff;
-	}
-
-
-#head {
-	position:absolute; 
-	width: 100%;
-	top:0; 
-	height:80px; 
-	background:#000; 
-	color: #fff;
-	z-index:5; 
-	border:1px solid #000;
-	}
-
-
-
-#foot {
-	width:100%;
-	text-align:center;
-	position:absolute; 
-	bottom:0; 
-	height:80px; 
-	background-color: black;
-	color: white;
-	z-index:5; 
-	border:1px solid #000;
-	font-weight:bold;
-	}
-
-
-
-#content p {
-	padding:5px;
-	text-align:justify;
-	color: black;
-}
-
-
-#TopLogo
+#container
 {
-	position:relative;
-	margin-top: 30px;
-	margin-bottom: 10px;
-	text-align:center;
-	width:100px;
+width: 90%;
+margin: 10px auto;
+background-color: #fff;
+color: #333;
+border: 1px solid gray;
+line-height: 130%;
 }
 
-img {
-	border:0;
+#top
+{
+padding: .5em;
+background-color: #ddd;
+border-bottom: 1px solid gray;
 }
 
-h1{
-	margin:0;
-	padding:1em;
-	font-weight:bold;
+#top h1
+{
+padding: 0;
+margin: 0;
 }
 
-h1 span{
-	font-size:.667em;
+#leftnav
+{
+float: left;
+width: 160px;
+margin: 0;
+padding: 1em;
 }
 
-p{
-	margin:0;
-	padding:.5em 1.5em;
-	color: white;
-	text-align:left
+#content
+{
+margin-left: 200px;
+border-left: 1px solid gray;
+padding: 1em;
+max-width: 36em;
 }
 
-
-#headline {
-	position:relative;
-	text-align:center;
-	font: bold 2.0em Arial, Verdana, Helvetica, sans-serif;
-	color:#FFFFFF;
-	margin-top: 10px;
-	margin-bottom: 8px;
+#footer
+{
+clear: both;
+margin: 0;
+padding: .5em;
+color: #333;
+background-color: #ddd;
+border-top: 1px solid gray;
 }
 
-
-#search{
-	float:right;
-}
-
-#login_form{
-position:absolute;
-right:12px;
-top:35px;
-	font-weight:bold;
-}
-
-#login_form a{
-	text-decoration:none;
-	color:white;
-}
-
+#leftnav p { margin: 0 0 1em 0; }
+#content h2 { margin: 0 0 .5em 0; }

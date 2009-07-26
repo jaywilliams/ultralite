@@ -1,4 +1,15 @@
 <?php
+/**
+ *
+ * @Simple exception class to log exceptions
+ *
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @package Error Handling
+ * @Author Kevin Waterson
+ *
+ */
 
 class web2bbException extends Exception
 {

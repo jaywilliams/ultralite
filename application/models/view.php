@@ -1,16 +1,14 @@
 <?php
-/** 
-
- * View Class
+/**
  *
- * A simple template class for separating layout and php logic.
- * It still uses PHP inside of the templates, but the actual
- * program logic remains outside of the template.
+ * @View Class
  *
- * @author Kevin Waterson <kevin@phpro.org>
- * @copyright2007 PHPRO 
- * @versionCVS: $Id:$
- * @sinceClass available since Release 0.0.1
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @package Core
+ * @Author Kevin Waterson
+ *
  */
 
 class View
@@ -221,7 +219,7 @@ class View
 		}
 		else
 		{
-			throw new Exception("The template directory '$dir' does not exist");
+			throw new web2bbException("The template directory '$dir' does not exist", 200);
 		}
 	}
 

@@ -1,4 +1,15 @@
 <?php
+/**
+ *
+ * @Singleton to create uri fragments
+ *
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @package Files
+ * @Author Kevin Waterson
+ *
+ */
 
 class uri 
 {

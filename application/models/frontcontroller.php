@@ -1,11 +1,22 @@
 <?php
 
+/**
+ *
+ * @Front Controller class
+ *
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @package Core
+ * @Author Kevin Waterson
+ *
+ */
 class FrontController
 {
 
 	protected $_controller, $_action, $_params, $_body, $_url;
 
-	static $_instance;
+	public static $_instance;
 
 	public static function getInstance()
 	{
@@ -53,8 +64,8 @@ class FrontController
  	 */
 	public function route()
 	{
-		/*** check fi the controller exists ***/
-		if(class_exists($this->getController()))
+		/*** check if the controller exists ***/
+		if( class_exists( $this->getController() ) )
 		{
 			/*** check if controller exists ***/
 			$rc = new ReflectionClass($this->getController());

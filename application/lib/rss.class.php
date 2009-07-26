@@ -33,22 +33,22 @@ class rss extends DomDocument
 	 */
 	public function __construct($title, $link, $description)
 	{
-		/*** call the parent constructor ***/
+		// call the parent constructor
 		parent::__construct();
 
-		/*** format the created XML ***/
+		// format the created XML
 		$this->formatOutput = true;
 
-		/*** craete the root element ***/
+		// craete the root element
 		$root = $this->appendChild($this->createElement('rss'));
 
-		/*** set to rss2 ***/
+		// set to rss2
 		$root->setAttribute('version', '2.0');
 
-		/*** set the channel node **/
+		// set the channel node
 		$this->channel = $root->appendChild($this->createElement('channel'));
 
-		/*** set the title link and description elements ***/
+		// set the title link and description elements 
 		$this->channel->appendChild($this->createElement('title', $title));
 		$this->channel->appendChild($this->createElement('link', $link));
 		$this->channel->appendChild($this->createElement('description', $description));
@@ -66,13 +66,13 @@ class rss extends DomDocument
 	 */
 	public function addItem($items)
 	{
-		/*** create an item ***/
+		// create an item
 		$item = $this->createElement('item');
 		foreach($items as $element=>$value)
 		{
 			switch($element)
 			{
-				/*** create sub elements here ***/
+				// create sub elements here
 				case 'image':
 				case 'skipHour':
 				case 'skipDay':
@@ -106,10 +106,10 @@ class rss extends DomDocument
 				break;
 			}
 		}
-		/*** append the item to the channel ***/
+		// append the item to the channel
 		$this->channel->appendChild($item);
 
-		/*** allow chaining ***/
+		// allow chaining 
 		return $this;
 	}
 

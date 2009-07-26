@@ -10,7 +10,7 @@ class config
 	/*
 	 * @var array $config_values; 
 	 */
-	public static $config_values = array();
+	public $config_values = array();
 
 	/*
 	* @var object $instance

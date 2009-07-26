@@ -1,8 +1,24 @@
 <?php
+/**
+ *
+ * @Singleton to create database connection
+ *
+ * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
+ *
+ * @version //autogentag//
+ * @license new bsd http://www.opensource.org/licenses/bsd-license.php
+ * @filesource
+ * @package Database
+ * @Author Kevin Waterson
+ *
+ */
 
 class db{
 
-	/*** Declare instance ***/
+	/**
+	 * Holds an insance of self
+	 * @var $instance
+	 */
 	private static $instance = NULL;
 
 	/**
@@ -11,8 +27,8 @@ class db{
 	* so nobody can create a new instance using new
 	*
 	*/
-	private function __construct() {
-	  /*** maybe set the db name here later ***/
+	private function __construct()
+	{
 	}
 
 	/**
@@ -29,13 +45,14 @@ class db{
 		if (!self::$instance)
 		{
 			$config = config::getInstance();
+			$db_type = $config->config_values['database']['db_type'];
 			$hostname = $config->config_values['database']['db_hostname'];
 			$dbname = $config->config_values['database']['db_name'];
 			$db_password = $config->config_values['database']['db_password'];
 			$db_username = $config->config_values['database']['db_username'];
 			$db_port = $config->config_values['database']['db_port'];
 
-			self::$instance = new PDO("mysql:host=$hostname;port=$db_port;dbname=$dbname", $db_username, $db_password);
+			self::$instance = new PDO("$db_type:host=$hostname;port=$db_port;dbname=$dbname", $db_username, $db_password);
 			self::$instance-> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 		return self::$instance;
@@ -52,4 +69,4 @@ class db{
 	{
 	}
 
-} /*** end of class ***/
+} // end of class

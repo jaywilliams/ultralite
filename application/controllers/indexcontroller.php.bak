@@ -1,0 +1,15 @@
+<?php
+
+class indexController implements IController {
+
+	public function index()
+	{
+		$view = new View();
+		$view->name = "Kevin";
+		$result = $view->render(__APP_PATH.'/views/index.php');
+
+		$fc = FrontController::getInstance();
+		$fc->setBody($result);
+	}
+
+}

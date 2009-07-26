@@ -9,7 +9,7 @@ display_errors = 1
 language = en
 
 [database]
-db_name = web2bb_lite
+db_name = web2bb
 db_hostname = localhost
 db_username = username
 db_password = password
@@ -28,3 +28,9 @@ x_mailer = "PHPRO.ORG Mail"
 smtp_server = "mail.phpro.org"
 smtp_port = 25
 smtp_timeout = 30
+
+[logging]
+log_level = 200
+log_handler = database
+log_file = /tmp/web2bb.log
+

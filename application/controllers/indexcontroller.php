@@ -7,6 +7,15 @@ class indexController implements IController {
 		/*** a new view instance ***/
 		$view = new view;
 
+		/*** a debug log entry ***/
+		logger::debugLog('this a debug message', 300, __FILE__, __LINE__ );
+
+		/*** this is an error log entry ***/
+		logger::errorLog('An error message', 200, __FILE__, __LINE__ );
+
+		/*** this is an audit log entry ***/
+		logger::auditLog('An audit log message', 100, __FILE__, __LINE__ ); 
+
 		/*** turn caching on for this page ***/
 		$view->setCaching(true);
 

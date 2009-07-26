@@ -28,7 +28,7 @@ class db{
 	{
 		if (!self::$instance)
 		{
-			$config = configuration::getInstance();
+			$config = config::getInstance();
 			$hostname = $config->config_values['database']['db_hostname'];
 			$dbname = $config->config_values['database']['db_name'];
 			$db_password = $config->config_values['database']['db_password'];

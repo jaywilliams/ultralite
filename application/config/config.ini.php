@@ -9,7 +9,7 @@ display_errors = 1
 language = en
 timezone = "America/Los_Angeles"
 site_name = WEB2BB
-version = 0.0.5
+version = 0.0.8
 
 [database]
 db_type = mysql

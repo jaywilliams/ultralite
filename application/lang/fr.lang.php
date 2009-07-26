@@ -15,7 +15,7 @@ class fr
 	const __ADMIN = 'Admin';
 	const __BLOG = 'Blog';
 	const __CATEGORY = 'Category';
-	const __CONTACT_US = 'Contactez-nous';
+	const __CONTACT = 'Contactez-nous';
 	const __DELETE = 'Delete';
 	const __DOCS = 'Docs';
 	const __EDIT = 'Edit';

@@ -14,3 +14,14 @@ $code='
 ';
 highlight_string($code);
 ?>
+
+<p>
+Each module may also have its own config.ini.php file. This file must located in application/&lt;module name&gt;/config/config.ini.php 
+</p>
+<p>
+When this file is in place, the config values are are added automatically to the config_values array and are available globally as seen above. Care should be taken by module creators not to over write config values in other modules.
+</p>
+
+<p>
+Of course, if you do not wish to have a seperate config file for each module, the values can simply be added to the main system config.ini.php file.
+</p>

@@ -14,7 +14,7 @@ class en
 	const __ADMIN = 'Admin';
 	const __BLOG = 'Blog';
 	const __CATEGORY = 'Category';
-	const __CONTACT_US = 'Contact Us';
+	const __CONTACT = 'Contact';
 	const __DELETE = 'Delete';
 	const __DOCS = 'Docs';
 	const __EDIT = 'Edit';

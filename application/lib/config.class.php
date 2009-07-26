@@ -46,7 +46,16 @@ class config
 	 */
 	private function __construct()
 	{
-		$this->config_values=parse_ini_file(__APP_PATH . self::$config_file, true);
+		$this->config_values = parse_ini_file(__APP_PATH . self::$config_file, true);
+
+		// check if there is a module config file
+		$uri = uri::getInstance();
+		$module_conf =  __APP_PATH . '/modules/' . $uri->fragment(0) . '/config/config.ini.php';
+		if( file_exists( $module_conf ) )
+		{
+			$module_array = parse_ini_file( $module_conf, true );
+			$this->config_values = array_merge( $this->config_values, $module_array );
+		}
 	}
 
 	/**

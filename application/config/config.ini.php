@@ -7,6 +7,7 @@ error_controller = error404
 error_reporting = E_ALL
 display_errors = 1
 language = en
+timezone = "America/Los_Angeles"
 
 [database]
 db_name = web2bb
@@ -31,6 +32,6 @@ smtp_timeout = 30
 
 [logging]
 log_level = 200
-log_handler = database
+log_handler = file
 log_file = /tmp/web2bb.log
 

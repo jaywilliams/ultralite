@@ -1,5 +1,6 @@
 <?php
 
+
 try
 {
 	/*** define the site path ***/
@@ -58,9 +59,27 @@ try
 	spl_autoload_register('controllerLoader');
 	spl_autoload_register('libLoader');
 
-	/*** set the error reporting ***/
+	/*** set config ***/
 	$config = config::getInstance();
-	error_reporting($config->config_values['application']['error_reporting']);
+
+	/*** set the timezone ***/
+	date_default_timezone_set($config->config_values['application']['timezone']);
+
+	/**
+	 *
+	 * @custom error function to throw exception
+	 *
+	 * @param int $errno The error number
+	 *
+	 * @param string $errmsg The error message
+	 *
+	 */
+	function web2bbErrorHandler($errno, $errmsg)
+	{
+		throw new web2bbException($errmsg, $errno);
+	}
+	/*** set error handler level to E_WARNING ***/
+	set_error_handler('web2bbErrorHandler', $config->config_values['application']['error_reporting']);
 
 	//Initialize the FrontController
 	$front = FrontController::getInstance();
@@ -68,7 +87,7 @@ try
 
 	echo $front->getBody();
 }
-catch(Exception $e)
+catch(web2bbException $e)
 {
-	echo $e->getMessage();
+	echo 'FATAL:<br />';
 }

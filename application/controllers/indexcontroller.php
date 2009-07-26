@@ -4,17 +4,27 @@ class indexController implements IController {
 
 	public function index()
 	{
+		try
+		{
+			fopen('foo');
+			throw new web2bbException( 'test error', 200 );
+		}
+		catch( web2bbException $e)
+		{
+			echo 'howdy kev';
+		}
+		
 		/*** a new view instance ***/
 		$view = new view;
 
 		/*** a debug log entry ***/
-		logger::debugLog('this a debug message', 300, __FILE__, __LINE__ );
+		//logger::debugLog('this a debug message', 300, __FILE__, __LINE__ );
 
 		/*** this is an error log entry ***/
-		logger::errorLog('An error message', 200, __FILE__, __LINE__ );
+		// logger::errorLog('An error message', 200, __FILE__, __LINE__ );
 
 		/*** this is an audit log entry ***/
-		logger::auditLog('An audit log message', 100, __FILE__, __LINE__ ); 
+		// logger::auditLog('An audit log message', 100, __FILE__, __LINE__ ); 
 
 		/*** turn caching on for this page ***/
 		$view->setCaching(true);

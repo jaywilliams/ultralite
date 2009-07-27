@@ -20,7 +20,7 @@
 
 // namespace web2bb;
 
-class logger
+class Web2BB_Logger
 {
 
 	/**

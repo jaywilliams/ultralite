@@ -11,7 +11,7 @@
 
 // namespace web2bb;
 
-class validation
+class Web2BB_Validation
 {
 	/**
 	* @var		$errors	The array of errors

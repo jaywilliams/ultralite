@@ -26,7 +26,7 @@
 
 // namespace web2bb;
 
-class mailer{
+class Web2BB_Mailer{
 
 	/*
 	 * The stmp stream

@@ -17,7 +17,7 @@
 
 // namespace web2bb;
 
-class breadcrumbs{
+class Web2BB_Breadcrumbs{
 
 	/*
 	 * @string $breadcrumbs

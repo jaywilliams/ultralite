@@ -13,7 +13,7 @@
 
 // namespace web2bb;
 
-class web2bbException extends Exception
+class Web2BB_Exception extends Exception
 {
 	/**
 	*

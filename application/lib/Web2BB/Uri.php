@@ -13,7 +13,7 @@
 
 // namespace web2bb;
 
-class uri 
+class Web2BB_Uri 
 {
 	/*
 	 * @var array $fragments

@@ -16,7 +16,7 @@ session_start();
 try
 {
 	// define the site path
-	$site_path = rtrim(realpath(dirname(__FILE__)),'/');
+	$site_path = rtrim(str_replace( '\\', '/', realpath(dirname(__FILE__))),'/');
 	define ('__SITE_PATH', $site_path);
 
 	// the application directory path 
@@ -26,7 +26,7 @@ try
 	set_include_path( __APP_PATH );
 	set_include_path( __SITE_PATH );
 
-	define ('__DOC_ROOT',rtrim($_SERVER['DOCUMENT_ROOT'],'/'));
+	define ('__DOC_ROOT',rtrim(str_replace( '\\', '/',$_SERVER['DOCUMENT_ROOT']),'/'));
 
 	// set the public web root path
 	$path = '/'.trim(str_replace(__DOC_ROOT, '', __SITE_PATH),'/');

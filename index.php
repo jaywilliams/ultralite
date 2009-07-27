@@ -26,10 +26,10 @@ try
 	set_include_path( __APP_PATH );
 	set_include_path( __SITE_PATH );
 
-	define ('__DOC_ROOT',$_SERVER['DOCUMENT_ROOT']);
+	define ('__DOC_ROOT',rtrim($_SERVER['DOCUMENT_ROOT'],'/').'/');
 
 	// set the public web root path
-	$path = str_replace(__DOC_ROOT, '', __SITE_PATH);
+	$path = '/'.trim(str_replace(__DOC_ROOT, '', __SITE_PATH),'/');
 	define('__PUBLIC_PATH', $path);
 
 	spl_autoload_register(null, false);

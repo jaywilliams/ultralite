@@ -115,7 +115,7 @@ try
 	 */
 	function web2bbErrorHandler($errno, $errmsg)
 	{
-		throw new web2bbException($errmsg, $errno);
+		throw new Web2BB_Exception($errmsg, $errno);
 	}
 	/*** set error handler level to E_WARNING ***/
 	// set_error_handler('web2bbErrorHandler', $config->config_values['application']['error_reporting']);
@@ -126,7 +126,7 @@ try
 
 	echo $front->getBody();
 }
-catch(web2bbException $e)
+catch(Web2BB_Exception $e)
 {
 	//show a 404 page here
 	echo 'FATAL:<br />';

@@ -11,10 +11,10 @@ class baseController
 		$this->view = new view;
 
 		/*** create the bread crumbs ***/
-		$bc = new breadcrumbs;
+		$bc = new Web2BB_Breadcrumbs;
 		// $bc->setPointer('->');
 		$bc->crumbs();
-		$this->view->breadcrumbs = $bc->breadcrumbs;
+		$this->view->Web2BB_Breadcrumbs = $bc->Web2BB_Breadcrumbs;
 
 	}
 

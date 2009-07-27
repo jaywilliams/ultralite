@@ -25,7 +25,7 @@ class Web2BB_Exception extends Exception
 	public function __construct($message, $code)
 	{
 		parent::__construct($message, $code);
-		logger::exceptionLog( $this->getMessage(), $this->getCode(), $this->getFile(), $this->getLine() );
+		Web2BB_Logger::exceptionLog( $this->getMessage(), $this->getCode(), $this->getFile(), $this->getLine() );
 	}
 }
 

@@ -35,7 +35,7 @@ Future Tasks:
 /**
  * Enable this when developing/debugging 
  */
-error_reporting(E_ALL);
+error_reporting(E_ALL|E_STRICT);
 
 /**
  * Some included files may require that this be set to prevent them being run outside of Ultralite.
@@ -66,7 +66,7 @@ $config->total_pages = 0;
 $config->template   = "greyspace";
 
 // Default timezone
-$config->timezone = date_default_timezone_get();
+$config->timezone = @date_default_timezone_get();
 
 // Split up the configuration object by reference for easy access
 // $config     = & $config->site;

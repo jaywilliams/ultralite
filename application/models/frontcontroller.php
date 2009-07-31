@@ -9,6 +9,9 @@
  * @license new bsd http://www.opensource.org/licenses/bsd-license.php
  * @package Core
  * @Author Kevin Waterson
+ * @author Dennis Mooibroek
+ * 
+ * Modified the class to work with the Ultralite structure
  *
  */
 
@@ -83,8 +86,8 @@ class FrontController
 			else
 			{
 				// load the default action method
-				$config = config::getInstance();
-				$default = $config->config_values['application']['default_action'];
+				//$config = config::getInstance();
+				$default = Pixelpost_Config::current()->default_action;
 				$method = $rc->getMethod( $default );
 			}
 			$method->invoke( $controller );
@@ -118,8 +121,8 @@ class FrontController
 		}
 		else
 		{
-			$config = config::getInstance();
-			$default = $config->config_values['application']['error_controller'].'Controller';
+			//$config = config::getInstance();
+			$default = Pixelpost_Config::current()->error_controller.'Controller';
 			return $default;
 		}
 	}

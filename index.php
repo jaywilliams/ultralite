@@ -20,6 +20,7 @@ try
 
 	// the application directory path
 	define('__APP_PATH', __SITE_PATH . '/application');
+	define('__THEME_PATH', __SITE_PATH . '/content/themes');
 
 	// the classes directory path
 	define('__CLASS_PATH', __APP_PATH . '/classes');
@@ -71,7 +72,7 @@ try
 	
 		echo $front->getBody();
 }
-catch (Web2BB_Exception$e)
+catch (Web2BB_Exception $e)
 {
 	//show a 404 page here
 	echo 'FATAL:<br />';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File containing the index controller
  *
@@ -19,6 +20,8 @@ class indexController extends baseController implements IController
 
 	public function index()
 	{
+
+		$current_time = Pixelpost_Config::current()->current_time;
 		/*** a new view instance ***/
 		$tpl = new view;
 
@@ -29,7 +32,7 @@ class indexController extends baseController implements IController
 		$tpl->setTemplateDir(__APP_PATH . '/modules/index/views');
 
 		/*** the include template ***/
-		$tpl->include_tpl = __APP_PATH . '/views/index/index.phtml';
+		//$tpl->include_tpl = __APP_PATH . '/views/index/index.phtml';
 
 		/*** a view variable ***/
 		$this->view->title = 'WEB2BB - Development Made Easy';
@@ -37,20 +40,88 @@ class indexController extends baseController implements IController
 
 		// a new config
 		//$config = config::getInstance();
-		$this->view->version = 'test';
+		//$this->view->version = 'test';
 
 		/*** the cache id is based on the file name ***/
-		$cache_id = md5( 'admin/index.phtml' );
+		$cache_id = md5('admin/index.phtml');
+
+		$post = new stdClass;
+		// Clean the image id number. Set to int 0 if invalid OR empty.
+		$post->id = (isset($_GET['id']) && (int)$_GET['id'] > 0) ? (int)$_GET['id'] : 0;
+
+
+		if ($post->id > 0)
+		{
+			$sql = "SELECT * FROM `pixelpost` WHERE `id` = '$post->id' AND `published` <= '{$current_time}' LIMIT 0,1";
+		}
+		else
+		{
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$current_time}' ORDER BY `published` ASC LIMIT 0,1";
+		}
+
+		// Grab the data object from the DB. Returns null on failure.
+		$post = Pixelpost_DB::get_row($sql);
+
+		// Only load the template if the query was successful.
+		// We can display a nice error or splash screen otherwise...
+		if (!is_object($post))
+		{
+			// Error? Splash Screen?
+			die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
+		}
+
+		// Set the variables
+		$image_info = getimagesize('content/images/' . $post->filename);
+
+		$post->width = $image_info[0];
+		$post->height = $image_info[1];
+		$post->dimensions = $image_info[3];
+
+		$this->view->post = $post;
+
+
+		// Retrieve the Next image information:
+		$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '$post->published') and (`published` <= '{$current_time}') ORDER BY `published` ASC LIMIT 0,1";
+
+		$next_image = Pixelpost_DB::get_row($sql);
+		if (!is_object($next_image))
+		{
+			// Lets wrap around to the first image.
+
+			// Retrieve the First image information:
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$current_time}' ORDER BY `published` ASC LIMIT 0,1";
+			$next_image = Pixelpost_DB::get_row($sql);
+			$this->view->post->next_image = $next_image;
+		}
+
+
+		// Retrieve the Prev image information:
+		$sql = "SELECT * FROM `pixelpost` WHERE (`published` < '$post->published') and (`published` <= '{$current_time}') ORDER BY `published` DESC LIMIT 0,1";
+
+		$previous_image = Pixelpost_DB::get_row($sql);
+		if (!is_object($previous_image))
+		{
+			// Lets wrap around to the last image.
+
+			// Retrieve the Last image information:
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$current_time}' ORDER BY `published` DESC LIMIT 0,1";
+			$previous_image = Pixelpost_DB::get_row($sql);
+			$this->view->post->previous_image = $previous_image;
+		}
+
+		$this->view->name = Pixelpost_Config::current()->name;
+		$this->view->description = Pixelpost_Config::current()->description;
+
 
 		/*** fetch the template ***/
-		$this->content = $tpl->fetch( 'index.phtml', $cache_id);
+		$this->content = $tpl->fetch('index.phtml', $cache_id);
 	}
 
 	public function test()
 	{
 		$view = new view;
 		$view->text = 'this is a test';
-		$result = $view->fetch( __APP_PATH.'/views/index.php' );
+		$result = $view->fetch(__APP_PATH . '/views/index.php');
 		$fc = FrontController::getInstance();
 		$fc->setBody($result);
 	}

@@ -23,7 +23,8 @@ class baseController
 		if( !is_null( $this->content ) )
 		{
 			$this->view->content = $this->content;
-			$result = $this->view->fetch( __APP_PATH.'/layouts/index.phtml' );
+			$template = Pixelpost_Config::current()->template;
+			$result = $this->view->fetch( __THEME_PATH.'/'.$template.'/index.phtml' );
 			$fc = FrontController::getInstance();
 			$fc->setBody($result);
 		}

@@ -33,7 +33,7 @@ class indexController extends baseController implements IController
 		$tpl->setTemplateDir( __THEME_PATH.'/'.$template);
 
 		/*** the include template ***/
-		$tpl->include_tpl =  __THEME_PATH.'/'.$template.'/views/index.phtml';
+		$tpl->include_tpl = __APP_PATH . '/views/index/index.phtml';
 
 		/*** a view variable ***/
 		$this->view->title = 'WEB2BB - Development Made Easy';
@@ -118,6 +118,7 @@ class indexController extends baseController implements IController
 
 
 		/*** fetch the template ***/
+		//$this->content = $tpl->fetch('views/index.phtml', $cache_id);
 		$this->content = $tpl->fetch('views/index.phtml', $cache_id);
 	}
 

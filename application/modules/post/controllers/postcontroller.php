@@ -25,27 +25,20 @@ class postController extends baseController implements IController
 		$template = Pixelpost_Config::current()->template;
 		/*** a new view instance ***/
 		$tpl = new view;
-
-		/*** turn caching on for this page ***/
-		// $view->setCaching(true);
-
-		/*** set the template dir ***/
-		$tpl->setTemplateDir( __THEME_PATH.'/'.$template);
-
+		if (file_exists(__THEME_PATH.'/'.$template.'/views/post.phtml'))
+		{
+			$tpl->setTemplateDir( __THEME_PATH.'/'.$template);
+			$this->content = $tpl->fetch('views/post.phtml', $cache_id);
+		}
+		else
+		{
+			$tpl->setTemplateDir(__APP_PATH . '/modules/index/views');
+			$this->content = $tpl->fetch('index.phtml', $cache_id);
+		}
+		
+		//  I'm still figuring out what this does????
 		/*** the include template ***/
 		$tpl->include_tpl = __APP_PATH . '/views/post/index.phtml';
 
-		/*** fetch the template ***/
-		//$this->content = $tpl->fetch('views/index.phtml', $cache_id);
-		$this->content = $tpl->fetch('views/post.phtml', $cache_id);
-	}
-
-	public function test()
-	{
-		$view = new view;
-		$view->text = 'this is a test';
-		$result = $view->fetch(__APP_PATH . '/views/index.php');
-		$fc = FrontController::getInstance();
-		$fc->setBody($result);
 	}
 }

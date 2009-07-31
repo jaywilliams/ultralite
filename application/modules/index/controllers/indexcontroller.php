@@ -36,8 +36,8 @@ class indexController extends baseController implements IController
 		$this->view->heading = 'WEB2BB';
 
 		// a new config
-		$config = config::getInstance();
-		$this->view->version = $config->config_values['application']['version'];
+		//$config = config::getInstance();
+		$this->view->version = 'test';
 
 		/*** the cache id is based on the file name ***/
 		$cache_id = md5( 'admin/index.phtml' );

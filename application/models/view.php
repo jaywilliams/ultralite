@@ -242,13 +242,13 @@ class View
 	{
 		if( is_null( $cacheDir ) )
 		{
-			$config = config::getInstance();
-			$cacheDir = $config->config_values['template']['cache_dir'];
+			//$config = config::getInstance();
+			$cacheDir =Pixelpost_Config::current()->cache_dir;
 		}
 	
 		if (is_dir($cacheDir) && is_writable($cacheDir))
 		{
-			$config = config::getInstance();
+			//$config = config::getInstance();
 			$this->cache_dir = $cacheDir;
 		}
 		else

@@ -38,7 +38,7 @@ class Web2BB_Uri
 	{
  		if(is_null(self::$instance))
  		{
- 			self::$instance = new uri;
+ 			self::$instance = new Web2BB_uri;
  		}
 		return self::$instance;
 	}

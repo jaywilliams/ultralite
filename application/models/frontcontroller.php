@@ -34,7 +34,7 @@ class FrontController
 	private function __construct()
 	{
 		// set the controller
-		$this->_uri = uri::getInstance();
+		$this->_uri = Web2BB_uri::getInstance();
 		if($this->_uri->fragment(0))
 		{
 			$this->_controller = $this->_uri->fragment(0).'Controller';
@@ -42,8 +42,8 @@ class FrontController
 		else
 		{
 			// get the default controller
-			$config = config::getInstance();
-			$default = $config->config_values['application']['default_controller'].'Controller';
+			//$config = config::getInstance();
+			$default = Pixelpost_Config::current()->default_controller.'Controller';
 			$this->_controller = $default;
 		}
 

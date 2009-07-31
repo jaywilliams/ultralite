@@ -32,9 +32,6 @@ class indexController extends baseController implements IController
 		/*** set the template dir ***/
 		$tpl->setTemplateDir( __THEME_PATH.'/'.$template);
 
-		/*** the include template ***/
-		$tpl->include_tpl = __APP_PATH . '/views/index/index.phtml';
-
 		/*** a view variable ***/
 		$this->view->title = 'WEB2BB - Development Made Easy';
 		$this->view->heading = 'WEB2BB';
@@ -68,7 +65,7 @@ class indexController extends baseController implements IController
 		if (!is_object($post))
 		{
 			// Error? Splash Screen?
-			die("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
+			throw new Exception("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
 		}
 
 		// Set the variables

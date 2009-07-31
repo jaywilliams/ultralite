@@ -20,8 +20,6 @@ class postController extends baseController implements IController
 
 	public function index()
 	{
-
-		$current_time = Pixelpost_Config::current()->current_time;
 		$template = Pixelpost_Config::current()->template;
 		/*** a new view instance ***/
 		$tpl = new view;
@@ -35,10 +33,5 @@ class postController extends baseController implements IController
 			$tpl->setTemplateDir(__APP_PATH . '/modules/index/views');
 			$this->content = $tpl->fetch('index.phtml', $cache_id);
 		}
-		
-		//  I'm still figuring out what this does????
-		/*** the include template ***/
-		$tpl->include_tpl = __APP_PATH . '/views/post/index.phtml';
-
 	}
 }

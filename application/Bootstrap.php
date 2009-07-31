@@ -94,7 +94,7 @@ try
 	$config->total_pages = 0;
 
 	// Default (fallback) Template
-	$config->template = "greyspace_web2bb";
+	$config->template = "grayspace_neue";
 
 	/**
 	 * With the config in place we can get the db connection

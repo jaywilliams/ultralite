@@ -221,7 +221,7 @@ class View
 		}
 		else
 		{
-			throw new Web2BB_Exception("The template directory '$dir' does not exist", 200);
+			throw new Exception("The template directory '$dir' does not exist", 200);
 		}
 	}
 

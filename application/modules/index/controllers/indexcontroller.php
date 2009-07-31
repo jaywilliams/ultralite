@@ -22,6 +22,7 @@ class indexController extends baseController implements IController
 	{
 
 		$current_time = Pixelpost_Config::current()->current_time;
+		$template = Pixelpost_Config::current()->template;
 		/*** a new view instance ***/
 		$tpl = new view;
 
@@ -29,10 +30,10 @@ class indexController extends baseController implements IController
 		// $view->setCaching(true);
 
 		/*** set the template dir ***/
-		$tpl->setTemplateDir(__APP_PATH . '/modules/index/views');
+		$tpl->setTemplateDir( __THEME_PATH.'/'.$template);
 
 		/*** the include template ***/
-		//$tpl->include_tpl = __APP_PATH . '/views/index/index.phtml';
+		$tpl->include_tpl =  __THEME_PATH.'/'.$template.'/views/index.phtml';
 
 		/*** a view variable ***/
 		$this->view->title = 'WEB2BB - Development Made Easy';
@@ -111,10 +112,13 @@ class indexController extends baseController implements IController
 
 		$this->view->name = Pixelpost_Config::current()->name;
 		$this->view->description = Pixelpost_Config::current()->description;
+		$this->view->url = Pixelpost_Config::current()->url;
+		$this->view->locale = Pixelpost_Config::current()->locale;
+		
 
 
 		/*** fetch the template ***/
-		$this->content = $tpl->fetch('index.phtml', $cache_id);
+		$this->content = $tpl->fetch('views/index.phtml', $cache_id);
 	}
 
 	public function test()

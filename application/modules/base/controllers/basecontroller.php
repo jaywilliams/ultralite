@@ -24,7 +24,7 @@ class baseController
 		{
 			$this->view->content = $this->content;
 			$template = Pixelpost_Config::current()->template;
-			$result = $this->view->fetch( __THEME_PATH.'/'.$template.'/index.phtml' );
+			$result = $this->view->fetch( __THEME_PATH.'/'.$template.'/layout.phtml' );
 			$fc = FrontController::getInstance();
 			$fc->setBody($result);
 		}

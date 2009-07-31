@@ -64,10 +64,9 @@ return array (
   'comments_per_page' => 25,
   'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',
   'my-bool' => false,
-  'mytest' => 'Ovver',
-  'default_controller' = 'index',
-  'default_action' = 'index',
-  'error_controller' = 'error404',
+  'default_controller' => 'index',
+  'default_action' => 'index',
+  'error_controller' => 'error404',
 )
 
 ?>

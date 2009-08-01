@@ -15,13 +15,13 @@
 			width: <?php echo $post->width; ?>px;
 		}
 	</style>
-	<?php //$plugins->do_action('theme_head');  ?>
+	<?php $plugins->do_action('theme_head');  ?>
 </head>
 
 <body>
 
 <?php echo $content ?>
 
-<?php //$plugins->do_action('theme_body'); ?>
+<?php $plugins->do_action('theme_body'); ?>
 </body>
 </html>

@@ -1,6 +1,15 @@
 <?php
-
 header('Content-Type: text/html; charset=utf-8');
+
+/**
+ * Bootstrap.php is the file that takes care of the bootstrapping.
+ * Bootstrapping means that every server request are funneled through 
+ * a single (or a few) PHP file(s). This file will be the “bootstrapper” 
+ * of our application. It will help instantiate objects that are needed 
+ * by every page in general such as starting a session, connecting to a 
+ * database, defining constants and default variables, etc.
+ * 
+ **/
 
 try
 {
@@ -72,12 +81,19 @@ try
 	//var_dump(Pixelpost_Config::current()->database['host']);
 
 	/**
-	 * Get the language file
+	 * Initialise some default settings
 	 */
+	// Default Page Settings
+	$config->pagination = 0;
+	$config->total_pages = 0;
 
-	$lang = Pixelpost_Config::current()->locale;
-	$filename = $lang . '.lang.php';
-	$file = __APP_PATH . '/languages/' . $filename;
+	// Default (fallback) Template
+	$config->template = "grayspace_neue";
+	
+	/**
+	 * Get the language file (we really need to find another approach)
+	 */
+	$file = __APP_PATH . '/languages/' . Pixelpost_Config::current()->locale . '.lang.php';
 	include $file;
 	// alias the lang class (e.g. make the en_US class available as lang)
 	//class_alias( $lang, '\lang');
@@ -88,13 +104,6 @@ try
 
 	// Detects if mod_rewrite mode should be enabled
 	$config->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
-
-	// Default Page Settings
-	$config->pagination = 0;
-	$config->total_pages = 0;
-
-	// Default (fallback) Template
-	$config->template = "grayspace_neue";
 
 	/**
 	 * With the config in place we can get the db connection
@@ -120,6 +129,17 @@ try
 			Pixelpost_DB::connect($config->database['username'], $config->database['password'], $config->database['database'], $config->database['host']);
 			break;
 	}
+	
+	/**
+	 * Get the plugins in gear
+	 */
+	
+	$plugins = new Pixelpost_Plugin();
+	// Load list of plugins from config:
+	$plugins->plugins = & $config->plugins;
+	$plugins->get();
+	$plugins->do_action('global_pre');
+	
 	/**
 	 * Everything is in place now.
 	 */

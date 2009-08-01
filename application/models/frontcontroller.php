@@ -37,7 +37,7 @@ class FrontController
 	private function __construct()
 	{
 		// set the controller
-		$this->_uri = Web2BB_uri::getInstance();
+		$this->_uri = Web2BB_Uri::getInstance();
 		if($this->_uri->fragment(0))
 		{
 			$this->_controller = $this->_uri->fragment(0).'Controller';

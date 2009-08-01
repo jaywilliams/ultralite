@@ -30,7 +30,7 @@ class postController extends baseController implements IController
 
 		$post = new stdClass;
 		// Clean the image id number. Set to int 0 if invalid OR empty.
-		$this->_uri = Web2BB_uri::getInstance();
+		$this->_uri = Web2BB_Uri::getInstance();
 		
 		$id = $this->_uri->fragment(1);
 		

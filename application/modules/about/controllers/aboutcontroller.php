@@ -24,7 +24,7 @@ class aboutController extends baseController implements IController
 		 * Do the template stuff here
 		 */
 		$template = Pixelpost_Config::current()->template;
-		$this->_uri = Web2BB_uri::getInstance();
+		$this->_uri = Web2BB_Uri::getInstance();
 		$this->view->config = Pixelpost_Config::current();
 	
 		/**

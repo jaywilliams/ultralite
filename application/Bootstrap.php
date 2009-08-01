@@ -76,7 +76,7 @@ try
 	 */
 
 	$lang = Pixelpost_Config::current()->locale;
-	$filename = strtolower($lang) . '.lang.php';
+	$filename = $lang . '.lang.php';
 	$file = __APP_PATH . '/languages/' . $filename;
 	include $file;
 	// alias the lang class (e.g. make the en_US class available as lang)

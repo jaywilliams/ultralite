@@ -1,1 +1,26 @@
-<h1>I'm the post file</h1>
+<div id="wrapper">
+
+	<div class="top section">
+		<span class="published"><?php eprint($post->published); ?></span>
+		<div class="nav"><a href="./" class="active">Home</a> <a href="archive">Archive</a> <a href="about">About</a></div>
+		<h1 class="title"><?php eprint($post->title); ?></h1>
+		<br class="clear"/>
+	</div>
+
+	
+	<div class="middle section">
+		<a href="post/<?php echo $next_image->id; ?>"><img src="content/images/<?php eprint($post->filename); ?>" alt="<?php eprint($post->title); ?>" <?php echo $post->dimensions; ?> id="photo" /></a>
+		<div class="site section">
+			<h2 class="name"><a href="./" title="View Latest Photo"><?php eprint($config->name); ?></a></h2>
+			<em class="tagline"><?php eprint($config->description); ?></em>
+		</div>
+	</div>
+
+
+	<div class="bottom section">
+		<div id="description">
+			<p><?php eprint($post->description); ?></p>
+		</div>
+	</div>
+
+</div>

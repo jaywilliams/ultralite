@@ -136,6 +136,8 @@ class View
 	 * @param string $template_file Filename (with path) to the template you want to fetch
 	 *
 	 * @param string $id The cache identification number/string of the template you want to fetch
+	 * 
+	 * @param array $view The view variable containing the needed information for showing the contents
 	 *
 	 * @access private
 	 *
@@ -186,7 +188,7 @@ class View
 	{
 		/*** extract all the variables ***/
 		extract($this->variables);
-	
+		
 		if (file_exists($template_file))
 		{
 			ob_start();

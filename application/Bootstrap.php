@@ -88,7 +88,7 @@ try
 	$config->total_pages = 0;
 
 	// Default (fallback) Template
-	$config->template = "grayspace_neue";
+	$config->template = "greyspace_neue";
 	
 	/**
 	 * Get the language file (we really need to find another approach)

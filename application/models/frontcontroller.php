@@ -46,7 +46,7 @@ class FrontController
 		{
 			// get the default controller
 			//$config = config::getInstance();
-			$default = Pixelpost_Config::current()->default_controller.'Controller';
+			$default = Pixelpost_Config::getInstance()->default_controller.'Controller';
 			$this->_controller = $default;
 		}
 
@@ -87,7 +87,7 @@ class FrontController
 			{
 				// load the default action method
 				//$config = config::getInstance();
-				$default = Pixelpost_Config::current()->default_action;
+				$default = Pixelpost_Config::getInstance()->default_action;
 				$method = $rc->getMethod( $default );
 			}
 			$method->invoke( $controller );
@@ -122,7 +122,7 @@ class FrontController
 		else
 		{
 			//$config = config::getInstance();
-			$default = Pixelpost_Config::current()->error_controller.'Controller';
+			$default = Pixelpost_Config::getInstance()->error_controller.'Controller';
 			return $default;
 		}
 	}

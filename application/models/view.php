@@ -245,7 +245,7 @@ class View
 		if( is_null( $cacheDir ) )
 		{
 			//$config = config::getInstance();
-			$cacheDir =Pixelpost_Config::current()->cache_dir;
+			$cacheDir =Pixelpost_Config::getInstance()->cache_dir;
 		}
 	
 		if (is_dir($cacheDir) && is_writable($cacheDir))

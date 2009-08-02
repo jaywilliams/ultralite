@@ -77,8 +77,8 @@ try
 	/**
 	 * First we have to try to get the config variable
 	 */
-	$config = Pixelpost_Config::current();
-	//var_dump(Pixelpost_Config::current()->database['host']);
+	$config = Pixelpost_Config::getInstance();
+	//var_dump(Pixelpost_Config::getInstance()->database['host']);
 
 	/**
 	 * Initialise some default settings
@@ -93,7 +93,7 @@ try
 	/**
 	 * Get the language file (we really need to find another approach)
 	 */
-	$file = __APP_PATH . '/languages/' . Pixelpost_Config::current()->locale . '.lang.php';
+	$file = __APP_PATH . '/languages/' . Pixelpost_Config::getInstance()->locale . '.lang.php';
 	include $file;
 	// alias the lang class (e.g. make the en_US class available as lang)
 	//class_alias( $lang, '\lang');
@@ -118,7 +118,7 @@ try
 
 			// Make sure the file is writable, otherwise php will error out,
 			// and won't be able to add anyting to the database.
-			Pixelpost_DB::connect('sqlite:' . Pixelpost_Config::current()->database['sqlite']);
+			Pixelpost_DB::connect('sqlite:' . Pixelpost_Config::getInstance()->database['sqlite']);
 			break;
 
 		case 'mysql':

@@ -14,7 +14,7 @@ class baseController
 		 * initiate some standard variables for the view
  		 * $this->view-myVar can be accessed in the template as $myVar
 		 */
-	 	$config = Pixelpost_Config::current();
+	 	$config = Pixelpost_Config::getInstance();
 	 	$plugins = new Pixelpost_Plugin();
 	 	$this->_config = $config; // for use in the controllers
 		$this->_uri = Web2BB_Uri::getInstance();
@@ -35,7 +35,7 @@ class baseController
 		else
 		{
 			// get the default controller
-			$this->_controller = Pixelpost_Config::current()->default_controller;
+			$this->_controller = Pixelpost_Config::getInstance()->default_controller;
 		}
 		
 		// I'm not sure what we should do with this code. I left it for now
@@ -66,7 +66,7 @@ class baseController
 		if( !is_null( $this->content ) )
 		{
 			$this->view->content = $this->content;
-			$template = Pixelpost_Config::current()->template;
+			$template = Pixelpost_Config::getInstance()->template;
 			$result = $this->view->fetch( __THEME_PATH.'/'.$template.'/layout.phtml' );
 			$fc = FrontController::getInstance();
 			$fc->setBody($result);

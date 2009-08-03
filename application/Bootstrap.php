@@ -18,6 +18,10 @@ try
 
 	// Remove register globals, if applicable:
 	unregister_globals();
+	
+	// Remove magic_quotes, if applicable:
+	remove_magic_quotes();
+	
 
 	require_once 'Zend/Loader/Autoloader.php';
 	$autoloader = Zend_Loader_Autoloader::getInstance();

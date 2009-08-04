@@ -38,19 +38,39 @@ class FrontController
 	{
 		// set the controller
 		$this->_uri = Web2BB_Uri::getInstance();
-		if($this->_uri->fragment(0))
+		
+		
+		if ($this->_uri->fragment(0))
 		{
-			$this->_controller = $this->_uri->fragment(0).'Controller';
+			/**
+			 * If the URI fragment points to an non existent controller it will
+			 * try to switch to the page controller.
+			 */
+
+			if (file_exists(__APP_PATH . '/modules/' . $this->_uri->fragment(0) . '/controllers/' . $this->_uri->fragment(0) . 'controller.php'))
+			{
+				$this->_controller = $this->_uri->fragment(0).'Controller';
+			}
+			else
+			{
+				// we couldn't locate a controller so we switched to the page (if it exists)
+				if (file_exists(__APP_PATH . '/modules/' . Pixelpost_Config::getInstance()->page_controller . '/controllers/' . Pixelpost_Config::getInstance()->page_controller .'controller.php'))
+				{
+					$this->_controller = Pixelpost_Config::getInstance()->page_controller . 'Controller';
+				}
+				else
+				{
+					$this->_controller = Pixelpost_Config::getInstance()->error_controller.'Controller';
+				}
+				
+			}
 		}
 		else
 		{
 			// get the default controller
-			//$config = config::getInstance();
-			$default = Pixelpost_Config::getInstance()->default_controller.'Controller';
-			$this->_controller = $default;
+			$this->_controller = Pixelpost_Config::getInstance()->default_controller.'Controller';
 		}
-
-
+		
 		// the action
 		if($this->_uri->fragment(1))
 		{

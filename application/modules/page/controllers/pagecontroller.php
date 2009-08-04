@@ -1,6 +1,6 @@
 <?php
 /**
- * Controller for the about page
+ * Generic controller for the pages
  *
  * @package Pixelpost
  * @author Dennis Mooibroek 
@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class aboutController extends baseController implements IController
+class pageController extends baseController implements IController
 {
 
 	public function __construct()

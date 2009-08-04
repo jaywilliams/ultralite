@@ -12,7 +12,7 @@
 	<link rel="alternate stylesheet" href="content/themes/greyspace_neue/styles/light.css" type="text/css" charset="utf-8" title="Light" />
 	<style type="text/css">
 		.section{
-			width: <?php echo $post->width; ?>px;
+			width: <?php if(isset($post)){ echo $post->width;} ?>px;
 		}
 	</style>
 	<?php $plugins->do_action('theme_head');  ?>

@@ -81,5 +81,11 @@ class archiveController extends baseController implements IController
 		 */
 		
 		$this->view->archive = $archive;
+
+		/**
+		 * Inclusion of the actual template needed is handled in the destruct
+		 * function of the base controller.
+		 */
+
 	}
 }

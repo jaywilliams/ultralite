@@ -44,10 +44,10 @@ class baseController
 		
 		// I'm not sure what we should do with this code. I left it for now
 		/*** create the bread crumbs ***/
-		$bc = new Web2BB_Breadcrumbs;
+		// $bc = new Web2BB_Breadcrumbs;
 		// $bc->setPointer('->');
-		$bc->crumbs();
-		$this->view->Web2BB_Breadcrumbs = $bc->Web2BB_Breadcrumbs;
+		// $bc->crumbs();
+		// $this->view->Web2BB_Breadcrumbs = $bc->breadcrumbs;
 
 
 	}
@@ -55,17 +55,18 @@ class baseController
 	public function __destruct()
 	{
 		/**
-		 * Do the template stuff here
-		 * @todo Fix or Remove $cache_id, as that variable doesn't exist in this namespace
+		 * Load the view, either from the controller view, or from the template's view file
+		 * 
+		 * @todo Possibly setup a $cache_id for fetch()
 		 */
 		
 		if (file_exists(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml'))
 		{
-			$this->content = $this->view->fetch(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml', $cache_id);
+			$this->content = $this->view->fetch(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml');
 		}
 		else
 		{
-			$this->content = $this->view->fetch(__APP_PATH . '/modules/'.$this->_controller.'/views/index.phtml', $cache_id);
+			$this->content = $this->view->fetch(__APP_PATH . '/modules/'.$this->_controller.'/views/index.phtml');
 		}
 
 		if( !is_null( $this->content ) )

@@ -9,7 +9,7 @@
 Options FollowSymLinks -Indexes
  
 php_flag display_errors on
-php_value error_reporting 7
+# php_value error_reporting 7
  
 <IfModule mod_rewrite.c>
 # Enable mod_rewrite:

@@ -94,7 +94,7 @@ class feedController extends baseController implements IController
 		$this->feed['rss']['channel']['atom:link_attr'] = 
 			array(  
 				'href' => $this->_config->url.'feed',
-		        'rel' => 'self',
+		        'rel'  => 'self',
 		        'type' => 'application/rss+xml',
 			);
 		
@@ -118,11 +118,11 @@ class feedController extends baseController implements IController
 			 * Begin Media RSS Specific Tags
 			 * @todo Add Media RSS tags via a plugin
 			 */
-			$this->feed['rss']['channel']['item'][$id]['media:title'] = $this->feed['rss']['channel']['item'][$id]['title'];
-			$this->feed['rss']['channel']['item'][$id]['media:description'] = $this->feed['rss']['channel']['item'][$id]['description'];
+			$this->feed['rss']['channel']['item'][$id]['media:title']                    = $this->feed['rss']['channel']['item'][$id]['title'];
+			$this->feed['rss']['channel']['item'][$id]['media:description']              = $this->feed['rss']['channel']['item'][$id]['description'];
 			$this->feed['rss']['channel']['item'][$id]['media:description_attr']['type'] = 'html';
-			$this->feed['rss']['channel']['item'][$id]['media:content'] = array();
-			$this->feed['rss']['channel']['item'][$id]['media:content_attr'] = 
+			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
+			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
 				array(
 					'url' => "{$this->_config->url}content/images/$post->filename",
 					'fileSize' => filesize("content/images/$post->filename"),
@@ -130,11 +130,11 @@ class feedController extends baseController implements IController
 					'width' => $post->full_width,
 					'height' => $post->full_height,
 				);
-			$this->feed['rss']['channel']['item'][$id]['media:thumbnail'] = array();
+			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 
 				array(
-					'url' => "{$this->_config->url}content/images/thumb_$post->filename",
-					'width' => $post->thumb_width,
+					'url'    => "{$this->_config->url}content/images/thumb_$post->filename",
+					'width'  => $post->thumb_width,
 					'height' => $post->thumb_height,
 				);
 			/**
@@ -148,9 +148,9 @@ class feedController extends baseController implements IController
 		 */
 		$this->feed['rss_attr'] = 
 			array(
-				'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+				'xmlns:dc'   => 'http://purl.org/dc/elements/1.1/',
 				'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-				'version' => '2.0',
+				'version'    => '2.0',
 			  );
 		
 		/**

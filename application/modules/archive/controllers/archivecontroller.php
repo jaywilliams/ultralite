@@ -24,7 +24,7 @@ class archiveController extends baseController implements IController
 		 * Get all the variables from the database
 		 */
 		$archive = new stdClass;
-		$archive->title = 'The Past';
+		$this->view->title = 'The Past';
 
 		// If another controller has already created a query,
 		// run with that, rather than create our own:

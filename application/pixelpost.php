@@ -23,7 +23,7 @@ return array (
     'sqlite' => './application/pixelpost.sqlite3',
     'adapter' => 'sqlite',
   ),
-  'name' => 'My Ultralite Photoblog2',
+  'name' => 'My Ultralite Photoblog',
   'description' => 'Guess what, it\'s open source, and it\'s ultralite!',
   'url' => 'http://localhost/ultralite/',
   'email' => 'user@domain.com',

@@ -41,13 +41,13 @@ class feedController extends baseController implements IController
 			
 			$this->posts[$key]->width  = $image_info[0];
 			$this->posts[$key]->height = $image_info[1];
-			$this->posts[$key]->mime   = $image_info['mime'];
+			$this->posts[$key]->type   = $image_info['mime'];
 			
 			$image_info = getimagesize('content/images/thumb_' . $post->filename);
 			
 			$this->posts[$key]->thumb_width  = $image_info[0];
 			$this->posts[$key]->thumb_height = $image_info[1];
-			$this->posts[$key]->thumb_mime   = $image_info['mime'];
+			$this->posts[$key]->thumb_type   = $image_info['mime'];
 		}
 		
 		/**
@@ -123,11 +123,11 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
 			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
 				array(
-					'url' => "{$this->_config->url}content/images/$post->filename",
+					'url'      => "{$this->_config->url}content/images/$post->filename",
 					'fileSize' => filesize("content/images/$post->filename"),
-					'type' => $post->mime,
-					'width' => $post->width,
-					'height' => $post->height,
+					'type'     => $post->type,
+					'width'    => $post->width,
+					'height'   => $post->height,
 				);
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 

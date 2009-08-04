@@ -78,6 +78,9 @@ try
 	spl_autoload_register('modelLoader');
 	spl_autoload_register('controllerLoader');
 
+	// Initalize Uri Class
+	Web2BB_Uri::getInstance();
+
 	/**
 	 * First we have to try to get the config variable
 	 */

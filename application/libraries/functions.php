@@ -186,6 +186,51 @@ function escape($value='')
 	return htmlentities($value,ENT_QUOTES);
 }
 
+/**
+ * Clean Filename Path
+ * 
+ * Yes, it's overkill, but why not, it's fun!
+ * This function allows only the following characters to pass:
+ * 		A-Z a-z 0-9 - _ . /
+ * 
+ * It also goes into great detail to make sure that troublesome 
+ * slash and period characters are not abused by would-be hackers.
+ * So because of this, you can't read any file or folder that starts 
+ * or ends with a period, but then again, you shouldn't have public 
+ * files named like that in the first place, right?
+ *
+ * @param string $file 
+ * @return string $filename
+ */
+function clean_filename($filename='')
+{
+	$patern[] = '/[^\w\.\-\_\/]/';
+	$replacement[] = '';
+
+	$patern[] = '/\.+/';
+	$replacement[] = '.';
+
+	$patern[] = '/\/+/';
+	$replacement[] = '/';
+
+	$patern[] = '/(\/\.|\.\/)/';
+	$replacement[] = '/';
+
+	$patern[] = '/\.+/';
+	$replacement[] = '.';
+
+	$patern[] = '/\/+/';
+	$replacement[] = '/';
+	
+	$patern[] = '/(\/\.|\.\/)/';
+	$replacement[] = '/';
+
+	$filename = str_replace( '\\', '/', $filename);
+	$filename = preg_replace($patern,$replacement,$filename);
+	$filename = trim($filename,' ./\\');
+	
+	return $filename;
+}
 
 /*
 // Don't close the file, since it needs to be included.

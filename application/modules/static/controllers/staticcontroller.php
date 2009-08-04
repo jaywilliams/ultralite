@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class pageController extends baseController implements IController
+class staticController extends baseController implements IController
 {
 
 	public function __construct()

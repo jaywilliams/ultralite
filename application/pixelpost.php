@@ -67,7 +67,7 @@ return array (
   'default_controller' => 'post',
   'default_action' => 'index',
   'error_controller' => 'error404',
-  'page_controller' => 'page',
+  'page_controller' => 'static',
 )
 
 ?>

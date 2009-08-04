@@ -58,7 +58,7 @@ class Pixelpost_Feed
 			for ($i=1; $i < $level; $i++) { $indent .= self::$indent; }
 		
 		
-		foreach( $array as $tag => $value )
+		foreach( (array) $array as $tag => $value )
 		{
 			// Remove any non-safe XML characters from the tag
 			$tag = self::escape_key($tag);

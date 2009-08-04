@@ -24,5 +24,6 @@ class aboutController extends baseController implements IController
 		 * We don't need to do anything here, since we only have to include
 		 * a template file. Everything is taken care of by the basecontroller.
 		 */
+		$this->view->title = 'About';
 	}
 }

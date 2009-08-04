@@ -12,6 +12,11 @@
 header('Content-Type: text/html; charset=utf-8');
 define('ULTRALITE',true);
 
+/**
+ * When debugging, or developing, be sure this is enabled:
+ */
+error_reporting(E_ALL|E_STRICT);
+
 try
 {
 	// define the site path

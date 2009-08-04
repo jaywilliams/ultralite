@@ -25,7 +25,7 @@ class postController extends baseController implements IController
 		 * Get all the variables from the database
 		 */
 		/*** the cache id is based on the file name ***/
-		$cache_id = md5('admin/index.phtml');
+		// $cache_id = md5('admin/index.phtml');
 
 		$post = new stdClass;
 
@@ -92,6 +92,7 @@ class postController extends baseController implements IController
 		 * $this->view-myVar can be accessed in the template as $myVar
 		 */
 		
+		$this->view->title = $post->title;
 		$this->view->post = $post;
 		$this->view->previous_image = $previous_image;
 		$this->view->next_image = $next_image;		

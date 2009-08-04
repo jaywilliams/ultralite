@@ -14,13 +14,17 @@ class baseController
 		 * initiate some standard variables for the view
  		 * $this->view-myVar can be accessed in the template as $myVar
 		 */
-	 	$config = Pixelpost_Config::current();
-	 	$plugins = new Pixelpost_Plugin();
-	 	$this->_config = $config; // for use in the controllers
+	 	// $config = Pixelpost_Config::getInstance();
+	 	$this->view->plugins = new Pixelpost_Plugin();
+		$this->_config = $this->view->config = Pixelpost_Config::getInstance(); // for use in the controllers
 		$this->_uri = Web2BB_Uri::getInstance();
-		$this->view->config = $config;  // for use in the templates
-		$this->view->plugins = $plugins;
-		$this->_template = $config->template;
+		$this->_template = & $this->_config->template;
+		
+		/**
+		 * Default Layout
+		 * If empty, no layout will be used.
+		 */
+		$this->_layout = 'layout.phtml';
 
 		/**
 		 * Make sure we do have a controller, so either select the one from
@@ -35,15 +39,15 @@ class baseController
 		else
 		{
 			// get the default controller
-			$this->_controller = Pixelpost_Config::current()->default_controller;
+			$this->_controller = & $this->_config->default_controller;
 		}
 		
 		// I'm not sure what we should do with this code. I left it for now
 		/*** create the bread crumbs ***/
-		$bc = new Web2BB_Breadcrumbs;
+		// $bc = new Web2BB_Breadcrumbs;
 		// $bc->setPointer('->');
-		$bc->crumbs();
-		$this->view->Web2BB_Breadcrumbs = $bc->Web2BB_Breadcrumbs;
+		// $bc->crumbs();
+		// $this->view->Web2BB_Breadcrumbs = $bc->breadcrumbs;
 
 
 	}
@@ -51,23 +55,37 @@ class baseController
 	public function __destruct()
 	{
 		/**
-		 * Do the template stuff here
+		 * Load the view, either from the controller view, or from the template's view file
+		 * 
+		 * @todo Possibly setup a $cache_id for fetch()
 		 */
 		
 		if (file_exists(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml'))
 		{
-			$this->content = $this->view->fetch(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml', $cache_id);
+			$this->content = $this->view->fetch(__THEME_PATH.'/'.$this->_template.'/views/'.$this->_controller.'.phtml');
 		}
 		else
 		{
-			$this->content = $tpl->fetch(__APP_PATH . '/modules/'.$this->_controller.'/views/index.phtml', $cache_id);
+			$this->content = $this->view->fetch(__APP_PATH . '/modules/'.$this->_controller.'/views/index.phtml');
 		}
 
 		if( !is_null( $this->content ) )
 		{
 			$this->view->content = $this->content;
-			$template = Pixelpost_Config::current()->template;
-			$result = $this->view->fetch( __THEME_PATH.'/'.$template.'/layout.phtml' );
+			
+			/**
+			 * If no layout is specified, only show the view file
+			 * Otherwise load the view inside the layout.
+			 */
+			if (empty($this->_layout))
+			{
+				$result = & $this->content;
+			}
+			else
+			{
+				$result = $this->view->fetch( __THEME_PATH.'/'.$this->_config->template.'/'.$this->_layout );
+			}
+			
 			$fc = FrontController::getInstance();
 			$fc->setBody($result);
 		}

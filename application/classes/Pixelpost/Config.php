@@ -58,7 +58,7 @@ class Pixelpost_Config
 	 */
 	public static function set($setting, $value, $overwrite = false)
 	{
-		 $self = self::current();
+		 $self = self::getInstance();
 		
 		if (!$overwrite and isset($self->$setting) and $self->$setting == $value)
 			return false;
@@ -67,7 +67,7 @@ class Pixelpost_Config
 		$self->config[$setting] = $self->$setting = $value;
 		
 		// if (class_exists("Trigger"))
-			// Trigger::current()->call("change_setting", $setting, $value, $overwrite);
+			// Trigger::getInstance()->call("change_setting", $setting, $value, $overwrite);
 			
 		if (!$self->store()) {
 			/**
@@ -86,7 +86,7 @@ class Pixelpost_Config
 	 */
 	public static function remove($setting)
 	{
-		$self = self::current();
+		$self = self::getInstance();
 		
 		if (!isset($self->$setting))
 			return false;
@@ -103,7 +103,7 @@ class Pixelpost_Config
 	 *
 	 * @return $instance
 	 */
-	public static function & current($reset=false)
+	public static function & getInstance($reset=false)
 	{
 
 		static $instance = null;

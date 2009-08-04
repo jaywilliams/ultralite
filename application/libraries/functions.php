@@ -23,6 +23,19 @@ function unregister_globals() {
 		}
 }
 
+/**
+ * Remove magic quotes for incoming GET/POST/Cookie data.
+ *
+ * @return null Will return null if magic_quotes_gpc PHP directive was disabled
+ */
+function remove_magic_quotes() {
+	if (!get_magic_quotes_gpc())
+		return;
+		
+	$_GET     = array_map('stripslashes', $_GET);
+	$_POST    = array_map('stripslashes', $_POST);
+	$_COOKIE  = array_map('stripslashes', $_COOKIE);
+}
 
 /**
  * Renders the URL in the proper format.

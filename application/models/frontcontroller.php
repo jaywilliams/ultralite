@@ -54,15 +54,7 @@ class FrontController
 			else
 			{
 				// we couldn't locate a controller so we switched to the page (if it exists)
-				if (file_exists(__APP_PATH . '/modules/' . Pixelpost_Config::getInstance()->page_controller . '/controllers/' . Pixelpost_Config::getInstance()->page_controller .'controller.php'))
-				{
-					$this->_controller = Pixelpost_Config::getInstance()->page_controller . 'Controller';
-				}
-				else
-				{
-					$this->_controller = Pixelpost_Config::getInstance()->error_controller.'Controller';
-				}
-				
+				$this->_controller = Pixelpost_Config::getInstance()->page_controller . 'Controller';
 			}
 		}
 		else

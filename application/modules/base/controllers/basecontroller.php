@@ -56,6 +56,7 @@ class baseController
 				else
 				{
 					$this->_controller = Pixelpost_Config::getInstance()->error_controller;
+					$this->_view = $this->_controller;		
 				}
 			}
 

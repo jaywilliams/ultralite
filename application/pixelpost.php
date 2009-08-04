@@ -65,7 +65,7 @@ return array (
   'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',
   'my-bool' => false,
   'default_controller' => 'post',
-  'default_action' => 'post',
+  'default_action' => 'index',
   'error_controller' => 'error404',
   'page_controller' => 'page',
 )

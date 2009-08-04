@@ -98,6 +98,14 @@ class feedController extends baseController implements IController
 			);
 		
 		/**
+		 * Include the feed icon, if it exists:
+		 */
+		if (file_exists(__THEME_PATH."/{$this->_template}/images/feed_icon.png"))
+		{
+			$this->feed['rss']['channel']['atom:icon']   = "{$this->_config->url}content/themes/{$this->_template}/images/feed_icon.png";
+		}
+		
+		/**
 		 * Feed Items
 		 */
 		$this->feed['rss']['channel']['item'] = array();
@@ -147,9 +155,9 @@ class feedController extends baseController implements IController
 		 */
 		$this->feed['rss_attr'] = 
 			array(
+				'version'    => '2.0',
 				'xmlns:dc'   => 'http://purl.org/dc/elements/1.1/',
 				'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-				'version'    => '2.0',
 			  );
 		
 		/**

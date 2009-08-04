@@ -37,18 +37,17 @@ class feedController extends baseController implements IController
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)
 		{
+			$image_info = getimagesize('content/images/' . $post->filename);
+			
+			$this->posts[$key]->width  = $image_info[0];
+			$this->posts[$key]->height = $image_info[1];
+			$this->posts[$key]->type   = $image_info['mime'];
 			
 			$image_info = getimagesize('content/images/thumb_' . $post->filename);
 			
 			$this->posts[$key]->thumb_width  = $image_info[0];
 			$this->posts[$key]->thumb_height = $image_info[1];
-			$this->posts[$key]->thumb_mime   = $image_info['mime'];
-			
-			$image_info = getimagesize('content/images/' . $post->filename);
-			
-			$this->posts[$key]->full_width  = $image_info[0];
-			$this->posts[$key]->full_height = $image_info[1];
-			$this->posts[$key]->full_mime   = $image_info['mime'];
+			$this->posts[$key]->thumb_type   = $image_info['mime'];
 		}
 		
 		/**
@@ -109,7 +108,7 @@ class feedController extends baseController implements IController
 				array(
 					'title'       => $post->title,
 					'link'        => $this->_config->url.'post/'.$post->id,
-					'description' => "<img src=\"{$this->_config->url}content/images/$post->filename\" alt=\"$post->title\" width=\"$post->full_width\" height=\"$post->full_height\" /><br />$post->description",
+					'description' => "<img src=\"{$this->_config->url}content/images/$post->filename\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
 					'pubDate'     => date(DATE_RSS,strtotime($post->published)),
 					'guid'        => $this->_config->url.'post/'.$post->id,
 				);
@@ -124,18 +123,18 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
 			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
 				array(
-					'url' => "{$this->_config->url}content/images/$post->filename",
+					'url'      => "{$this->_config->url}content/images/$post->filename",
 					'fileSize' => filesize("content/images/$post->filename"),
-					'type' => $post->full_mime,
-					'width' => $post->full_width,
-					'height' => $post->full_height,
+					'type'     => $post->type,
+					'width'    => $post->width,
+					'height'   => $post->height,
 				);
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 
 				array(
 					'url'    => "{$this->_config->url}content/images/thumb_$post->filename",
-					'width'  => $post->thumb_width,
-					'height' => $post->thumb_height,
+					'width'  => $post->width,
+					'height' => $post->height,
 				);
 			/**
 			 * End Media RSS Specific Tags

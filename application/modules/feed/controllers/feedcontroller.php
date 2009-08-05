@@ -14,14 +14,14 @@ class feedController extends baseController implements IController
 		parent::__construct();
 		
 		// Remove the layout.phtml wrapper for feeds
-		$this->_layout = null;
-		$this->feed_type = (string) $this->_uri->fragment(1);
+		$this->layout = null;
+		$this->feed_type = (string) Web2BB_Uri::fragment(1);
 	}
 
 	public function index()
 	{
 		
-		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->_config->current_time}' ORDER BY `published` ASC LIMIT 0, {$this->_config->feed_items}";
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0, {$this->config->feed_items}";
 
 		// Grab the data object from the DB. Returns null on failure.
 		$this->posts = Pixelpost_DB::get_results($sql);
@@ -84,15 +84,15 @@ class feedController extends baseController implements IController
 		/**
 		 * Feed Header Information
 		 */
-		$this->feed['rss']['channel']['title']          = $this->_config->name;
-		$this->feed['rss']['channel']['link']           = $this->_config->url;
-		$this->feed['rss']['channel']['description']    = $this->_config->description;
-		$this->feed['rss']['channel']['language']       = str_replace('_','-',strtolower($this->_config->locale));
+		$this->feed['rss']['channel']['title']          = $this->config->name;
+		$this->feed['rss']['channel']['link']           = $this->config->url;
+		$this->feed['rss']['channel']['description']    = $this->config->description;
+		$this->feed['rss']['channel']['language']       = str_replace('_','-',strtolower($this->config->locale));
 		$this->feed['rss']['channel']['pubDate']        = date(DATE_RSS,time());
 		$this->feed['rss']['channel']['atom:link']      = array();
 		$this->feed['rss']['channel']['atom:link_attr'] = 
 			array(  
-				'href' => $this->_config->url.'feed',
+				'href' => $this->config->url.'feed',
 		        'rel'  => 'self',
 		        'type' => 'application/rss+xml',
 			);
@@ -100,9 +100,9 @@ class feedController extends baseController implements IController
 		/**
 		 * Include the feed icon, if it exists:
 		 */
-		if (file_exists(__THEME_PATH."/{$this->_template}/images/feed_icon.png"))
+		if (file_exists(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png"))
 		{
-			$this->feed['rss']['channel']['atom:icon']   = "{$this->_config->url}content/themes/{$this->_template}/images/feed_icon.png";
+			$this->feed['rss']['channel']['atom:icon']   = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
 		}
 		
 		/**
@@ -115,10 +115,10 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id] = 
 				array(
 					'title'       => $post->title,
-					'link'        => $this->_config->url.'post/'.$post->id,
-					'description' => "<img src=\"{$this->_config->url}content/images/$post->filename\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
+					'link'        => $this->config->url.'post/'.$post->id,
+					'description' => "<img src=\"{$this->config->url}content/images/$post->filename\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
 					'pubDate'     => date(DATE_RSS,strtotime($post->published)),
-					'guid'        => $this->_config->url.'post/'.$post->id,
+					'guid'        => $this->config->url.'post/'.$post->id,
 				);
 				
 			/**
@@ -131,7 +131,7 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
 			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
 				array(
-					'url'      => "{$this->_config->url}content/images/$post->filename",
+					'url'      => "{$this->config->url}content/images/$post->filename",
 					'fileSize' => filesize("content/images/$post->filename"),
 					'type'     => $post->type,
 					'width'    => $post->width,
@@ -140,7 +140,7 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 
 				array(
-					'url'    => "{$this->_config->url}content/images/thumb_$post->filename",
+					'url'    => "{$this->config->url}content/images/thumb_$post->filename",
 					'width'  => $post->width,
 					'height' => $post->height,
 				);

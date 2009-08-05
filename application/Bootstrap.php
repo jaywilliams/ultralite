@@ -95,7 +95,7 @@ try
 	$config->total_pages = 0;
 
 	// Default (fallback) Template
-	$config->template = "greyspace_neue";
+	// $config->theme = "greyspace_neue";
 	
 	/**
 	 * Get the language file (we really need to find another approach)

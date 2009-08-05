@@ -30,29 +30,29 @@ class archiveController extends baseController implements IController
 		// run with that, rather than create our own:
 		if (!isset($archive->thumbnails))
 		{
-			if ($this->_config->pagination > 0)
+			if ($this->config->pagination > 0)
 			{
 
-				$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$this->_config->current_time}'";
+				$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}'";
 				// Get total images publically available
 				$image->total = (int)$db->get_var($sql);
 				// Determine the total number of available pages
-				$this->_config->total_pages = (int)ceil($image->total / $this->_config->pagination);
+				$this->config->total_pages = (int)ceil($image->total / $this->config->pagination);
 
 				// The page doesn't exist!
-				if ($this->_config->total_pages < $this->_config->page)
+				if ($this->config->total_pages < $this->config->page)
 				{
 					throw new Exception("Sorry, we don't have anymore pages to show!");
 				}
 
 				// The database needs to know which row we need to start with:
-				$range = (int)($this->_config->page - 1) * $this->_config->pagination;
+				$range = (int)($this->config->page - 1) * $this->config->pagination;
 
-				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->_config->current_time}' ORDER BY `published` ASC LIMIT $range, $this->_config->pagination";
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT $range, $this->config->pagination";
 			}
 			else
 			{
-				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->_config->current_time}' ORDER BY `published` ASC";
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC";
 			}
 
 			// Store the thumbnails array
@@ -81,11 +81,5 @@ class archiveController extends baseController implements IController
 		 */
 		
 		$this->view->archive = $archive;
-
-		/**
-		 * Inclusion of the actual template needed is handled in the destruct
-		 * function of the base controller.
-		 */
-
 	}
 }

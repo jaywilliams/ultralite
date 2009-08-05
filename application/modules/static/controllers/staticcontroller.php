@@ -25,5 +25,15 @@ class staticController extends baseController implements IController
 		 * a template file. Everything is taken care of by the basecontroller.
 		 */
 		$this->view->title = 'About';
+		
+		/**
+		 * @todo If we can't find the specified view, return a 404.
+		 */
+	}
+	public function test()
+	{
+		/**
+		 * Sample Sub-Page Action Test
+		 */
 	}
 }

@@ -28,7 +28,7 @@ return array (
   'url' => 'http://localhost/ultralite/',
   'email' => 'user@domain.com',
   'locale' => 'en_US',
-  'theme' => 'default',
+  'theme' => 'greyspace_neue',
   'posts_per_page' => 5,
   'feed_items' => 20,
   'clean_urls' => true,
@@ -67,7 +67,7 @@ return array (
   'default_controller' => 'post',
   'default_action' => 'index',
   'error_controller' => 'error404',
-  'page_controller' => 'static',
+  'static_controller' => 'static',
 )
 
 ?>

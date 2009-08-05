@@ -26,6 +26,7 @@ class error404Controller extends baseController implements IController
 		/*** a view variable ***/
 		$this->view->title = '404 File Not Found';
 		$this->view->heading = '404 File Not Found';
+		@header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 	}
 
 }

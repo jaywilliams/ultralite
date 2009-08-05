@@ -114,7 +114,7 @@ class Web2BB_Uri
 	 * @param int $page (optional) override the current page number
 	 * @return int self::$page current page
 	 */
-	public static function page($page=0)
+	public static function page(int $page = NULL)
 	{
 		if(!empty($page))
 		{

@@ -165,5 +165,3 @@ class Pixelpost_Feed
 		return htmlentities( $value, ENT_QUOTES, 'UTF-8' );
 	}
 }
-
-?>

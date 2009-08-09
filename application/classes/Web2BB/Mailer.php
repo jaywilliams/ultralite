@@ -356,5 +356,3 @@ class Web2BB_Mailer{
 	}
 
 } /*** end of class ***/
-
-?>

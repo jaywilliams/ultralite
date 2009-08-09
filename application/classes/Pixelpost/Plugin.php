@@ -369,4 +369,3 @@ class Pixelpost_Plugin {
   	return $string;
   }
 }
-?>                                      

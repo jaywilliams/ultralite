@@ -48,11 +48,11 @@ class archiveController extends baseController implements IController
 				// The database needs to know which row we need to start with:
 				$range = (int)($this->config->page - 1) * $this->config->pagination;
 
-				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT $range, $this->config->pagination";
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT $range, $this->config->pagination";
 			}
 			else
 			{
-				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC";
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC";
 			}
 
 			// Store the thumbnails array

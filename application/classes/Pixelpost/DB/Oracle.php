@@ -291,4 +291,3 @@ class Pixelpost_DB_Oracle extends Pixelpost_DB_Core
 		return $return_value;
 	}
 }
-?>

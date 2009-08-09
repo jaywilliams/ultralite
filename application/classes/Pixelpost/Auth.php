@@ -150,4 +150,3 @@ class Pixelpost_Auth
 		$this->session->destroy();
 	}
 }
-?>

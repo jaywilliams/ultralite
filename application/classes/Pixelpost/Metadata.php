@@ -807,4 +807,3 @@ class Pixelpost_Metadata
 	}
 
 }
-?>

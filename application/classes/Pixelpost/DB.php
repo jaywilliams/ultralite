@@ -411,4 +411,3 @@ class Pixelpost_DB
 		return self::$DB->debug($return);
 	}
 }
-?>

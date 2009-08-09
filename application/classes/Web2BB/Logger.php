@@ -98,5 +98,3 @@ class Web2BB_Logger
 	}
 	
 } // end of log class
-
-?>

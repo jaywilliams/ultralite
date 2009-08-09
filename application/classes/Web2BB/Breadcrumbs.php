@@ -120,5 +120,3 @@ class Web2BB_Breadcrumbs{
 	}
 
 } /*** end of class ***/
-
-?>

@@ -39,7 +39,7 @@ class postController extends baseController implements IController
 		}
 		else
 		{
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0,1";
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
 		}
 
 		// Grab the data object from the DB. Returns null on failure.
@@ -63,7 +63,7 @@ class postController extends baseController implements IController
 		$post->uri = $this->config->url.'content/images/' . $post->filename;
 
 		// Retrieve the Next image information:
-		$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '$post->published') and (`published` <= '{$this->config->current_time}') ORDER BY `published` ASC LIMIT 0,1";
+		$sql = "SELECT * FROM `pixelpost` WHERE (`published` < '$post->published') and (`published` <= '{$this->config->current_time}') ORDER BY `published` DESC LIMIT 0,1";
 		
 		$next_image = Pixelpost_DB::get_row($sql);
 		if (!is_object($next_image))
@@ -71,13 +71,13 @@ class postController extends baseController implements IController
 			// Lets wrap around to the first image.
 
 			// Retrieve the First image information:
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0,1";
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
 			$next_image = Pixelpost_DB::get_row($sql);
 		}
 
 
 		// Retrieve the Prev image information:
-		$sql = "SELECT * FROM `pixelpost` WHERE (`published` < '$post->published') and (`published` <= '{$this->config->current_time}') ORDER BY `published` DESC LIMIT 0,1";
+		$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '$post->published') and (`published` <= '{$this->config->current_time}') ORDER BY `published` ASC LIMIT 0,1";
 
 		$previous_image = Pixelpost_DB::get_row($sql);
 		if (!is_object($previous_image))
@@ -85,7 +85,7 @@ class postController extends baseController implements IController
 			// Lets wrap around to the last image.
 
 			// Retrieve the Last image information:
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0,1";
 			$previous_image = Pixelpost_DB::get_row($sql);
 		}
 		

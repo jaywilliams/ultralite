@@ -494,5 +494,3 @@ class Web2BB_Validation
 
 	}
 } // end of validation class
-
-?>

@@ -333,4 +333,3 @@ class Pixelpost_Session
 		session_write_close();
 	}
 }
-?>

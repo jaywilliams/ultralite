@@ -49,5 +49,3 @@ class lang
 	const __VERIFY = 'Vérifiez';
 
 }
-
-?>

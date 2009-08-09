@@ -48,5 +48,3 @@ class en_US
 	const __WELCOME = 'Welcome';
 
 }
-
-?>

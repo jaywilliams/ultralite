@@ -107,7 +107,6 @@ class Pixelpost_HTML extends Pixelpost_Feed
 			 *     <th>heading_one</th>
 			 *     <th>heading_two</th>
 			 *     <th>heading_three</th>
-
 			 */
 			if (self::is_sequential($value))
 			{
@@ -134,4 +133,3 @@ class Pixelpost_HTML extends Pixelpost_Feed
 		return $html;
 	}
 }
-?>

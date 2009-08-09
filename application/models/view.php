@@ -457,5 +457,3 @@ class View
 	}
 
 } /*** end of class ***/
-
-?>

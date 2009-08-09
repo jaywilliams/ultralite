@@ -740,5 +740,3 @@ class Pixelpost_DB_Core
 	}
 	
 }
-
-?>

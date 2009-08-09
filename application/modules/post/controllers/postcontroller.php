@@ -55,10 +55,12 @@ class postController extends baseController implements IController
 
 		// Set the variables
 		$image_info = getimagesize('content/images/' . $post->filename);
-
+		
 		$post->width = $image_info[0];
 		$post->height = $image_info[1];
 		$post->dimensions = $image_info[3];
+		$post->type = $image_info['mime'];
+		$post->uri = $this->config->url.'content/images/' . $post->filename;
 
 		// Retrieve the Next image information:
 		$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '$post->published') and (`published` <= '{$this->config->current_time}') ORDER BY `published` ASC LIMIT 0,1";

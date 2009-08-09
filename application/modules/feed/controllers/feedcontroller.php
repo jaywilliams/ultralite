@@ -24,30 +24,27 @@ class feedController extends baseController implements IController
 		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0, {$this->config->feed_items}";
 
 		// Grab the data object from the DB. Returns null on failure.
-		$this->posts = Pixelpost_DB::get_results($sql);
+		$this->posts = (array) Pixelpost_DB::get_results($sql);
 
-		// Only load the template if the query was successful.
-		// We can display a nice error or splash screen otherwise...
-		if (empty($this->posts))
-		{
-			// Error? Splash Screen?
-			throw new Exception("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
-		}
 
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)
 		{
 			$image_info = getimagesize('content/images/' . $post->filename);
 			
-			$this->posts[$key]->width  = $image_info[0];
-			$this->posts[$key]->height = $image_info[1];
-			$this->posts[$key]->type   = $image_info['mime'];
+			$this->posts[$key]->id        = (int) $this->posts[$key]->id;
+			$this->posts[$key]->permalink = $this->config->url.'post/'.$post->id;
+			$this->posts[$key]->width     = $image_info[0];
+			$this->posts[$key]->height    = $image_info[1];
+			$this->posts[$key]->type      = $image_info['mime'];
+			$this->posts[$key]->uri       = $this->config->url.'content/images/' . $post->filename;
 			
 			$image_info = getimagesize('content/images/thumb_' . $post->filename);
 			
 			$this->posts[$key]->thumb_width  = $image_info[0];
 			$this->posts[$key]->thumb_height = $image_info[1];
 			$this->posts[$key]->thumb_type   = $image_info['mime'];
+			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
 		}
 		
 		/**
@@ -88,7 +85,10 @@ class feedController extends baseController implements IController
 		$this->feed['rss']['channel']['link']           = $this->config->url;
 		$this->feed['rss']['channel']['description']    = $this->config->description;
 		$this->feed['rss']['channel']['language']       = str_replace('_','-',strtolower($this->config->locale));
+		if(isset($this->config->copyright))
+		$this->feed['rss']['channel']['copyright']      = $this->config->copyright;
 		$this->feed['rss']['channel']['pubDate']        = date(DATE_RSS,time());
+		$this->feed['rss']['channel']['generator']      = "Ultralite";
 		$this->feed['rss']['channel']['atom:link']      = array();
 		$this->feed['rss']['channel']['atom:link_attr'] = 
 			array(  
@@ -102,7 +102,14 @@ class feedController extends baseController implements IController
 		 */
 		if (file_exists(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png"))
 		{
-			$this->feed['rss']['channel']['atom:icon']   = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
+			$image = getimagesize(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png");
+			
+			$this->feed['rss']['channel']['image']['title']  = $this->config->name;
+			$this->feed['rss']['channel']['image']['link']   = $this->config->url;
+			$this->feed['rss']['channel']['image']['url']    = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
+			$this->feed['rss']['channel']['image']['width']  = $image[0];
+			$this->feed['rss']['channel']['image']['height'] = $image[1];
+			$this->feed['rss']['channel']['atom:icon']       = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
 		}
 		
 		/**
@@ -115,10 +122,10 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id] = 
 				array(
 					'title'       => $post->title,
-					'link'        => $this->config->url.'post/'.$post->id,
-					'description' => "<img src=\"{$this->config->url}content/images/$post->filename\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
+					'link'        => $post->permalink,
+					'description' => "<img src=\"{$post->uri}\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
 					'pubDate'     => date(DATE_RSS,strtotime($post->published)),
-					'guid'        => $this->config->url.'post/'.$post->id,
+					'guid'        => $post->permalink,
 				);
 				
 			/**
@@ -131,7 +138,7 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
 			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
 				array(
-					'url'      => "{$this->config->url}content/images/$post->filename",
+					'url'      => $post->uri,
 					'fileSize' => filesize("content/images/$post->filename"),
 					'type'     => $post->type,
 					'width'    => $post->width,
@@ -140,9 +147,9 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
 			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 
 				array(
-					'url'    => "{$this->config->url}content/images/thumb_$post->filename",
-					'width'  => $post->width,
-					'height' => $post->height,
+					'url'    => $post->thumb_uri,
+					'width'  => $post->thumb_width,
+					'height' => $post->thumb_height,
 				);
 			/**
 			 * End Media RSS Specific Tags

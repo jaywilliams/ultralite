@@ -6,6 +6,7 @@
 	<title><?php eprint($title); ?> / <?php eprint($config->name); ?></title>
 	
 	<base href="<?php eprint($config->url); ?>" />
+	<!-- <link rel="canonical" href="post/2" /> -->
 	
 	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="feed" />
 	<link rel="stylesheet" href="content/themes/greyspace_neue/styles/dark.css" type="text/css" charset="utf-8" title="Dark" />
@@ -15,13 +16,13 @@
 			width: <?php if(isset($post)){ echo $post->width;} ?>px;
 		}
 	</style>
-	<?php $plugins->do_action('theme_head');  ?>
+	<?php $plugins->executeAction('theme_head');  ?>
 </head>
 
 <body>
 
 <?php echo $content ?>
 
-<?php $plugins->do_action('theme_body'); ?>
+<?php $plugins->executeAction('theme_body'); ?>
 </body>
 </html>

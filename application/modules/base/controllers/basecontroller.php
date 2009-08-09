@@ -15,7 +15,7 @@ class baseController
 		/**
 		 * @todo Pixelpost_Plugin must be switched to a singleton, otherwise we're going to have no end of troubles.
 		 */
-		$this->view->plugins = new Pixelpost_Plugin();
+		$this->view->plugins = Pixelpost_Plugin::getInstance();
 
 		/**
 		 * Default Layout

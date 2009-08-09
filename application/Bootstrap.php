@@ -141,11 +141,11 @@ try
 	 * Get the plugins in gear
 	 */
 	
-	$plugins = new Pixelpost_Plugin();
+	$plugins = Pixelpost_Plugin::getInstance();
 	// Load list of plugins from config:
-	$plugins->plugins = & $config->plugins;
-	$plugins->get();
-	$plugins->do_action('global_pre');
+//	$plugins->plugins = & $config->plugins;
+//	$plugins->get();
+	$plugins->executeAction('global_pre');
 	
 	/**
 	 * Everything is in place now.

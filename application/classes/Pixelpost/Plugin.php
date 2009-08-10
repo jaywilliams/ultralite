@@ -65,9 +65,9 @@ class Pixelpost_Plugin {
 		 * Verify that the plugin directory exists
 		 */
 		 
-		if (!(is_dir(__PLUGINS_PATH) && is_readable(__PLUGINS_PATH)))
+		if (!(is_dir(__PLUGIN_PATH) && is_readable(__PLUGIN_PATH)))
 		{
-			throw new Exception("Unable to open path: ".__PLUGINS_PATH);
+			throw new Exception("Unable to open path: ".__PLUGIN_PATH);
 			return false;		
 		}
 			
@@ -76,13 +76,13 @@ class Pixelpost_Plugin {
 		 */
 		foreach ((array) $this->plugins as $id => $plugin)
 		{
-			if (!is_readable(__PLUGINS_PATH."/".$plugin))
+			if (!is_readable(__PLUGIN_PATH."/".$plugin))
 				continue;
 
 			/**
 			 * Include the Plugin
 			 */
-			$result = include_once(__PLUGINS_PATH."/".$plugin);
+			$result = include_once(__PLUGIN_PATH."/".$plugin);
 
 			/**
 			 * Verify that the file was included properly

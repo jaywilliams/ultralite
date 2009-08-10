@@ -21,7 +21,7 @@ class feedController extends baseController implements IController
 	public function index()
 	{
 		
-		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0, {$this->config->feed_items}";
+		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
 
 		// Grab the data object from the DB. Returns null on failure.
 		$this->posts = (array) Pixelpost_DB::get_results($sql);

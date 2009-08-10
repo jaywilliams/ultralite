@@ -25,6 +25,11 @@ class Web2BB_Uri
 	 */
 	public static $page = 1;
 
+	/**
+	 * @var int $page Total Number of Pages, defaults to 1
+	 */
+	public static $total_pages = 1;
+
 	/*
 	* @var object $instance
 	*/
@@ -109,7 +114,7 @@ class Web2BB_Uri
 	 * Possible ways to get the current page:
 	 * 
 	 *   Web2BB_Uri::$page;
-	 *   $this->_uri->page();
+	 *   Web2BB_Uri::page();
 	 *
 	 * @param int $page (optional) override the current page number
 	 * @return int self::$page current page
@@ -122,6 +127,27 @@ class Web2BB_Uri
 		}
 		
 		return self::$page;
+	}
+
+	/**
+	 * Get or set the total number of pages
+	 * 
+	 * Possible ways to get the total pages:
+	 * 
+	 *   Web2BB_Uri::$total_pages;
+	 *   Web2BB_Uri::totalPages();
+	 *
+	 * @param int $total_pages (optional) override the total pages
+	 * @return int self::$total_pages total pages
+	 */
+	public static function totalPages(int $total_pages = NULL)
+	{
+		if(!empty($total_pages))
+		{
+			self::$total_pages = (int) $total_pages;
+		}
+		
+		return self::$total_pages;
 	}
 
 	/**

@@ -85,18 +85,7 @@ try
 	 * First we have to try to get the config variable
 	 */
 	$config = Pixelpost_Config::getInstance();
-	//var_dump(Pixelpost_Config::getInstance()->database['host']);
 
-	/**
-	 * Initialise some default settings
-	 */
-	// Default Page Settings
-	$config->pagination = 0;
-	$config->total_pages = 0;
-
-	// Default (fallback) Template
-	// $config->theme = "greyspace_neue";
-	
 	/**
 	 * Get the language file (we really need to find another approach)
 	 */
@@ -110,7 +99,7 @@ try
 	$config->current_time = date("Y-m-d H:i:s",time());
 
 	// Detects if mod_rewrite mode should be enabled
-	$config->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
+	// $config->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
 
 	/**
 	 * With the config in place we can get the db connection
@@ -152,7 +141,7 @@ try
 	 */
 
 }
-catch (Web2BB_Exception$e)
+catch (Web2BB_Exception $e)
 {
 	//show a 404 page here
 	echo 'FATAL:<br />';

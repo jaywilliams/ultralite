@@ -23,10 +23,13 @@ class feedController extends baseController implements IController
 		
 		
 
+		/**
+		 * Feed Pagination
+		 */
 		if ($this->config->feed_pagination)
 		{
 			/**
-			 * If the config option, posts_per_page is set, we will spit up the feed into pages.
+			 * If the config option, feed_pagination is set, we will spit up the feed into pages.
 			 */
 			
 			// Get total number of publically available posts
@@ -49,14 +52,14 @@ class feedController extends baseController implements IController
 		else
 		{
 			/**
-			 * the config option, posts_per_page, isn't set, so display ALL the posts
+			 * the config option, feed_pagination, isn't set, so only display the number listed in feed_items
 			 */
 			
 			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
 		}
 
 
-		// Grab the data object from the DB. Returns null on failure.
+		// Grab the data object from the DB.
 		$this->posts = (array) Pixelpost_DB::get_results($sql);
 
 
@@ -131,21 +134,39 @@ class feedController extends baseController implements IController
 			);
 		
 		
+		/**
+		 * Feed Pagination - Next:
+		 */
 		if ($this->config->feed_pagination && (WEB2BB_Uri::$page) > 1)
 		{
+			// Add the current page to the rel=self link:
+			$this->feed['rss']['channel']['atom:link']['0_attr']['href'] .= '/page/'.(WEB2BB_Uri::$page);
+			
 			$this->feed['rss']['channel']['atom:link'][1]    = null;
-			$this->feed['rss']['channel']['atom:link']['1_attr']['rel']  = 'previous';
-			$this->feed['rss']['channel']['atom:link']['1_attr']['href']  = $this->config->url.'feed';
+			$this->feed['rss']['channel']['atom:link']['1_attr'] = 
+				array(  
+					'rel'  => 'previous',
+					// 'type' => 'application/rss+xml',
+					'href' => $this->config->url.'feed',
+				);
 			
 			if ((WEB2BB_Uri::$page-1) != 1)
 				$this->feed['rss']['channel']['atom:link']['1_attr']['href'] .= '/page/'. (WEB2BB_Uri::$page-1);
 		}
 
+		/**
+		 * Feed Pagination - Previous:
+		 */
 		if ($this->config->feed_pagination && WEB2BB_Uri::$page < WEB2BB_Uri::$total_pages)
 		{
 			$this->feed['rss']['channel']['atom:link'][2]    = null;
-			$this->feed['rss']['channel']['atom:link']['2_attr']['rel']  = 'next';
-			$this->feed['rss']['channel']['atom:link']['2_attr']['href']  = $this->config->url.'feed/page/'. (WEB2BB_Uri::$page+1);
+			$this->feed['rss']['channel']['atom:link']['2_attr'] = 
+				array(  
+					'rel'  => 'next',
+					// 'type' => 'application/rss+xml',
+					'href' => $this->config->url.'feed/page/'. (WEB2BB_Uri::$page+1),
+				);
+			
 		}
 		
 		/**

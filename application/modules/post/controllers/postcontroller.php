@@ -117,7 +117,7 @@ class postController extends baseController implements IController
 		 * $this->view->myVar can be accessed in the template as $myVar
 		 */
 		
-		$this->view->title = $post->title;
+		$this->view->title = $this->posts['current']->title;
 		$this->view->posts = $this->posts;
 		
 		/**

@@ -26,6 +26,7 @@ try
 	// the application directory path
 	define('__APP_PATH', __SITE_PATH . '/application');
 	define('__THEME_PATH', __SITE_PATH . '/content/themes');
+	define('__PLUGINS_PATH', __SITE_PATH . '/content/plugins');
 
 	// the classes directory path
 	define('__CLASS_PATH', __APP_PATH . '/classes');

@@ -43,11 +43,7 @@ return array (
   'cache_lifetime' => 3600,
   'enabled_plugins' => 
   array (
-    0 => 'markdown',
-    2 => 'smartypants',
-    3 => 'tags',
-    5 => 'swfupload',
-    6 => 'comments',
+    0 => 'example/plugin_example.php',
   ),
   'routes' => 
   array (

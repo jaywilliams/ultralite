@@ -35,19 +35,12 @@ class Pixelpost_Plugin {
 	 */
 	private $plugins = array();
 	
-	/**
-	 * Relative path to plugin directory
-	 * Note: The trailing slash is required.
-	 *
-	 * @var string
-	 */
-	var $path = 'content/plugins/';
-
 	private static $instance;
 
 	private function __construct()
 	{
 		// do nothing here, just make sure we cannot initiate the object
+		$this->plugins = Pixelpost_Config::getInstance()->enabled_plugins;
 	}         
 	
 	public static function getInstance()
@@ -68,13 +61,13 @@ class Pixelpost_Plugin {
 	 */
 	protected function loadPlugins() 
 	{
-				/**
+		/**
 		 * Verify that the plugin directory exists
 		 */
 		 
-		if (!(is_dir($this->path) && is_readable($this->path)))
+		if (!(is_dir(__PLUGINS_PATH) && is_readable(__PLUGINS_PATH)))
 		{
-			throw new Exception("Unable to open path: ".$this->path);
+			throw new Exception("Unable to open path: ".__PLUGINS_PATH);
 			return false;		
 		}
 			
@@ -83,13 +76,13 @@ class Pixelpost_Plugin {
 		 */
 		foreach ((array) $this->plugins as $id => $plugin)
 		{
-			if (!is_readable("{$this->path}plugin_$plugin.php"))
+			if (!is_readable(__PLUGINS_PATH."/".$plugin))
 				continue;
 
 			/**
 			 * Include the Plugin
 			 */
-			$result = include_once "{$this->path}plugin_$plugin.php";
+			$result = include_once(__PLUGINS_PATH."/".$plugin);
 
 			/**
 			 * Verify that the file was included properly

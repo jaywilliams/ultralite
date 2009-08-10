@@ -18,9 +18,12 @@
 	Author URI: http://pixelpost.org/
 */
 
-$plugins = Pixelpost_Plugin::getInstance(); // this should really be in a base plugin!!!
-$plugins->registerAction('theme_head', 'echo_head');
-$plugins->registerAction('theme_body', 'echo_body');
+//$plugins = Pixelpost_Plugin::getInstance(); // this should really be in a base plugin!!!
+//$plugins->registerAction('theme_head', 'echo_head');
+//$plugins->registerAction('theme_body', 'echo_body');
+
+Pixelpost_Plugin::registerAction('theme_head', 'echo_head');
+Pixelpost_Plugin::registerAction('theme_body', 'echo_body');
 
 
 function echo_head()

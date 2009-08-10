@@ -12,9 +12,13 @@
 	<link rel="stylesheet" href="content/themes/greyspace_neue/styles/dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="content/themes/greyspace_neue/styles/light.css" type="text/css" charset="utf-8" title="Light" />
 	<style type="text/css">
-		.section{
-			width: <?php if(isset($post)){ echo $post->width;} ?>px;
-		}
+	
+		<?php if (isset($posts['current']->width)): ?>
+			.section{
+				width: <?php echo $posts['current']->width; ?> px;
+			}
+		<?php endif ?>
+	
 	</style>
 	<?php $plugins->executeAction('theme_head');  ?>
 </head>

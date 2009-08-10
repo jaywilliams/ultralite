@@ -1,5 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
 
 /**
  * Bootstrap.php is the file that takes care of the bootstrapping.

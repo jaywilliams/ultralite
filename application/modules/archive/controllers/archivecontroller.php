@@ -46,8 +46,8 @@ class archiveController extends baseController implements IController
 			}
 
 			// The database needs to know which row we need to start with:
-			$start = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$start}, {$this->config->posts_per_page}";
+			$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->posts_per_page}";
 		}
 		else
 		{

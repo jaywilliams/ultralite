@@ -83,8 +83,10 @@ class Pixelpost_Feed
 			 *     <item>one</item>
 			 *     <item>two</item>
 			 *     <item>three</item>
+			 * 
+			 * @todo Replace the "$tag ==" hack with a cleaner solution, using a public array
 			 */
-			if ( self::is_sequential($value) ) {
+			if ( $tag == 'atom:link' || self::is_sequential($value) ) {
 				$xml .= self::encode($value,$level-1,$tag);
 				continue;
 			}

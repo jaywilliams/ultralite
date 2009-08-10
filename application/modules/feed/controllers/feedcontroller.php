@@ -21,7 +21,40 @@ class feedController extends baseController implements IController
 	public function index()
 	{
 		
-		$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
+		
+
+		if ($this->config->feed_pagination)
+		{
+			/**
+			 * If the config option, posts_per_page is set, we will spit up the feed into pages.
+			 */
+			
+			// Get total number of publically available posts
+			$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}'";
+			$this->total_posts = (int) Pixelpost_DB::get_var($sql);
+			
+			// Determine the total number of pages
+			WEB2BB_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
+
+			// Verify that we're on a legitimate page to start with
+			if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
+			{
+				throw new Exception("Sorry, we don't have anymore pages to show!");
+			}
+
+			// The database needs to know which row we need to start with:
+			$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->feed_items}";
+		}
+		else
+		{
+			/**
+			 * the config option, posts_per_page, isn't set, so display ALL the posts
+			 */
+			
+			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
+		}
+
 
 		// Grab the data object from the DB. Returns null on failure.
 		$this->posts = (array) Pixelpost_DB::get_results($sql);
@@ -89,13 +122,31 @@ class feedController extends baseController implements IController
 		$this->feed['rss']['channel']['copyright']      = $this->config->copyright;
 		$this->feed['rss']['channel']['pubDate']        = date(DATE_RSS,time());
 		$this->feed['rss']['channel']['generator']      = "Ultralite";
-		$this->feed['rss']['channel']['atom:link']      = array();
-		$this->feed['rss']['channel']['atom:link_attr'] = 
+		$this->feed['rss']['channel']['atom:link'][0]    = null;
+		$this->feed['rss']['channel']['atom:link']['0_attr'] = 
 			array(  
+				'rel'  => 'self',
+				'type' => 'application/rss+xml',
 				'href' => $this->config->url.'feed',
-		        'rel'  => 'self',
-		        'type' => 'application/rss+xml',
 			);
+		
+		
+		if ($this->config->feed_pagination && (WEB2BB_Uri::$page) > 1)
+		{
+			$this->feed['rss']['channel']['atom:link'][1]    = null;
+			$this->feed['rss']['channel']['atom:link']['1_attr']['rel']  = 'previous';
+			$this->feed['rss']['channel']['atom:link']['1_attr']['href']  = $this->config->url.'feed';
+			
+			if ((WEB2BB_Uri::$page-1) != 1)
+				$this->feed['rss']['channel']['atom:link']['1_attr']['href'] .= '/page/'. (WEB2BB_Uri::$page-1);
+		}
+
+		if ($this->config->feed_pagination && WEB2BB_Uri::$page < WEB2BB_Uri::$total_pages)
+		{
+			$this->feed['rss']['channel']['atom:link'][2]    = null;
+			$this->feed['rss']['channel']['atom:link']['2_attr']['rel']  = 'next';
+			$this->feed['rss']['channel']['atom:link']['2_attr']['href']  = $this->config->url.'feed/page/'. (WEB2BB_Uri::$page+1);
+		}
 		
 		/**
 		 * Include the feed icon, if it exists:
@@ -132,6 +183,7 @@ class feedController extends baseController implements IController
 			 * Begin Media RSS Specific Tags
 			 * @todo Add Media RSS tags via a plugin
 			 */
+			if ($this->config->feed_media_rss) {
 			$this->feed['rss']['channel']['item'][$id]['media:title']                    = $this->feed['rss']['channel']['item'][$id]['title'];
 			$this->feed['rss']['channel']['item'][$id]['media:description']              = $this->feed['rss']['channel']['item'][$id]['description'];
 			$this->feed['rss']['channel']['item'][$id]['media:description_attr']['type'] = 'html';
@@ -151,6 +203,7 @@ class feedController extends baseController implements IController
 					'width'  => $post->thumb_width,
 					'height' => $post->thumb_height,
 				);
+			}
 			/**
 			 * End Media RSS Specific Tags
 			 */
@@ -172,7 +225,9 @@ class feedController extends baseController implements IController
 		 * 
 		 * @todo Add via plugin
 		 */
-		$this->feed['rss_attr']['xmlns:media'] = 'http://search.yahoo.com/mrss/';
+		if ($this->config->feed_media_rss) {
+			$this->feed['rss_attr']['xmlns:media'] = 'http://search.yahoo.com/mrss/';
+		}
 		
 		/**
 		 * Sent the Values out to the view

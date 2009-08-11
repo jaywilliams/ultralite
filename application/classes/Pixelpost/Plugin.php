@@ -35,19 +35,27 @@ class Pixelpost_Plugin {
 	 */
 	private $plugins = array();
 	
+	/**
+	 * Path to plugin directory
+	 * Note: The trailing slash is required.
+	 *
+	 * @var string
+	 */
+	private $path = __PLUGIN_PATH;
+	
 	private static $instance;
 
 	private function __construct()
 	{
 		// do nothing here, just make sure we cannot initiate the object
 		$this->plugins = Pixelpost_Config::getInstance()->enabled_plugins;
-	}         
+	}		  
 	
-	public static function getInstance()
+	public static function & getInstance()
 	{
 		if ( empty( self::$instance ) ) 
 		{
-			self::$instance = new Pixelpost_Plugin();
+			self::$instance = new self();
 			self::$instance->loadPlugins();
 		}
 		return self::$instance;
@@ -65,9 +73,9 @@ class Pixelpost_Plugin {
 		 * Verify that the plugin directory exists
 		 */
 		 
-		if (!(is_dir(__PLUGIN_PATH) && is_readable(__PLUGIN_PATH)))
+		if (!(is_dir($this->path) && is_readable($this->path)))
 		{
-			throw new Exception("Unable to open path: ".__PLUGIN_PATH);
+			throw new Exception("Unable to open plugin path");
 			return false;		
 		}
 			
@@ -76,13 +84,13 @@ class Pixelpost_Plugin {
 		 */
 		foreach ((array) $this->plugins as $id => $plugin)
 		{
-			if (!is_readable(__PLUGIN_PATH."/".$plugin))
+			if (!is_readable("$this->path/$plugin"))
 				continue;
 
 			/**
 			 * Include the Plugin
 			 */
-			$result = include_once(__PLUGIN_PATH."/".$plugin);
+			$result = include_once("$this->path/$plugin");
 
 			/**
 			 * Verify that the file was included properly
@@ -105,15 +113,17 @@ class Pixelpost_Plugin {
 	 * @param int $accept_args (optional|default = 0) Number of arguments your action plugin accepts
 	 * @return bool
 	 */
-	public function registerAction($hook, $callback_function, $priority = 10, $accept_args = 0)
-	{
+	public static function registerAction($hook, $callback_function, $priority = 10, $accept_args = 0)
+	{		
 		if (!function_exists($callback_function))
 			return false;
-
-		$priority    = (int) $priority;
+		
+		$self = self::getInstance();
+		
+		$priority	 = (int) $priority;
 		$accept_args = (int) $accept_args;
-
-		$this->actions[$hook][$priority][$callback_function] = array( 	'function' => $callback_function, 'accept_args' => $accept_args );
+		
+		$self->actions[$hook][$priority][$callback_function] = array( 'function' => $callback_function, 'accept_args' => $accept_args );
 		return true;
 	}
 
@@ -126,17 +136,19 @@ class Pixelpost_Plugin {
 	 * @param int $priority (optional) Action plugin priority, only set this if the plugin was set with a custom priority
 	 * @return bool
 	 */
-	public function removeAction($hook, $callback_function, $priority = 10)
+	public static function removeAction($hook, $callback_function, $priority = 10)
 	{
-
-		$priority    = (int) $priority;
-
-		if (array_key_exists($callback_function, $this->actions[$hook][$priority][$callback_function])) 
+		
+		$self = self::getInstance();
+		
+		$priority = (int) $priority;
+		
+		if (array_key_exists($callback_function, $self->actions[$hook][$priority][$callback_function])) 
 		{
-			unset($this->actions[$hook][$priority][$callback_function]);
-
-			if (empty($this->actions[$hook][$priority]))
-				unset($this->actions[$hook][$priority]);
+			unset($self->actions[$hook][$priority][$callback_function]);
+			
+			if (empty($self->actions[$hook][$priority]))
+				unset($self->actions[$hook][$priority]);
 		}
 
 		return true;
@@ -148,19 +160,20 @@ class Pixelpost_Plugin {
 	 * @param string $hook Action hook name
 	 * @return bool|mixed
 	 */
-	public function executeAction($hook,&$string=true)
+	public static function executeAction($hook,&$string=true)
 	{
+		$self = self::getInstance();
 
 		/**
 		 * First, check to see if any plugins are using this hook:
 		 */
-		if (!isset($this->actions[$hook]))
+		if (!isset($self->actions[$hook]))
 			return $string;
 		
 		/**
 		 * Verify that all of the $priorities are in order
 		 */
-		ksort($this->actions[$hook]);
+		ksort($self->actions[$hook]);
 		
 		/**
 		 * Get the additional hook arguments and trim the $hook variable 
@@ -177,11 +190,11 @@ class Pixelpost_Plugin {
 		/**
 		 * Now for the magic, lets bring the actions to life:
 		 */
-		foreach ($this->actions[$hook] as  $priority => &$functions) 
+		foreach ($self->actions[$hook] as  $priority => &$functions) 
 		{
 			foreach ($functions as &$function) 
 			{
-				$func_name   = & $function['function'];
+				$func_name	 = & $function['function'];
 				$accept_args = & $function['accept_args'];
 
 				if ($accept_args > 0) 
@@ -237,16 +250,18 @@ class Pixelpost_Plugin {
    * @param int $accept_args (optional|default = 1) Number of arguments your filter plugin accepts
    * @return bool
    */
-  public function registerFilter($hook, $callback_function, $priority = 10, $accept_args = 1)
+  public static function registerFilter($hook, $callback_function, $priority = 10, $accept_args = 1)
   {
-  	if (!function_exists($callback_function) || $accept_args < 1)
-  		return false;
+	if (!function_exists($callback_function) || $accept_args < 1)
+		return false;
+	
+	$self = self::getInstance();
+	
+	$priority	 = (int) $priority;
+	$accept_args = (int) $accept_args;
   
-  	$priority    = (int) $priority;
-  	$accept_args = (int) $accept_args;
-  
-  	$this->filters[$hook][$priority][$callback_function] = array( 	'function' => $callback_function, 'accept_args' => $accept_args );
-  	return true;
+	$self->filters[$hook][$priority][$callback_function] = array( 'function' => $callback_function, 'accept_args' => $accept_args );
+	return true;
   }
   
   /**
@@ -257,19 +272,21 @@ class Pixelpost_Plugin {
    * @param int $priority (optional) Filter plugin priority, only set this if the plugin was set with a custom priority
    * @return bool
    */
-  public function removeFilter($hook, $callback_function, $priority = 10)
+  public static function removeFilter($hook, $callback_function, $priority = 10)
   {
-  	$priority    = (int) $priority;
+	$self = self::getInstance();
+	
+	$priority = (int) $priority;
   
-  	if (array_key_exists($callback_function, $this->filters[$hook][$priority][$callback_function])) {
-  		
-  		unset($this->filters[$hook][$priority][$callback_function]);
+	if (array_key_exists($callback_function, $self->filters[$hook][$priority][$callback_function])) {
+		
+		unset($self->filters[$hook][$priority][$callback_function]);
   
-  		if (empty($this->filters[$hook][$priority]))
-  			unset($this->filters[$hook][$priority]);
-  	}
+		if (empty($self->filters[$hook][$priority]))
+			unset($self->filters[$hook][$priority]);
+	}
   
-  	return true;
+	return true;
   }
   
   /**
@@ -279,86 +296,88 @@ class Pixelpost_Plugin {
    * @param string $string Raw input string
    * @return string $string Filtered output string
    */
-  public function executeFilters($hook,&$string)
+  public static function executeFilter($hook,&$string)
   {
+	
+	$self = self::getInstance();
   
-  	/**
-  	 * First, check to see if any filters are using this hook:
-  	 */
-  	if (!isset($this->filters[$hook]))
-  		return $string;
-  	
-  	/**
-  	 * Verify that all of the $priorities are in order
-  	 */
-  	ksort($this->filters[$hook]);
+	/**
+	 * First, check to see if any filters are using this hook:
+	 */
+	if (!isset($self->filters[$hook]))
+		return $string;
+	
+	/**
+	 * Verify that all of the $priorities are in order
+	 */
+	ksort($self->filters[$hook]);
   
-  	/**
-  	 * Get any additional filter arguments to accompany to the hook & string and
-  	 * trim the $hook and $string from the $args array, as they are not needed. 
-  	 */
-  	$args = array_slice(func_get_args(), 2);
-  	
-  	/**
-  	 * This is used to send the correct number of 
-  	 * arguments to the callback function.
-  	 */
-  	$args_total = count($args);
+	/**
+	 * Get any additional filter arguments to accompany to the hook & string and
+	 * trim the $hook and $string from the $args array, as they are not needed. 
+	 */
+	$args = array_slice(func_get_args(), 2);
+	
+	/**
+	 * This is used to send the correct number of 
+	 * arguments to the callback function.
+	 */
+	$args_total = count($args);
   
   
-  	/**
-  	 * Now for the magic, lets bring the filters to life:
-  	 */
-  	foreach ($this->filters[$hook] as  $priority => &$functions) 
-  	{
-  		foreach ($functions as &$function) 
-  		{
-  			
-  			$func_name   = & $function['function'];
-  			$accept_args = & $function['accept_args'];
+	/**
+	 * Now for the magic, lets bring the filters to life:
+	 */
+	foreach ($self->filters[$hook] as  $priority => &$functions) 
+	{
+		foreach ($functions as &$function) 
+		{
+			
+			$func_name	 = & $function['function'];
+			$accept_args = & $function['accept_args'];
   
-  			/**
-  			 * We know that all filter plugins must have at least one argument
-  			 * So we'll check if this callback function is using more than one.
-  			 */
-  			if ($accept_args > 1) 
-  			{
-  				
-  				/**
-  				 * Functions can be funny, they can be particular with the number of arguments they accept, 
-  				 * so we'll be nice and only give it the number of arguments they request.
-  				 * 
-  				 * We subtract 1 from $accept_args when adding to the array, since we will be adding
-  				 * the $string variable back as a reference a bit later with the array_merge().
-  				 */
-  				if ($accept_args < $args_total)
-  					$the_args = array_slice($args, 0, $accept_args);
-  				else
-  					$the_args = array_pad($args, ($accept_args-1),null);
+			/**
+			 * We know that all filter plugins must have at least one argument
+			 * So we'll check if this callback function is using more than one.
+			 */
+			if ($accept_args > 1) 
+			{
+				
+				/**
+				 * Functions can be funny, they can be particular with the number of arguments they accept, 
+				 * so we'll be nice and only give it the number of arguments they request.
+				 * 
+				 * We subtract 1 from $accept_args when adding to the array, since we will be adding
+				 * the $string variable back as a reference a bit later with the array_merge().
+				 */
+				if ($accept_args < $args_total)
+					$the_args = array_slice($args, 0, $accept_args);
+				else
+					$the_args = array_pad($args, ($accept_args-1),null);
   
-  				/**
-  				 * If the callback function only accepts two arguments,
-  				 * we can save some time by calling the function directly.
-  				 */
-  				if ($accept_args == 2)
-  					$func_name($string,$the_args);
-  				else
-  					call_user_func_array($func_name, array_merge(array(&$string), $the_args));
-  				
-  			}
-  			else 
-  			{
-  				
-  				/**
-  				 * Simple and sweet,
-  				 * this calls our filter,
-  				 * into action.
-  				 */
-  				$func_name($string);
-  			}
-  		}
-  	}
-  	
-  	return $string;
+				/**
+				 * If the callback function only accepts two arguments,
+				 * we can save some time by calling the function directly.
+				 */
+				if ($accept_args == 2)
+					$func_name($string,$the_args);
+				else
+					call_user_func_array($func_name, array_merge(array(&$string), $the_args));
+				
+			}
+			else 
+			{
+				
+				/**
+				 * Simple and sweet,
+				 * this calls our filter,
+				 * into action.
+				 */
+				$func_name($string);
+			}
+		}
+	}
+	
+	return $string;
   }
 }

@@ -5,7 +5,7 @@
 	
 	<title><?php eprint($title); ?> / <?php eprint($config->name); ?></title>
 	
-	<base href="<?php eprint($config->url); ?>" />
+	<base href="<?php echo $config->url; ?>" />
 	<!-- <link rel="canonical" href="post/2" /> -->
 	
 	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="feed" />
@@ -20,13 +20,13 @@
 		<?php endif ?>
 	
 	</style>
-	<?php $plugins->executeAction('theme_head');  ?>
+	<?php Pixelpost_Plugin::executeAction('hook_page_head');  ?>
 </head>
 
 <body>
 
 <?php echo $content ?>
 
-<?php $plugins->executeAction('theme_body'); ?>
+<?php Pixelpost_Plugin::executeAction('hook_page_body');  ?>
 </body>
 </html>

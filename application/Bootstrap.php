@@ -11,7 +11,27 @@
  **/
 
 try
-{
+{	
+	// the application directory path
+	define('__THEME_PATH', __SITE_PATH . '/content/themes');
+	define('__PLUGIN_PATH', __SITE_PATH . '/content/plugins');
+
+	// the classes directory path
+	define('__CLASS_PATH', __APP_PATH . '/classes');
+	define('__LIB_PATH', __APP_PATH . '/libraries');
+	
+	
+	define('__DOC_ROOT', rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/'));
+
+	// set the public web root path
+	$path = '/' . trim(str_replace(__DOC_ROOT, '', __SITE_PATH), '/');
+	define('__PUBLIC_PATH', $path);
+	
+	// add the application to the include path
+	set_include_path(__APP_PATH);
+	set_include_path(__SITE_PATH);
+	set_include_path(__CLASS_PATH);
+	
 	// we need this old function file to make it work.....
 	require_once __LIB_PATH . '/functions.php';
 
@@ -21,7 +41,9 @@ try
 	// Remove magic_quotes, if applicable:
 	remove_magic_quotes();
 	
-
+	/**
+	 * Initialize Autoloaders
+	 */
 	require_once 'Zend/Loader/Autoloader.php';
 	$autoloader = Zend_Loader_Autoloader::getInstance();
 
@@ -32,78 +54,47 @@ try
 	$autoloader->registerNamespace($namespaces);
 
 	/**
+	 * Initialize Plugin Architecture
+	 */
+	Pixelpost_Plugin::getInstance();
+	Pixelpost_Plugin::executeAction('hook_init');
+
+	/**
 	 * Load the models and controllers
 	 */
 	spl_autoload_register(null, false);
 	spl_autoload_extensions('.php, .class.php, .lang.php');
-	// model loader
-	function modelLoader($class)
-	{
-		$class = strtolower($class);
-		$models = array('icontroller.php', 'frontcontroller.php', 'view.php');
-		$class = strtolower($class);
-		$filename = $class . '.php';
-		if (in_array($filename, $models))
-		{
-			$file = __APP_PATH . "/models/$filename";
-		}
-		else
-		{
-			$file = __APP_PATH . "/$class/models/$filename";
-		}
-		if (file_exists($file) == false)
-		{
-			return false;
-		}
-
-		include_once $file;
-	}
-
-
-	// autoload controllers
-	function controllerLoader($class)
-	{
-		$class = str_replace('web2bb\\', '', $class);
-		$module = str_replace('Controller', '', $class);
-		$filename = $class . '.php';
-		$file = strtolower(__APP_PATH . "/modules/$module/controllers/$filename");
-		if (file_exists($file) == false)
-		{
-			return false;
-		}
-		include_once $file;
-	}
 
 	spl_autoload_register('modelLoader');
 	spl_autoload_register('controllerLoader');
 
-	// Initalize Uri Class
+	/**
+	 * Initialize Uri Class
+	 */
 	Web2BB_Uri::getInstance();
 
 	/**
-	 * First we have to try to get the config variable
+	 * Initialize Config Class
 	 */
 	$config = Pixelpost_Config::getInstance();
 
 	/**
 	 * Get the language file (we really need to find another approach)
 	 */
-	$file = __APP_PATH . '/languages/' . Pixelpost_Config::getInstance()->locale . '.lang.php';
-	include $file;
-	// alias the lang class (e.g. make the en_US class available as lang)
-	//class_alias( $lang, '\lang');
+	$file = __APP_PATH . '/languages/' . $config->locale . '.lang.php';
+	if (file_exists($file)) {
+		include $file;
+	}else {
+		throw new Exception("Unable to open language file");
+	}
 	
 	// time settings
 	date_default_timezone_set($config->timezone);
 	$config->current_time = date("Y-m-d H:i:s",time());
 
-	// Detects if mod_rewrite mode should be enabled
-	// $config->mod_rewrite = (isset($_GET['mod_rewrite']) && $_GET['mod_rewrite'] == "true") ? true : false;
-
 	/**
-	 * With the config in place we can get the db connection
+	 * Initialize DB Class
 	 */
-
 	switch ($config->database['adapter'])
 	{
 		case 'sqlite':
@@ -113,7 +104,7 @@ try
 
 			// Make sure the file is writable, otherwise php will error out,
 			// and won't be able to add anyting to the database.
-			Pixelpost_DB::connect('sqlite:' . Pixelpost_Config::getInstance()->database['sqlite']);
+			Pixelpost_DB::connect('sqlite:' . $config->database['sqlite']);
 			break;
 
 		case 'mysql':
@@ -125,19 +116,23 @@ try
 			break;
 	}
 	
-	/**
-	 * Get the plugins in gear
-	 */
-	
-	$plugins = Pixelpost_Plugin::getInstance();
-	// Load list of plugins from config:
-//	$plugins->plugins = & $config->plugins;
-//	$plugins->get();
-	$plugins->executeAction('global_pre');
+	/*** set error handler level to E_WARNING ***/
+	// set_error_handler('web2bbErrorHandler', $config->config_values['application']['error_reporting']);
 	
 	/**
-	 * Everything is in place now.
+	 * Sample Default Permalink manager
 	 */
+	function default_permalink($value='',$prams)
+	{
+		$value = Pixelpost_Config::getInstance()->url . 'post/'. $prams->id;
+	}
+	
+	/**
+	 * Setup Default Filters & Hooks
+	 */
+	Pixelpost_Plugin::registerFilter('filter_escape','entities');
+	Pixelpost_Plugin::registerAction('hook_permalink','default_permalink',10,2);
+	
 
 }
 catch (Web2BB_Exception $e)

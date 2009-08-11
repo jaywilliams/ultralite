@@ -37,6 +37,60 @@ function remove_magic_quotes() {
 	$_COOKIE  = array_map('stripslashes', $_COOKIE);
 }
 
+
+
+// model loader
+function modelLoader($class)
+{
+	$class = strtolower($class);
+	$models = array('icontroller.php', 'frontcontroller.php', 'view.php');
+	$class = strtolower($class);
+	$filename = $class . '.php';
+	if (in_array($filename, $models))
+	{
+		$file = __APP_PATH . "/models/$filename";
+	}
+	else
+	{
+		$file = __APP_PATH . "/$class/models/$filename";
+	}
+	if (file_exists($file) == false)
+	{
+		return false;
+	}
+
+	include_once $file;
+}
+
+
+// autoload controllers
+function controllerLoader($class)
+{
+	$class = str_replace('web2bb\\', '', $class);
+	$module = str_replace('Controller', '', $class);
+	$filename = $class . '.php';
+	$file = strtolower(__APP_PATH . "/modules/$module/controllers/$filename");
+	if (file_exists($file) == false)
+	{
+		return false;
+	}
+	include_once $file;
+}
+
+/**
+ *
+ * @custom error function to throw exception
+ *
+ * @param int $errno The error number
+ *
+ * @param string $errmsg The error message
+ *
+ */
+function web2bbErrorHandler($errno, $errmsg)
+{
+	throw new Web2BB_Exception($errmsg, $errno);
+}
+
 /**
  * Renders the URL in the proper format.
  * 
@@ -159,6 +213,11 @@ function tt($template_tag='',$options='')
 }
 
 
+function entities(&$value='')
+{
+	$value = htmlentities($value,ENT_QUOTES,'UTF-8');
+}
+
 /**
  * Escape Print
  * 
@@ -183,7 +242,7 @@ function eprint($value='')
  */
 function escape($value='')
 {
-	return htmlentities($value,ENT_QUOTES);
+	return Pixelpost_Plugin::executeFilter('filter_escape',$value);
 }
 
 /**

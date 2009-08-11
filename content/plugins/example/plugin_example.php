@@ -18,21 +18,22 @@
 	Author URI: http://pixelpost.org/
 */
 
-//$plugins = Pixelpost_Plugin::getInstance(); // this should really be in a base plugin!!!
-//$plugins->registerAction('theme_head', 'echo_head');
-//$plugins->registerAction('theme_body', 'echo_body');
+Pixelpost_Plugin::registerAction('hook_page_head', 'example_echo_head');
+Pixelpost_Plugin::registerAction('hook_page_body', 'example_echo_body');
+Pixelpost_Plugin::registerFilter('filter_escape', 'example_filter_test');
 
-Pixelpost_Plugin::registerAction('theme_head', 'echo_head');
-Pixelpost_Plugin::registerAction('theme_body', 'echo_body');
+function example_filter_test(&$value)
+{
+	$value = $value. '+Example';
+}
 
-
-function echo_head()
+function example_echo_head()
 {	
 	echo "\n<!-- Header Code! -->\n";
 }
 
 
-function echo_body()
+function example_echo_body()
 {	
 	echo "\n<h2 style=\"text-align:center\">Theme body! (I got added by a plugin))</h2>\n";
 }

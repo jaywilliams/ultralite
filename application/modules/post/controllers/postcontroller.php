@@ -95,14 +95,25 @@ class postController extends baseController implements IController
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)
 		{
+			/**
+			 * To determine the permalink, we first pass along, by reference, the permalink variable,
+			 * we then include the current posts array for this item, so the permalink hook functions
+			 * can properly generate the permalink string. 
+			 */
+			Pixelpost_Plugin::executeAction('hook_permalink', $this->posts[$key]->permalink, $this->posts[$key]);
+			
+			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
+			$this->posts[$key]->title       = Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
+			$this->posts[$key]->description = Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
+			$this->posts[$key]->filename    = Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
+			$this->posts[$key]->published   = Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
+			
 			$image_info = getimagesize('content/images/' . $post->filename);
 			
-			$this->posts[$key]->id        = (int) $this->posts[$key]->id;
-			$this->posts[$key]->permalink = $this->config->url.'post/'.$post->id;
-			$this->posts[$key]->width     = $image_info[0];
-			$this->posts[$key]->height    = $image_info[1];
-			$this->posts[$key]->type      = $image_info['mime'];
-			$this->posts[$key]->uri       = $this->config->url.'content/images/' . $post->filename;
+			$this->posts[$key]->width       = $image_info[0];
+			$this->posts[$key]->height      = $image_info[1];
+			$this->posts[$key]->type        = $image_info['mime'];
+			$this->posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
 			
 			$image_info = getimagesize('content/images/thumb_' . $post->filename);
 			
@@ -110,13 +121,13 @@ class postController extends baseController implements IController
 			$this->posts[$key]->thumb_height = $image_info[1];
 			$this->posts[$key]->thumb_type   = $image_info['mime'];
 			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
+			
 		}
 		
 		/**
 		 * Assign the variables to be used in the view
 		 * $this->view->myVar can be accessed in the template as $myVar
 		 */
-		
 		$this->view->title = $this->posts['current']->title;
 		$this->view->posts = $this->posts;
 		

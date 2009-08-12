@@ -118,20 +118,11 @@ try
 	
 	/*** set error handler level to E_WARNING ***/
 	// set_error_handler('web2bbErrorHandler', $config->config_values['application']['error_reporting']);
-	
-	/**
-	 * Sample Default Permalink manager
-	 */
-	function default_permalink($value='',$prams)
-	{
-		$value = Pixelpost_Config::getInstance()->url . 'post/'. $prams->id;
-	}
-	
+
 	/**
 	 * Setup Default Filters & Hooks
 	 */
 	Pixelpost_Plugin::registerFilter('filter_escape','entities');
-	Pixelpost_Plugin::registerAction('hook_permalink','default_permalink',10,2);
 	
 
 }

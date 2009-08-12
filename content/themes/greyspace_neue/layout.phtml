@@ -3,12 +3,12 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	
-	<title><?php eprint($title); ?> / <?php eprint($config->name); ?></title>
+	<title><?php echo $title; ?> / <?php echo $site_name; ?></title>
 	
 	<base href="<?php echo $config->url; ?>" />
 	<!-- <link rel="canonical" href="post/2" /> -->
 	
-	<link rel="alternate" type="application/rss+xml" title="<?php eprint($config->name); ?> RSS Feed" href="feed" />
+	<link rel="alternate" type="application/rss+xml" title="<?php eprint($site_name); ?> RSS Feed" href="feed" />
 	<link rel="stylesheet" href="content/themes/greyspace_neue/styles/dark.css" type="text/css" charset="utf-8" title="Dark" />
 	<link rel="alternate stylesheet" href="content/themes/greyspace_neue/styles/light.css" type="text/css" charset="utf-8" title="Light" />
 	<style type="text/css">

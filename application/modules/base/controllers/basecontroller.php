@@ -27,6 +27,22 @@ class baseController
 
 	public function __destruct()
 	{
+		
+		/**
+		 * Run the default site-wide filters
+		 * 
+		 * Make a copy of the options we are going to filter, 
+		 * to make sure that the filters only change the view, not the actual config.
+		 */
+		$site_name        = $this->config->site_name;
+		$site_description = $this->config->site_description;
+		
+		Pixelpost_Plugin::executeFilter('filter_site_name',$site_name);
+		Pixelpost_Plugin::executeFilter('filter_site_description',$site_description);
+		
+		$this->view->site_name        = $site_name;
+		$this->view->site_description = $site_description;
+
 		/**
 		 * Load the view, either from the controller view, or from the template's view file
 		 * 
@@ -79,6 +95,7 @@ class baseController
 
 		if (!is_null($this->content))
 		{
+			
 			$this->view->content = $this->content;
 
 			/**

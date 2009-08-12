@@ -95,18 +95,8 @@ class postController extends baseController implements IController
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)
 		{
-			/**
-			 * To determine the permalink, we first pass along, by reference, the permalink variable,
-			 * we then include the current posts array for this item, so the permalink hook functions
-			 * can properly generate the permalink string. 
-			 */
-			Pixelpost_Plugin::executeAction('hook_permalink', $this->posts[$key]->permalink, $this->posts[$key]);
-			
 			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
-			$this->posts[$key]->title       = Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
-			$this->posts[$key]->description = Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
-			$this->posts[$key]->filename    = Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
-			$this->posts[$key]->published   = Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
+			$this->posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
 			
 			$image_info = getimagesize('content/images/' . $post->filename);
 			
@@ -122,6 +112,19 @@ class postController extends baseController implements IController
 			$this->posts[$key]->thumb_type   = $image_info['mime'];
 			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
 			
+		}
+		
+		/**
+		 * Allow any plugins to modify to adjust the posts before we apply the filters:
+		 */
+		Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
+		
+		foreach ($this->posts as $key => $post) {
+			Pixelpost_Plugin::executeFilter('filter_permalink',$this->posts[$key]->permalink);
+			Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
+			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
+			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
+			Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
 		}
 		
 		/**

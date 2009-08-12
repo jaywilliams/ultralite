@@ -1,2 +1,0 @@
-[blog]
-moderated = 1;

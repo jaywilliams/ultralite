@@ -66,14 +66,15 @@ class feedController extends baseController implements IController
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)
 		{
+			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
+			$this->posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
+			
 			$image_info = getimagesize('content/images/' . $post->filename);
 			
-			$this->posts[$key]->id        = (int) $this->posts[$key]->id;
-			$this->posts[$key]->permalink = $this->config->url.'post/'.$post->id;
-			$this->posts[$key]->width     = $image_info[0];
-			$this->posts[$key]->height    = $image_info[1];
-			$this->posts[$key]->type      = $image_info['mime'];
-			$this->posts[$key]->uri       = $this->config->url.'content/images/' . $post->filename;
+			$this->posts[$key]->width       = $image_info[0];
+			$this->posts[$key]->height      = $image_info[1];
+			$this->posts[$key]->type        = $image_info['mime'];
+			$this->posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
 			
 			$image_info = getimagesize('content/images/thumb_' . $post->filename);
 			
@@ -81,6 +82,20 @@ class feedController extends baseController implements IController
 			$this->posts[$key]->thumb_height = $image_info[1];
 			$this->posts[$key]->thumb_type   = $image_info['mime'];
 			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
+			
+		}
+		
+		/**
+		 * Allow any plugins to modify to adjust the posts before we apply the filters:
+		 */
+		Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
+		
+		foreach ($this->posts as $key => $post) {
+			Pixelpost_Plugin::executeFilter('filter_permalink',$this->posts[$key]->permalink);
+			Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
+			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
+			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
+			Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
 		}
 		
 		/**
@@ -117,9 +132,9 @@ class feedController extends baseController implements IController
 		/**
 		 * Feed Header Information
 		 */
-		$this->feed['rss']['channel']['title']          = $this->config->name;
+		$this->feed['rss']['channel']['title']          = $this->config->site_name;
 		$this->feed['rss']['channel']['link']           = $this->config->url;
-		$this->feed['rss']['channel']['description']    = $this->config->description;
+		$this->feed['rss']['channel']['description']    = $this->config->site_description;
 		$this->feed['rss']['channel']['language']       = str_replace('_','-',strtolower($this->config->locale));
 		if(isset($this->config->copyright))
 		$this->feed['rss']['channel']['copyright']      = $this->config->copyright;
@@ -176,7 +191,7 @@ class feedController extends baseController implements IController
 		{
 			$image = getimagesize(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png");
 			
-			$this->feed['rss']['channel']['image']['title']  = $this->config->name;
+			$this->feed['rss']['channel']['image']['title']  = $this->config->site_name;
 			$this->feed['rss']['channel']['image']['link']   = $this->config->url;
 			$this->feed['rss']['channel']['image']['url']    = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
 			$this->feed['rss']['channel']['image']['width']  = $image[0];

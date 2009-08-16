@@ -44,6 +44,8 @@ return array (
   'enabled_plugins' => 
   array (
     0 => 'example',
+    1 => 'comment',
+    2 => 'media_rss',
   ),
   'routes' => 
   array (

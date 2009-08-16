@@ -86,7 +86,7 @@ class feedController extends baseController implements IController
 		}
 		
 		/**
-		 * Allow any plugins to modify to adjust the posts before we apply the filters:
+		 * Allow any plugins to modify the posts before we apply the filters:
 		 */
 		Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
 		
@@ -95,7 +95,7 @@ class feedController extends baseController implements IController
 			Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
 			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
 			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
-			Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
+			// Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published); // The plublished date format shouldn't be modified on feeds
 		}
 		
 		/**
@@ -122,7 +122,7 @@ class feedController extends baseController implements IController
 		/**
 		 * Transmit the RSS feed using the XML content type
 		 */
-		@header('Content-Type: text/xml; charset=utf-8');
+		// @header('Content-Type: text/xml; charset=utf-8');
 		
 		/**
 		 * Initialize the feed array
@@ -199,6 +199,12 @@ class feedController extends baseController implements IController
 			$this->feed['rss']['channel']['atom:icon']       = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
 		}
 		
+		
+		/**
+		 * Allow any plugins to add/remove tags from the <channel> section of the RSS feed:
+		 */
+		Pixelpost_Plugin::executeAction('hook_rss_channel', $this->feed['rss']['channel']);
+		
 		/**
 		 * Feed Items
 		 */
@@ -216,34 +222,9 @@ class feedController extends baseController implements IController
 				);
 				
 			/**
-			 * Begin Media RSS Specific Tags
-			 * @todo Add Media RSS tags via a plugin
+			 * Allow any plugins to add/remove tags from each of the <item> tags in the RSS feed:
 			 */
-			if ($this->config->feed_media_rss) {
-			$this->feed['rss']['channel']['item'][$id]['media:title']                    = $this->feed['rss']['channel']['item'][$id]['title'];
-			$this->feed['rss']['channel']['item'][$id]['media:description']              = $this->feed['rss']['channel']['item'][$id]['description'];
-			$this->feed['rss']['channel']['item'][$id]['media:description_attr']['type'] = 'html';
-			$this->feed['rss']['channel']['item'][$id]['media:content']                  = array();
-			$this->feed['rss']['channel']['item'][$id]['media:content_attr']             = 
-				array(
-					'url'      => $post->uri,
-					'fileSize' => filesize("content/images/$post->filename"),
-					'type'     => $post->type,
-					'width'    => $post->width,
-					'height'   => $post->height,
-				);
-			$this->feed['rss']['channel']['item'][$id]['media:thumbnail']      = array();
-			$this->feed['rss']['channel']['item'][$id]['media:thumbnail_attr'] = 
-				array(
-					'url'    => $post->thumb_uri,
-					'width'  => $post->thumb_width,
-					'height' => $post->thumb_height,
-				);
-			}
-			/**
-			 * End Media RSS Specific Tags
-			 */
-				
+			Pixelpost_Plugin::executeAction('hook_rss_item', $this->feed['rss']['channel']['item'][$id], $post);
 		}
 		
 		/**
@@ -257,13 +238,9 @@ class feedController extends baseController implements IController
 			  );
 		
 		/**
-		 * Media RSS Specific Namespace
-		 * 
-		 * @todo Add via plugin
+		 * Allow any plugins to add/remove tags from the entire this->feed array:
 		 */
-		if ($this->config->feed_media_rss) {
-			$this->feed['rss_attr']['xmlns:media'] = 'http://search.yahoo.com/mrss/';
-		}
+		Pixelpost_Plugin::executeAction('hook_rss_feed', $this->feed);
 		
 		/**
 		 * Sent the Values out to the view

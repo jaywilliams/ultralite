@@ -24,6 +24,7 @@ Pixelpost_Plugin::registerFilter('filter_description', 'example_filter_test');
 Pixelpost_Plugin::registerFilter('filter_site_description', 'example_filter_test');
 Pixelpost_Plugin::registerFilter('filter_published', 'example_filter_published');
 Pixelpost_Plugin::registerAction('hook_posts', 'example_posts_test',10,1);
+Pixelpost_Plugin::registerAction('hook_rss_channel', 'example_channel_test',10,1);
 
 /**
  * Example hook
@@ -41,6 +42,13 @@ function example_posts_test(&$posts)
 		// Append the slug to the permalink:
 		$posts[$key]->permalink   .= "/{$posts[$key]->slug}";
 	}
+}
+
+
+function example_channel_test(&$channel)
+{
+	// var_dump($channel);
+	$channel['mytag'] = 'true';
 }
 
 /**

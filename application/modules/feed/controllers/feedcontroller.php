@@ -42,6 +42,7 @@ class feedController extends baseController implements IController
 			// Verify that we're on a legitimate page to start with
 			if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
 			{
+				// @todo this error displays if the database call doesn't work.
 				throw new Exception("Sorry, we don't have anymore pages to show!");
 			}
 

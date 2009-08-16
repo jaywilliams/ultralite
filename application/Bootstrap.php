@@ -116,6 +116,10 @@ try
 			break;
 	}
 	
+	/***
+	@todo display an error if we were unable to connect to the database.
+	***/
+	
 	/*** set error handler level to E_WARNING ***/
 	// set_error_handler('web2bbErrorHandler', $config->config_values['application']['error_reporting']);
 

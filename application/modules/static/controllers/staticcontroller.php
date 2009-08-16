@@ -20,9 +20,16 @@ class staticController extends baseController implements IController
 		/**
 		 * If no title is set, create a generic title based off of the view's name.
 		 */
-		if (empty($this->view->title)) {
-			$this->view->title = ucwords($this->front->getView());
+		if (empty($this->view->title))
+		{
+			$title = ucwords($this->front->getView());
+			
+			Pixelpost_Plugin::executeFilter('filter_title',$title);
+			
+			$this->view->title = $title;
 		}
+		
+		
 		
 	}
 

@@ -10,11 +10,6 @@
  **/
 
 
-// Pixelpost_Plugin::registerAction('hook_page_head', 'comment_echo_head');
-// Pixelpost_Plugin::registerAction('hook_page_body', 'comment_echo_body');
-// Pixelpost_Plugin::registerFilter('filter_description', 'comment_filter_test');
-// Pixelpost_Plugin::registerFilter('filter_site_description', 'comment_filter_test');
-// Pixelpost_Plugin::registerFilter('filter_published', 'comment_filter_published');
 Pixelpost_Plugin::registerAction('hook_rss_feed', 'plugin_media_rss_namespace',10,1);
 Pixelpost_Plugin::registerAction('hook_rss_item', 'plugin_media_rss_item',10,2);
 
@@ -30,37 +25,28 @@ function plugin_media_rss_namespace(&$feed)
 
 }
 
-
+/**
+ * Add Media RSS specific tags to each of the <item> tags.
+ */
 function plugin_media_rss_item(&$item,&$post)
 {
-			// var_dump($item);
-			/**
-			 * Begin Media RSS Specific Tags
-			 * @todo Add Media RSS tags via a plugin
-			 */
-			$item['media:title']                    = $item['title'];
-			$item['media:description']              = $item['description'];
-			$item['media:description_attr']['type'] = 'html';
-			$item['media:content']                  = array();
-			$item['media:content_attr']             = 
-				array(
-					'url'      => $post->uri,
-					'fileSize' => filesize("content/images/$post->filename"),
-					'type'     => $post->type,
-					'width'    => $post->width,
-					'height'   => $post->height,
-				);
-			$item['media:thumbnail']      = array();
-			$item['media:thumbnail_attr'] = 
-				array(
-					'url'    => $post->thumb_uri,
-					'width'  => $post->thumb_width,
-					'height' => $post->thumb_height,
-				);
-			/**
-			 * End Media RSS Specific Tags
-			 */
+	$item['media:title']                    = $item['title'];
+	$item['media:description']              = $item['description'];
+	$item['media:description_attr']['type'] = 'html';
+	$item['media:content']                  = array();
+	$item['media:content_attr']             = 
+		array(
+			'url'      => $post->uri,
+			'fileSize' => filesize("content/images/$post->filename"),
+			'type'     => $post->type,
+			'width'    => $post->width,
+			'height'   => $post->height,
+		);
+	$item['media:thumbnail']      = array();
+	$item['media:thumbnail_attr'] = 
+		array(
+			'url'    => $post->thumb_uri,
+			'width'  => $post->thumb_width,
+			'height' => $post->thumb_height,
+		);
 }
-
-
-?>

@@ -64,5 +64,3 @@ function comment_echo_body()
 }
 
 
-
-?>

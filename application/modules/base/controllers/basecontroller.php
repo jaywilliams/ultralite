@@ -67,6 +67,15 @@ class baseController
 			$this->content = $this->view->fetch(__APP_PATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml');
 		
 		}
+		else if ($this->front->getAction() != 'index' && file_exists(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml')) 
+		{
+			/**
+			 * Check for a matching plugin controller View & Action phtml file 
+			 * /plugins/[controller]/views/[action].phtml
+			 */
+			$this->content = $this->view->fetch(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml');
+		
+		}
 		else if (file_exists(__THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml"))
 		{
 			/**
@@ -82,6 +91,14 @@ class baseController
 			 * /[controller]/views/index.phtml
 			 */
 			$this->content = $this->view->fetch(__APP_PATH . '/modules/' . $this->front->getController() . '/views/index.phtml');
+		}
+		else if (file_exists(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml'))
+		{
+			/**
+			 * Check for a matching plugin template specific View phtml file 
+			 * /plugins/[controller]/views/index.phtml
+			 */
+			$this->content = $this->view->fetch(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml');
 		}
 		else
 		{

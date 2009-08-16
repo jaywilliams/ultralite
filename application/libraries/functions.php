@@ -66,14 +66,25 @@ function modelLoader($class)
 // autoload controllers
 function controllerLoader($class)
 {
-	$class = str_replace('web2bb\\', '', $class);
 	$module = str_replace('Controller', '', $class);
 	$filename = $class . '.php';
+	
+	// Check if controller exists in the /modules/ directory...
 	$file = strtolower(__APP_PATH . "/modules/$module/controllers/$filename");
 	if (file_exists($file) == false)
 	{
-		return false;
+		// Grab the list of enabled plugins...
+		$plugins = Pixelpost_Config::getInstance()->enabled_plugins;
+		$file    = strtolower(__PLUGIN_PATH . "/$module/controllers/$filename");
+		
+		// Check if an enabled plugin matches the name of the controller,
+		// And if so, verify that the file exists...
+		if (!in_array($module, $plugins) || file_exists($file) == false) {
+			return false;
+		}
+		
 	}
+	
 	include_once $file;
 }
 

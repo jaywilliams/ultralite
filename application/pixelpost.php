@@ -43,7 +43,7 @@ return array (
   'cache_lifetime' => 3600,
   'enabled_plugins' => 
   array (
-    0 => 'example/plugin_example.php',
+    0 => 'example',
   ),
   'routes' => 
   array (

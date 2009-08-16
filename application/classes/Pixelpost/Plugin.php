@@ -84,13 +84,13 @@ class Pixelpost_Plugin {
 		 */
 		foreach ((array) $this->plugins as $id => $plugin)
 		{
-			if (!is_readable("$this->path/$plugin"))
+			if (!is_readable("$this->path/$plugin/$plugin.php"))
 				continue;
 
 			/**
 			 * Include the Plugin
 			 */
-			$result = include_once("$this->path/$plugin");
+			$result = include_once("$this->path/$plugin/$plugin.php");
 
 			/**
 			 * Verify that the file was included properly

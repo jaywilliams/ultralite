@@ -33,6 +33,8 @@ function plugin_media_rss_item(&$item,&$post)
 	$item['media:title']                    = $item['title'];
 	$item['media:description']              = $item['description'];
 	$item['media:description_attr']['type'] = 'html';
+	// $item['media:credit']                   = $post->author;
+	// $item['media:credit_attr']['role']      = 'photographer';
 	$item['media:content']                  = array();
 	$item['media:content_attr']             = 
 		array(

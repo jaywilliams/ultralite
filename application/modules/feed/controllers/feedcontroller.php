@@ -97,6 +97,12 @@ class feedController extends baseController implements IController
 			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
 			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
 			// Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published); // The plublished date format shouldn't be modified on feeds
+			
+			Pixelpost_Plugin::executeFilter('filter_permalink_feed',$this->posts[$key]->permalink);
+			Pixelpost_Plugin::executeFilter('filter_title_feed',$this->posts[$key]->title);
+			Pixelpost_Plugin::executeFilter('filter_description_feed',$this->posts[$key]->description);
+			Pixelpost_Plugin::executeFilter('filter_filename_feed',$this->posts[$key]->filename);
+			// Pixelpost_Plugin::executeFilter('filter_published_feed',$this->posts[$key]->published); // The plublished date format shouldn't be modified on feeds
 		}
 		
 		/**
@@ -220,6 +226,7 @@ class feedController extends baseController implements IController
 					'description' => "<p><a href=\"$post->permalink\"><img src=\"{$post->uri}\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /></a></p>$post->description",
 					'pubDate'     => date(DATE_RSS,strtotime($post->published)),
 					// 'author'      => $post->author, // @todo add Author tag
+					// 'dc:creator'      => $post->author, // @todo add Author tag
 					'guid'        => $post->permalink,
 				);
 				

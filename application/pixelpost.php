@@ -46,6 +46,8 @@ return array (
     0 => 'example',
     1 => 'comment',
     2 => 'media_rss',
+    3 => 'markdown',
+    4 => 'smartypants',
   ),
   'routes' => 
   array (

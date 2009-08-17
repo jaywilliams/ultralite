@@ -217,8 +217,9 @@ class feedController extends baseController implements IController
 				array(
 					'title'       => $post->title,
 					'link'        => $post->permalink,
-					'description' => "<img src=\"{$post->uri}\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /><br />$post->description",
+					'description' => "<p><a href=\"$post->permalink\"><img src=\"{$post->uri}\" alt=\"$post->title\" width=\"$post->width\" height=\"$post->height\" /></a></p>$post->description",
 					'pubDate'     => date(DATE_RSS,strtotime($post->published)),
+					// 'author'      => $post->author, // @todo add Author tag
 					'guid'        => $post->permalink,
 				);
 				

@@ -164,6 +164,6 @@ class Pixelpost_Feed
 	 */
 	protected static function escape_value($value)
 	{
-		return htmlentities( $value, ENT_QUOTES, 'UTF-8' );
+		return htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' );
 	}
 }

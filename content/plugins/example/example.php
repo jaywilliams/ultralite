@@ -21,7 +21,7 @@
 Pixelpost_Plugin::registerAction('hook_page_head', 'example_echo_head');
 Pixelpost_Plugin::registerAction('hook_page_body', 'example_echo_body');
 Pixelpost_Plugin::registerFilter('filter_title', 'example_filter_test');
-Pixelpost_Plugin::registerFilter('filter_description', 'example_filter_test');
+Pixelpost_Plugin::registerFilter('filter_description', 'example_filter_test',5);
 Pixelpost_Plugin::registerFilter('filter_site_description', 'example_filter_test');
 Pixelpost_Plugin::registerFilter('filter_published', 'example_filter_published');
 Pixelpost_Plugin::registerAction('hook_posts', 'example_posts_test',10,1);
@@ -59,7 +59,7 @@ function example_filter_published(&$published)
  */
 function example_filter_test(&$value)
 {
-	$value = $value. ' + Example';
+	$value = $value. ' -- Example';
 }
 
 function example_echo_head()

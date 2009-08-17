@@ -129,7 +129,7 @@ class feedController extends baseController implements IController
 		/**
 		 * Transmit the RSS feed using the XML content type
 		 */
-		// @header('Content-Type: text/xml; charset=utf-8');
+		@header('Content-Type: text/xml; charset=utf-8');
 		
 		/**
 		 * Initialize the feed array
@@ -196,13 +196,13 @@ class feedController extends baseController implements IController
 		 */
 		if (file_exists(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png"))
 		{
-			$image = getimagesize(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png");
+			// $image = getimagesize(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png");
 			
 			$this->feed['rss']['channel']['image']['title']  = $this->config->site_name;
 			$this->feed['rss']['channel']['image']['link']   = $this->config->url;
 			$this->feed['rss']['channel']['image']['url']    = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
-			$this->feed['rss']['channel']['image']['width']  = $image[0];
-			$this->feed['rss']['channel']['image']['height'] = $image[1];
+			// $this->feed['rss']['channel']['image']['width']  = $image[0];
+			// $this->feed['rss']['channel']['image']['height'] = $image[1];
 			$this->feed['rss']['channel']['atom:icon']       = "{$this->config->url}content/themes/{$this->config->theme}/images/feed_icon.png";
 		}
 		

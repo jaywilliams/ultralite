@@ -33,7 +33,6 @@ return array (
   'posts_per_page' => 5,
   'feed_items' => 5,
   'feed_pagination' => true,
-  'feed_media_rss'  => true,
   'clean_urls' => true,
   'post_url' => '(year)/(month)/(day)/(url)/',
   'timezone' => 'America/Chicago',

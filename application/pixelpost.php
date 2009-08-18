@@ -47,6 +47,7 @@ return array (
     2 => 'media_rss',
     3 => 'markdown',
     4 => 'smartypants',
+    5 => 'metadata',
   ),
   'routes' => 
   array (

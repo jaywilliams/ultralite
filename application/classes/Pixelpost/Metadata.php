@@ -20,13 +20,6 @@ class Pixelpost_Metadata
 	private $path = __IMAGE_PATH;
 	
 	/**
-	 * Keyword delimiter for the IPTC data
-	 *
-	 * @var string
-	 */
-	private $IPTC_keyword_delimiter = " ";
-
-	/**
 	 * Temporary EXIF array
 	 * Holds the temporary EXIF array for the readEXIF file (used while collecting
 	 * the EXIF data)
@@ -201,18 +194,9 @@ class Pixelpost_Metadata
 					 * Note that sometimes SupplementalCategories contans multiple entries
 					 */
 				 	if(array_key_exists("2#020", $iptc))
-				 	{
-						$IPTCdata['SupplementalCategories'] = $iptc["2#020"][0];
-						/**
-					 	* There can be multiple keywords stored, so we need to create a single
-					 	* string containing these keywords seperated by IPTC_keyword_delimiter
-					 	*/
-						$keywordcount = count($iptc["2#025"]);
-						$keywords = '';
-						for ($i = 0; $i < $keywordcount; $i++)
-							$keywords .= $iptc["2#025"][$i] . $self->IPTC_keyword_delimiter;
-						$IPTCdata['Keywords'] = $keywords;
-					}
+				 		$IPTCdata['SupplementalCategories'] = $iptc["2#020"][0];
+				 	if(array_key_exists("2#025", $iptc))
+						$IPTCdata['Keywords'] = $iptc["2#025"];
 					if(array_key_exists("2#040", $iptc))
 						$IPTCdata['SpecialInstructions'] = $iptc["2#040"][0];
 					if(array_key_exists("2#055", $iptc))

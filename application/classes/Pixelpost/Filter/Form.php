@@ -233,7 +233,7 @@ class Pixelpost_Filter_Form extends Pixelpost_Filter {
 	
 	protected function isValidURL($url) 
 	{ 
-	 return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url); 
+	 return preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url); 
 	}
 	
 }

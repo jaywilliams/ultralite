@@ -12,9 +12,53 @@
 
 class Pixelpost_Metadata
 {
-	var $tmpEXIFdata = array(); // Image EXIF data array
-	var $EXIFalign;
+	/**
+	 * Path to image directory
+	 *
+	 * @var string
+	 */
+	private $path = __IMAGE_PATH;
+	
+	/**
+	 * Keyword delimiter for the IPTC data
+	 *
+	 * @var string
+	 */
+	private $IPTC_keyword_delimiter = " ";
 
+	/**
+	 * Temporary EXIF array
+	 * Holds the temporary EXIF array for the readEXIF file (used while collecting
+	 * the EXIF data)
+	 *
+	 * @var array
+	 */
+	private $tmpEXIFdata = array();
+	
+	/**
+	 * EIXF Alignment
+	 * Used to hold the alignment of the EXIF
+	 *
+	 * @var array
+	 */
+	private $EXIFalign;
+	
+	private static $instance;
+	
+	private function __construct()
+	{
+		// do nothing here, just make sure we cannot initiate the object
+	}		  
+	
+	public static function & getInstance()
+	{
+		if ( empty( self::$instance ) ) 
+		{
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+	
 	/**
 	* function readMetadata (string $image)
 	*
@@ -22,7 +66,7 @@ class Pixelpost_Metadata
 	* returns it as a merged array
 	*
 	* @since Version 2.0 (Alpha 1)
-	* @param string $image
+	* @param string (NOT INCLUDING PATH)
 	* @return array containing XMP, EXIF and IPTC data
 	*/
 	public function readMETA($image)
@@ -31,34 +75,25 @@ class Pixelpost_Metadata
 		$XMPdata  = array();
 		$EXIFdata = array();
 		$IPTCdata = array();
+		/**
+		 * All functions should at least supply an empty array when
+		 * no data is found
+		 */
 		$XMPdata  = $this->readXMP($image);
 		$EXIFdata = $this->readEXIF($image);
 		$IPTCdata = $this->readIPTC($image);
 
-		// check if we have arrays returned from each call
-		if (!is_array($XMPdata))
-		{
-			$XMPdata = array();
-		}
-		if (!is_array($EXIFdata))
-		{
-			$EXIFdata = array();
-		}
-		if (!is_array($IPTCdata))
-		{
-			$IPTCdata = array();
-		}
-		// let us assume the XMP data is the most important, followed by the EXIF and closed by IPTC
-		// we need to find the unique values and filter out the empty values
+		/**
+		 * Order of priority in processing: XMP, EXIF, IPTC
+		 * Find unique entries only and remove the empty entries
+		 */
 		$METAdata = array_filter( array_unique( array_merge( $XMPdata , $EXIFdata , $IPTCdata ) ) );
-		
-		// Remove unnecessary data:
-		$XMPdata=$EXIFdata=$IPTCdata=NULL;
-		unset($XMPdata, $EXIFdata, $IPTCdata);
-		
+
+		/**
+		 * Return result array
+		 */
 		return $METAdata;
 	}
-
 
 	/**
 	* function readXMP (string $image)
@@ -66,42 +101,52 @@ class Pixelpost_Metadata
 	* Read the XMP data from the image
 	* 
 	* @since Version 2.0 (Alpha 1)
-	* @param string $image
+	* @param string (NOT INCLUDING PATH)
 	* @return array containing XMP data
 	*/
 	public function readXMP($image)
 	{
 		$XMPdata = array();
 		
-		// read a file into the output_buffer and assign it to $source
+		/**
+		 * Read a file into the output_buffer and assign it to $source
+		 */
 		ob_start();
-		readfile($image);
+		readfile($path . '/' . $image);
 		$source = ob_get_contents();
 		ob_end_clean();
-		
-		// defenition of the start and endtag of the XMP meta block in the image
+
+		/**
+		 * Define the start and endtag of the XMP meta block in the image
+		 */
 		$xmpdata_start = strpos($source, "<x:xmpmeta");
 		$xmpdata_end   = strpos($source, "</x:xmpmeta>");
 		$xmplenght     = $xmpdata_end - $xmpdata_start;
-		
-		// extract the XMP meta block
+
+		/**
+		 * Extract the XMP meta block
+		 */
 		$xmpdata = substr($source, $xmpdata_start, $xmplenght + 12);
-		
-		// Use a regex to read out the data
+
+		/**
+		 * Use a regex to read out the data
+		 */
 		$result = preg_match_all('/(<?(photoshop|crs|tiff|exif|aux)):(\w+)?(>|=")(.*?)(<\/\2:\3>|")/',
 			$xmpdata, $tags, PREG_SET_ORDER);
-		
-		if ($result == true) {
-			foreach ($tags as $tag) {
-				// add each value into the associative array $XMPdata
+		if ($result == true) 
+		{
+			foreach ($tags as $tag) 
+			{
+				/**
+				 * Add each value into the associative array $XMPdata
+	 			 */
 				$XMPdata[$tag[3]] = $tag[5];
 			}
 		}
 		
-		// Remove unnecessary data:
-		$source = $xmpdata = $xmpdata_end = $xmpdata_start = $xmplenght = $result = null;
-		unset($source, $xmpdata, $xmpdata_end, $xmpdata_start, $xmplenght, $result);
-		
+		/**
+		 * Return result array
+		 */
 		return $XMPdata;
 	}
 
@@ -112,20 +157,26 @@ class Pixelpost_Metadata
 	 * Read the IPTC data from the image
 	 *
 	 * @since Version 2.0 (Alpha 1)
-	 * @param string $image
+	 * @param string $image (NOT INCLUDING PATH)
 	 * @return array containing IPTC data
 	 */
 	public function readIPTC($image)
 	{
 		$IPTCdata = array();
-		$size = getimagesize($image, $info);
-		// check if there is indeed an data block
-		if (is_array($info)) {
-			// try to parse the IPCT data block
+		$size = getimagesize($path . '/' . $image, $info);
+
+		/**
+		 * Check if there is indeed an data block
+		 */
+		if (is_array($info)) 
+		{
+			/**
+			 * Try to parse the IPCT data block
+			 */
 			$iptc = iptcparse($info["APP13"]);
 			/**
-			 * if $iptc is an array there was data found
-			 * please note there can be many things stored into
+			 * If $iptc is an array there was data found.
+			 * Please note there can be many things stored into
 			 * the IPTC data. The biggest problem with it is that
 			 * it can be in a different language, depending on the
 			 * language of the image. There is no way to get a clean
@@ -133,17 +184,22 @@ class Pixelpost_Metadata
 			 * approach is to fill the array with specific IPTC blocks
 			 * @link http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/IPTC.html
 			 */
-			if (is_array($iptc)) {
+			if (is_array($iptc)) 
+			{
 				$IPTCdata['ObjectName'] = $iptc["2#005"][0];
 				$IPTCdata['Urgency'] = $iptc["2#010"][0];
 				$IPTCdata['Category'] = $iptc["2#015"][0];
-				// note that sometimes SupplementalCategories contans multiple entries
+				/**
+				 * Note that sometimes SupplementalCategories contans multiple entries
+				 */
 				$IPTCdata['SupplementalCategories'] = $iptc["2#020"][0];
-				// there can be multiple keywords stored, so we need to create
-				// a single string containing these keywords seperated by spaces
+				/**
+				 * There can be multiple keywords stored, so we need to create a single
+				 * string containing these keywords seperated by IPTC_keyword_delimiter
+				 */
 				$keywordcount = count($iptc["2#025"]);
 				for ($i = 0; $i < $keywordcount; $i++)
-					$keywords .= $iptc["2#025"][$i] . " ";
+					$keywords .= $iptc["2#025"][$i] . $this->IPTC_keyword_delimiter;
 				$IPTCdata['Keywords'] = $keywords;
 				$IPTCdata['SpecialInstructions'] = $iptc["2#040"][0];
 				$IPTCdata['DateCreated'] = $iptc["2#055"][0];
@@ -160,10 +216,14 @@ class Pixelpost_Metadata
 				$IPTCdata['Contact'] = $iptc["2#118"][0];
 				$IPTCdata['Caption-Abstract'] = $iptc["2#120"][0];
 			}
+			$IPTCdata = array_filter($IPTCdata);
+			$size = $info = $iptc = null;
+			unset($size, $info, $iptc);
 		}
-		$IPTCdata = array_filter($IPTCdata);
-		$size = $info = $iptc = null;
-		unset($size, $info, $iptc);
+
+		/**
+		 * Return result array
+		 */
 		return $IPTCdata;
 	}
 
@@ -171,61 +231,63 @@ class Pixelpost_Metadata
 	 * Opens the JPEG file and attempts to find the EXIF data
 	 *
 	 * @since Version 2.0 (Alpha 1)
-	 *
-	 * @param string $image
-	 *
+	 * @param string $image (NOT INCLUDING PATH)
 	 * @return array containing EXIF data
-	 *
 	 */
 	public function readEXIF($image)
 	{
-		/*	Based upon Exif reader v 1.3 by Richard James Kendall
-		Modified by Dennis Mooibroek
-		* Added support for global variables (register_globals is off)
-		* Added support for GPS readouts.
-		* Added lots of more comments
-		*/
+		/**
+		 * Based upon Exif reader v 1.3 by Richard James Kendall
+		 * Modified by Dennis Mooibroek
+		 *  + Added support for global variables (register_globals is off)
+		 *	+ Added support for GPS readouts.
+		 */
+
 		$EXIFdata = array();
-		$fp = fopen($image, "rb");
+		$fp = fopen($path . '/' . $image, "rb");
 		$a = $this->fgetord($fp);
-		if ($a != 255 || $this->fgetord($fp) != 216) {
+		
+		if ($a != 255 || $this->fgetord($fp) != 216) 
 			return false;
-		}
+		
 		$ef = false;
-		while (!feof($fp)) {
+		
+		while (!feof($fp)) 
+		{
 			$section_length = 0;
 			$section_marker = 0;
 			$lh = 0;
 			$ll = 0;
-			for ($i = 0; $i < 7; $i++) {
+			for ($i = 0; $i < 7; $i++) 
+			{
 				$section_marker = $this->fgetord($fp);
-				if ($section_marker != 255) {
+				if ($section_marker != 255) 
 					break;
-				}
-				if ($i >= 6) {
+				if ($i >= 6) 
 					return false;
-				}
 			}
-			if ($section_marker == 255) {
+			if ($section_marker == 255) 
 				return false;
-			}
 			$lh = $this->fgetord($fp);
 			$ll = $this->fgetord($fp);
 			$section_length = ($lh << 8) | $ll;
 			$data = chr($lh) . chr($ll);
 			$t_data = fread($fp, $section_length - 2);
 			$data .= $t_data;
-			switch ($section_marker) {
+			switch ($section_marker) 
+			{
 				case 225:
 					$ef = true;
 					$this->extractEXIFData(substr($data, 2), $section_length);
 					$EXIFdata = $this->tmpEXIFdata;
-					// close file
 					fclose($fp);
-					return $EXIFdata;
 					break;
 			}
 		}
+		/**
+		 * Return result array
+		 */
+		return $EXIFdata;
 	}
 
 
@@ -258,11 +320,15 @@ class Pixelpost_Metadata
 	 */
 	protected function pad($data, $shouldbe, $put)
 	{
-		if (strlen($data) == $shouldbe) {
+		if (strlen($data) == $shouldbe) 
+		{
 			return $data;
-		} else {
+		} 
+		else 
+		{
 			$padding = "";
-			for ($i = strlen($data); $i < $shouldbe; $i++) {
+			for ($i = strlen($data); $i < $shouldbe; $i++) 
+			{
 				$padding .= $put;
 			}
 			return $padding . $data;
@@ -282,7 +348,8 @@ class Pixelpost_Metadata
 	protected function ii2mm($intel)
 	{
 		$mm = "";
-		for ($i = 0; $i <= strlen($intel); $i += 2) {
+		for ($i = 0; $i <= strlen($intel); $i += 2) 
+		{
 			$mm .= substr($intel, (strlen($intel) - $i), 2);
 		}
 		return $mm;
@@ -304,7 +371,8 @@ class Pixelpost_Metadata
 	protected function getnumber($data, $start, $length, $align)
 	{
 		$a = bin2hex(substr($data, $start, $length));
-		if (!$align) {
+		if (!$align) 
+		{
 			$a = $this->ii2mm($a);
 		}
 		return hexdec($a);
@@ -325,25 +393,28 @@ class Pixelpost_Metadata
 	protected function getrational($data, $align, $type)
 	{
 		$a = bin2hex($data);
-		if (!$align) {
+		if (!$align) 
 			$a = $this->ii2mm($a);
-		}
-		if ($align == 1) {
+		if ($align == 1) 
+		{
 			$n = hexdec(substr($a, 0, 8));
 			$d = hexdec(substr($a, 8, 8));
-		} else {
+		} 
+		else 
+		{
 			$d = hexdec(substr($a, 0, 8));
 			$n = hexdec(substr($a, 8, 8));
 		}
-		if ($type == "S" && $n > 2147483647) {
+		if ($type == "S" && $n > 2147483647) 
 			$n = $n - 4294967296;
-		}
-		if ($n == 0) {
+		if ($n == 0) 
 			return 0;
-		}
-		if ($d != 0) {
+		if ($d != 0) 
+		{
 			return ($n / $d);
-		} else {
+		} 
+		else 
+		{
 			return $n . "/" . $d;
 		}
 	}
@@ -362,29 +433,45 @@ class Pixelpost_Metadata
 	 */
 	protected function extractEXIFData($data, $length)
 	{
-		if (substr($data, 0, 4) == "Exif") {
-			if (substr($data, 6, 2) == "II") // Intel byte order
-				{
+		if (substr($data, 0, 4) == "Exif") 
+		{
+			if (substr($data, 6, 2) == "II")
+			{
+				/**
+				 * Intel byte order
+				 */
 				$this->EXIFalign = 0;
-			} else {
-				if (substr($data, 6, 2) == "MM") //Motorola byte order
-					{
+			} 
+			else 
+			{
+				if (substr($data, 6, 2) == "MM")
+				{
+					/**
+					 * Motorola byte order
+					 */
 					$this->EXIFalign = 1;
-				} else {
+				} 
+				else 
+				{
+					/**
+					 * Unknown byte order, can't process further
+					 */
 					return false;
 				}
 			}
 			$a = $this->getnumber($data, 8, 2, $this->EXIFalign);
-			if ($a != 0x2a) {
+			if ($a != 0x2a) 
 				return false;
-			}
+
 			$first_offset = $this->getnumber($data, 10, 4, $this->EXIFalign);
-			if ($first_offset < 8 || $first_offset > 16) {
+			if ($first_offset < 8 || $first_offset > 16) 
 				return false;
-			}
+
 			$this->readEXIFDir(substr($data, 14), 8, $length - 6, $this->EXIFalign);
 			return true;
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
@@ -393,11 +480,8 @@ class Pixelpost_Metadata
 	 * Takes an EXIF tag id and returns the string name of that tag
 	 *
 	 * @since Version 2.0 (Alpha 1)
-	 *
 	 * @param decimal $dec
-	 *
 	 * @return string
-	 *
 	 */
 	protected function tagid2name($dec)
 	{
@@ -522,9 +606,12 @@ class Pixelpost_Metadata
 		$tag_arr['0x001d'] = 'GPSDateStamp';
 		$tag_arr['0x001e'] = 'GPSDifferential';
 		$hex = '0x' . str_pad(dechex($dec), 4, "0", STR_PAD_LEFT);
-		if (array_key_exists($hex, $tag_arr)) {
+		if (array_key_exists($hex, $tag_arr)) 
+		{
 			return $tag_arr[$hex];
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
@@ -571,10 +658,13 @@ class Pixelpost_Metadata
 			"Two-chip Colour Area Sensor", "Three-chip Colour Area Sensor",
 			"Colour Sequential Area Sensor", "Trilinear Sensor",
 			"Colour Sequential Linear Sensor");
-		if (isset($$tname)) {
+		if (isset($$tname)) 
+		{
 			$tmp = $$tname;
 			return $tmp[$tvalue];
-		} else {
+		} 
+		else 
+		{
 			return $tvalue;
 		}
 	}
@@ -597,30 +687,41 @@ class Pixelpost_Metadata
 		$returnd = substr($bin, 5, 2);
 		$flashmode = substr($bin, 3, 2);
 		$redeye = substr($bin, 1, 1);
-		if ($flashfired == "1") {
+		if ($flashfired == "1") 
+		{
 			$reval = "Fired";
-		} else {
-			if ($flashfired == "0") {
+		} 
+		else 
+		{
+			if ($flashfired == "0") 
+			{
 				$retval = "Did not fire";
 			}
 		}
-		if ($returnd == "10") {
+		if ($returnd == "10") 
+		{
 			$retval .= ", Strobe return light not detected";
-		} else {
-			if ($returnd == "11") {
+		} 
+		else 
+		{
+			if ($returnd == "11") 
 				$retval .= ", Strobe return light detected";
-			}
 		}
-		if ($flashmode == "01" || $flashmode == "10") {
+		if ($flashmode == "01" || $flashmode == "10") 
+		{
 			$retval .= ", Compulsory mode";
-		} else {
-			if ($flashmode == "11") {
+		} 
+		else 
+		{
+			if ($flashmode == "11")
 				$retval .= ", Auto mode";
-			}
 		}
-		if ($redeye) {
+		if ($redeye) 
+		{
 			$retval .= ", Red eye reduction";
-		} else {
+		} 
+		else 
+		{
 			$retval .= ", No red eye reduction";
 		}
 		return $retval;
@@ -646,7 +747,8 @@ class Pixelpost_Metadata
 			"SBYTE", "UNDEFINED", "SSHORT", "SLONG", "SRATIONAL", "SINGLE", "DOUBLE");
 		$w = false;
 		$val = "";
-		switch ($format_type[$format]) {
+		switch ($format_type[$format]) 
+		{
 			case "STRING":
 				$val = trim(substr($data, 0, $length));
 				$w = true;
@@ -658,14 +760,14 @@ class Pixelpost_Metadata
 				break;
 			case "USHORT":
 			case "SSHORT":
-				switch ($tag) {
+				switch ($tag) 
+				{
 					case 0x9209:
 						$val = array($this->getnumber($data, 0, 2, $align), $this->flashvalue($this->
 							getnumber($data, 0, 2, $align)));
 						$w = true;
 						break;
 					case 0x9214:
-
 						break;
 					case 0xa001:
 						$tmp = $this->getnumber($data, 0, 2, $align);
@@ -684,30 +786,27 @@ class Pixelpost_Metadata
 				}
 				break;
 			case "URATIONAL":
-				switch ($tag) {
+				switch ($tag) 
+				{
 					case 0x0002:
-						if ($this->getrational(substr($data, 0, 8), $align, "U") == $this->getrational(substr
-							($data, 0, 24), $align, "U")) {
-							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->
-								getrational(substr($data, 8, 16), $align, "U") . ", " . $this->getrational(substr
-								($data, 16, 24), $align, "U");
-						} else {
-							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->
-								getrational(substr($data, 0, 16), $align, "U") . ", " . $this->getrational(substr
-								($data, 0, 24), $align, "U");
+						if ($this->getrational(substr($data, 0, 8), $align, "U") == $this->getrational(substr($data, 0, 24), $align, "U")) 
+						{
+							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->getrational(substr($data, 8, 16), $align, "U") . ", " . $this->getrational(substr($data, 16, 24), $align, "U");
+						} 
+						else 
+						{
+							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->getrational(substr($data, 0, 16), $align, "U") . ", " . $this->getrational(substr($data, 0, 24), $align, "U");
 						}
 						$w = true;
 						break;
 					case 0x0004:
-						if ($this->getrational(substr($data, 0, 8), $align, "U") == $this->getrational(substr
-							($data, 0, 24), $align, "U")) {
-							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->
-								getrational(substr($data, 8, 16), $align, "U") . ", " . $this->getrational(substr
-								($data, 16, 24), $align, "U");
-						} else {
-							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->
-								getrational(substr($data, 0, 16), $align, "U") . ", " . $this->getrational(substr
-								($data, 0, 24), $align, "U");
+						if ($this->getrational(substr($data, 0, 8), $align, "U") == $this->getrational(substr($data, 0, 24), $align, "U")) 
+						{
+							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->getrational(substr($data, 8, 16), $align, "U") . ", " . $this->getrational(substr($data, 16, 24), $align, "U");
+						} 
+						else 
+						{
+							$val = $this->getrational(substr($data, 0, 8), $align, "U") . ", " . $this->getrational(substr($data, 0, 16), $align, "U") . ", " . $this->getrational(substr($data, 0, 24), $align, "U");
 						}
 						$w = true;
 						break;
@@ -722,23 +821,30 @@ class Pixelpost_Metadata
 				$w = true;
 				break;
 			case "UNDEFINED":
-				switch ($tag) {
+				switch ($tag) 
+				{
 					case 0xa300:
 						$tmp = $this->getnumber($data, 0, 2, $align);
-						if ($tmp == 3) {
+						if ($tmp == 3) 
+						{
 							$val = "Digital Camera";
 							$w = true;
-						} else {
+						} 
+						else 
+						{
 							$val = "Unknown";
 							$w = true;
 						}
 						break;
 					case 0xa301:
 						$tmp = $this->getnumber($data, 0, 2, $align);
-						if ($tmp == 3) {
+						if ($tmp == 3) 
+						{
 							$val = "Directly Photographed";
 							$w = true;
-						} else {
+						} 
+						else 
+						{
 							$val = "Unknown";
 							$w = true;
 						}
@@ -746,7 +852,8 @@ class Pixelpost_Metadata
 				}
 				break;
 		}
-		if ($w) {
+		if ($w) 
+		{
 			$this->tmpEXIFdata[$this->tagid2name($tag)] = $val;
 		}
 	}
@@ -771,39 +878,43 @@ class Pixelpost_Metadata
 		$sofar = 2;
 		$data_in = "";
 		$number_dir_entries = $this->getnumber($data, 0, 2, $this->EXIFalign);
-		for ($i = 0; $i < $number_dir_entries; $i++) {
+		for ($i = 0; $i < $number_dir_entries; $i++) 
+		{
 			$sofar += 12;
 			$dir_entry = substr($data, 2 + 12 * $i);
 			$tag = $this->getnumber($dir_entry, 0, 2, $this->EXIFalign);
 			$format = $this->getnumber($dir_entry, 2, 2, $this->EXIFalign);
 			$components = $this->getnumber($dir_entry, 4, 4, $this->EXIFalign);
-			if (($format - 1) >= 12) {
+			if (($format - 1) >= 12)
 				return false;
-			}
+
 			$byte_count = $components * $format_length[$format];
-			if ($byte_count > 4) {
+			if ($byte_count > 4) 
+			{
 				$offset_val = ($this->getnumber($dir_entry, 8, 4, $this->EXIFalign)) - $offset_base;
-				if (($offset_val + $byte_count) > $exif_length) {
+				if (($offset_val + $byte_count) > $exif_length) 
 					return false;
-				}
+
 				$data_in = substr($data, $offset_val);
-			} else {
+			} 
+			else 
+			{
 				$data_in = substr($dir_entry, 8);
 			}
 			if ($tag == 0x8769) //pointer to the Exif IFD
-				{
-				$tmp = ($this->getnumber($data_in, 0, 4, $this->EXIFalign)) - 8;
-				$this->readEXIFDir(substr($data, $tmp), $tmp + 8, $exif_length, $this->
-					EXIFalign);
-			} elseif ($tag == 0x8825) //pointer to GPS IFD
 			{
 				$tmp = ($this->getnumber($data_in, 0, 4, $this->EXIFalign)) - 8;
-				$this->readEXIFDir(substr($data, $tmp), $tmp + 8, $exif_length, $this->
-					EXIFalign);
-			} else {
+				$this->readEXIFDir(substr($data, $tmp), $tmp + 8, $exif_length, $this->EXIFalign);
+			} 
+			elseif ($tag == 0x8825) //pointer to GPS IFD
+			{
+				$tmp = ($this->getnumber($data_in, 0, 4, $this->EXIFalign)) - 8;
+				$this->readEXIFDir(substr($data, $tmp), $tmp + 8, $exif_length, $this->EXIFalign);
+			} 
+			else 
+			{
 				$this->dealwithtag($tag, $format, $data_in, $byte_count, $this->EXIFalign);
 			}
 		}
 	}
-
 }

@@ -12,8 +12,8 @@ Pixelpost_Plugin::registerFilter('filter_title', 'plugin_smartypants_encode');
 Pixelpost_Plugin::registerFilter('filter_description', 'plugin_smartypants_encode');
 
 // Disable SmartyPants smart entities, on the feed:
-Pixelpost_Plugin::registerFilter('filter_title_feed', 'plugin_smartypants_decode');
-Pixelpost_Plugin::registerFilter('filter_description_feed', 'plugin_smartypants_decode');
+// Pixelpost_Plugin::registerFilter('filter_title_feed', 'plugin_smartypants_decode');
+// Pixelpost_Plugin::registerFilter('filter_description_feed', 'plugin_smartypants_decode');
 
 function plugin_smartypants_encode(&$string)
 {

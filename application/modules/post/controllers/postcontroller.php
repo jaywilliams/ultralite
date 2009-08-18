@@ -12,6 +12,12 @@
 
 class postController extends baseController implements IController
 {
+		/**
+	 * Path to image directory
+	 *
+	 * @var string
+	 */
+	private $path = __IMAGE_PATH;
 
 	public $posts = array('previous'=>null,'current'=>null,'next'=>null);
 
@@ -98,19 +104,19 @@ class postController extends baseController implements IController
 			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
 			$this->posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
 			
-			$image_info = getimagesize('content/images/' . $post->filename);
+			$image_info = getimagesize($this->path . '/' . $post->filename);
 			
 			$this->posts[$key]->width       = $image_info[0];
 			$this->posts[$key]->height      = $image_info[1];
 			$this->posts[$key]->type        = $image_info['mime'];
-			$this->posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
+			$this->posts[$key]->uri         = $this->config->url . $this->path . '/' . $post->filename;
 			
-			$image_info = getimagesize('content/images/thumb_' . $post->filename);
+			$image_info = getimagesize($this->path . '/thumb_' . $post->filename);
 			
 			$this->posts[$key]->thumb_width  = $image_info[0];
 			$this->posts[$key]->thumb_height = $image_info[1];
 			$this->posts[$key]->thumb_type   = $image_info['mime'];
-			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
+			$this->posts[$key]->thumb_uri    = $this->config->url . $this->path . '/thumb_' . $post->filename;
 			
 		}
 		

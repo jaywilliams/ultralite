@@ -15,6 +15,7 @@ try
 	// the application directory path
 	define('__THEME_PATH', __SITE_PATH . '/content/themes');
 	define('__PLUGIN_PATH', __SITE_PATH . '/content/plugins');
+	define('__IMAGE_PATH', 'content/images');
 
 	// the classes directory path
 	define('__CLASS_PATH', __APP_PATH . '/classes');

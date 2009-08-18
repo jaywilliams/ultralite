@@ -1,20 +1,32 @@
 <?php
 /**
- * It works, but it sure isn't pretty.
+ * Pixelpost Filter Form
+ * 
+ * Removes any hazardous html from user input, such as a comment.
+ * 
+ * Set $allowedTags to false if you don't want any tags as all.
+ * 
+ * Example:
+ * 
+ *     $filter = new Pixelpost_Filter_Form;
+ *     $output = $filter->filter($input);
+ * 
+ * Allowed Tags:
+ * 
+ *     <a href="URL">link</a>
+ *     <b>bold</b>
+ *     <strong>strong</strong>
+ *     <i>italic</i>
+ *     <em>emphasis</em>
+ *     <s>strike</s>
+ *     <del>deleted</del>
+ * 
+ * Everything else gets removed, permanently!
  * 
  * @todo Clean the this code up!
+ * 
+ * @package Pixelpost
  */
-
-/**
-* @package SPLIB
-* @version $Id: FormFilter.php,v 1.1 2003/12/12 08:06:05 kevin Exp $
-*/
-/**
-* FormFilter<br />
-* Class for examining HTML tags.<br />
-* @access public
-* @package SPLIB
-*/
 class Pixelpost_Filter_Form extends Pixelpost_Filter {
 	/**
 	* String of allowed tags

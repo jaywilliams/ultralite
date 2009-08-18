@@ -37,7 +37,6 @@ class Pixelpost_Plugin {
 	
 	/**
 	 * Path to plugin directory
-	 * Note: The trailing slash is required.
 	 *
 	 * @var string
 	 */

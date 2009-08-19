@@ -29,7 +29,9 @@ class categoryController extends baseController implements IController
 		$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
 			WHERE categories.left_node BETWEEN " . $result['left_node'] . " 
 				AND " . $result['right_node'] . "
-				AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id";
+				AND pixelpost.published <= '{$this->config->current_time}'
+				AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id
+				ORDER BY pixelpost.published";
 		$this->posts = (array )Pixelpost_DB::get_results($sql);
 		
 

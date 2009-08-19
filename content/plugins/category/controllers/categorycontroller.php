@@ -19,11 +19,19 @@ class categoryController extends baseController implements IController
 		 */
 		$cats = new Pixelpost_Hierarchy('categories');
 		$Uri_fragment = Web2BB_Uri::numberOfFragments() - 1;
-		$category = Web2BB_Uri::fragment($Uri_fragment);
-
-		$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost WHERE categories.name='" . $category . "' AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id";
+		$category = ucfirst(Web2BB_Uri::fragment($Uri_fragment));
+		
+		// in case it isn't a leaf we need to select the subcategories as well
+		$sql = "SELECT left_node, right_node FROM categories WHERE name='" . $category . "'";
+		$result= (array )Pixelpost_DB::get_row($sql);
+		if (empty($result)) 
+			throw new Exception("Sorry, that category doesn't exists!");
+		$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+			WHERE categories.left_node BETWEEN " . $result['left_node'] . " 
+				AND " . $result['right_node'] . "
+				AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id";
 		$this->posts = (array )Pixelpost_DB::get_results($sql);
-		if (empty($this->posts)) throw new Exception("Sorry, that category doesn't exists!");
+		
 
 		// Tack on image data to the posts array
 		foreach ($this->posts as $key => $post)

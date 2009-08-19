@@ -107,6 +107,18 @@ class Web2BB_Uri
 		return false;
 	}
 
+	/**
+	 * @get number of uri fragments 
+	 *
+	 * @access public
+	 *
+	 * @return int on success
+	 *
+	 */
+	public static function numberOfFragments()
+	{
+		return count(self::$fragments);
+	}
 
 	/**
 	 * Get the current page number

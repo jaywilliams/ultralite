@@ -48,6 +48,7 @@ return array (
     3 => 'markdown',
     4 => 'smartypants',
     5 => 'metadata',
+    6 => 'category',
   ),
   'routes' => 
   array (

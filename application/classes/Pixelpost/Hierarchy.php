@@ -19,7 +19,7 @@ class Pixelpost_Hierarchy
 
 	public function __construct($tablename)
 	{
-		$this->tablename = $tablename;
+		$this->tablename = Pixelpost_DB::escape($tablename);
 	}
 
 	/**
@@ -111,9 +111,10 @@ class Pixelpost_Hierarchy
 	 */
 	public function singlePath($node_name)
 	{
-		$sql = "SELECT parent.name FROM " . $this->tablename . " AS node, " . $this->tablename . " AS parent
+		$sql = "SELECT parent.name FROM " . $this->tablename . " AS node, 
+			" . $this->tablename . " AS parent
 			WHERE node.left_node BETWEEN parent.left_node AND parent.right_node 
-		 	AND node.name = '" . $node_name . "' ORDER BY node.left_node";
+		 	AND node.name = '" . Pixelpost_DB::escape($node_name) . "' ORDER BY node.left_node";
 	 	$result = (array) Pixelpost_DB::get_results($sql);
 		return $result;
 	}
@@ -129,7 +130,8 @@ class Pixelpost_Hierarchy
 	{
 		$sql = "SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth 
 			FROM " . $this->tablename . " AS node, 
-			" . $this->tablename . " AS parent WHERE node.left_node BETWEEN parent.left_node 
+			" . $this->tablename . " AS parent 
+			WHERE node.left_node BETWEEN parent.left_node 
 			AND parent.right_node GROUP BY node.name ORDER BY node.left_node";
 		$result = (array) Pixelpost_DB::get_results($sql);
 		return $result;
@@ -143,9 +145,12 @@ class Pixelpost_Hierarchy
 	 */
 	public function subTreeDepth($node_name)
 	{
-		$sql = "SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth FROM " . $this->tablename . " AS node, 
-			" . $this->tablename . " AS parent WHERE node.left_node BETWEEN parent.left_node 
-			AND parent.right_node AND node.name = '" . $node_name . "' GROUP BY node.name 
+		$sql = "SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth 
+			FROM " . $this->tablename . " AS node, 
+			" . $this->tablename . " AS parent 
+			WHERE node.left_node BETWEEN parent.left_node 
+			AND parent.right_node AND node.name = '" . Pixelpost_DB::escape($node_name) . "' 
+			GROUP BY node.name 
 			ORDER BY node.left_node";
 		$result = (array) Pixelpost_DB::get_results($sql);
 		return $result;
@@ -160,14 +165,15 @@ class Pixelpost_Hierarchy
 	public function getLocalSubNodes($node_name)
 	{
 		$sql = "SELECT node.name AS name, (COUNT(parent.name) - (sub_tree.depth + 1)) AS depth 
-			FROM " . $this->tablename . " AS node, " . $this->tablename . " AS parent, 
+			FROM " . $this->tablename . " AS node, 
+			" . $this->tablename . " AS parent, 
 			categories AS sub_parent,
 		    (
     			SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth
     			FROM " . $this->tablename . " AS node,
     			" . $this->tablename . " AS parent
     			WHERE node.left_node BETWEEN parent.left_node AND parent.right_node
-    			AND node.name = '" . $node_name . "'
+    			AND node.name = '" . Pixelpost_DB::escape($node_name) . "'
     			GROUP BY node.name
     			ORDER BY node.left_node
     		)AS sub_tree
@@ -192,16 +198,20 @@ class Pixelpost_Hierarchy
 	{
 		try
 		{
-			$sql = "SELECT right_node FROM " . $this->tablename . " WHERE name = '" . $left_node . "'";
+			$sql = "SELECT right_node FROM " . $this->tablename . " 
+				WHERE name = '" . Pixelpost_DB::escape($left_node) . "'";
 			$myRight = (int) Pixelpost_DB::get_var($sql);
 			/*** increment the nodes by two ***/
-			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET right_node = right_node + 2 WHERE right_node > " . $myRight);
-			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET left_node = left_node + 2 WHERE left_node > " . $myRight);
+			Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+				SET right_node = right_node + 2 WHERE right_node > " . $myRight);
+			Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+				SET left_node = left_node + 2 WHERE left_node > " . $myRight);
 			/*** insert the new node ***/
 			$new_left = $myRight + 1;
 			$new_right = $myRight + 2;
-			Pixelpost_DB::query("INSERT INTO " . $this->tablename . "(name, left_node, right_node) 
-				VALUES('" . $new_node . "', " . $new_left . ", " . $new_right . ")");
+			Pixelpost_DB::query("INSERT INTO " . $this->tablename . "
+				(name, left_node, right_node) 
+				VALUES('{$new_node}', '{$new_left}','{$new_right}')");
 		}
 		catch (exception $e)
 		{
@@ -223,7 +233,8 @@ class Pixelpost_Hierarchy
 	{
 		try
 		{
-			$sql = "SELECT left_node FROM " . $this->tablename . " WHERE name='" . $node_name . "'";
+			$sql = "SELECT left_node FROM " . $this->tablename . " 
+				WHERE name='" . Pixelpost_DB::escape($node_name) . "'";
 			$myLeft = (int) Pixelpost_DB::get_var($sql);
 			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET right_node = right_node + 2 WHERE right_node > ".$myLeft);
 			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET left_node = left_node + 2 WHERE left_node > ".$myLeft);
@@ -231,7 +242,7 @@ class Pixelpost_Hierarchy
 			$new_left = $myLeft + 1;
 			$new_right = $myLeft + 2;
 			Pixelpost_DB::query("INSERT INTO " . $this->tablename . "(name, left_node, right_node) 
-				VALUES('" . $new_node . "', " . $new_left . ", " . $new_right . ")");
+				VALUES('{$new_node}', '{$new_left}', '{$new_right}')");
 		}
 		catch (exception $e)
 		{
@@ -248,13 +259,19 @@ class Pixelpost_Hierarchy
 	{
 		try
 		{
-			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " WHERE name = '" . $node_name . "'";
+			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " 
+				WHERE name = '" . Pixelpost_DB::escape($node_name) . "'";
 			$result = (array) Pixelpost_DB::get_results($sql);
 			$result[0]->width_node = $result[0]->right_node - $result[0]->left_node + 1;
 			
-			Pixelpost_DB::query("DELETE FROM " . $this->tablename . " WHERE left_node BETWEEN " . $result[0]->left_node . " AND " . $result[0]->right_node);
-			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET right_node = right_node - " . $result[0]->width_node . " WHERE right_node > " . $result[0]->right_node);
-			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET left_node = left_node - " . $result[0]->width_node . " WHERE left_node > " . $result[0]->right_node);
+			Pixelpost_DB::query("DELETE FROM " . $this->tablename . " 
+				WHERE left_node BETWEEN " . $result[0]->left_node . " AND " . $result[0]->right_node);
+			Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+				SET right_node = right_node - " . $result[0]->width_node . " 
+				WHERE right_node > " . $result[0]->right_node);
+			Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+				SET left_node = left_node - " . $result[0]->width_node . " 
+				WHERE left_node > " . $result[0]->right_node);
 		}
 		catch (exception $e)
 		{
@@ -271,32 +288,24 @@ class Pixelpost_Hierarchy
 	{
 		try
 		{
-			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " WHERE name = '" . $node_name . "'";
+			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " 
+				WHERE name = '" . Pixelpost_DB::escape($node_name) . "'";
 			$result = (array) Pixelpost_DB::get_results($sql);
 			$result[0]->width_node = $result[0]->right_node - $result[0]->left_node + 1;
 			
-			Pixelpost_DB::query("DELETE FROM " . $this->tablename . " WHERE left_node BETWEEN " . $result[0]->left_node . " AND " . $result[0]->right_node);
-			Pixelpost_DB::query("UPDATE " . $this->tablename . " SET right_node = right_node - " . $result[0]->width_node . " WHERE right_node > " . $result[0]->right_node);
-			 Pixelpost_DB::query("UPDATE " . $this->tablename . " SET left_node = left_node - " . $result[0]->width_node . " WHERE left_node > " . $result[0]->right_node);
+			Pixelpost_DB::query("DELETE FROM " . $this->tablename . " 
+				WHERE left_node BETWEEN " . $result[0]->left_node . " 
+				AND " . $result[0]->right_node);
+			Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+				SET right_node = right_node - " . $result[0]->width_node . " 
+				WHERE right_node > " . $result[0]->right_node);
+			 Pixelpost_DB::query("UPDATE " . $this->tablename . " 
+			 	SET left_node = left_node - " . $result[0]->width_node . " 
+				 WHERE left_node > " . $result[0]->right_node);
 		}
 		catch (exception $e)
 		{
 			throw new Exception($e);
 		}
 	}
-
-//	/**
-//	 * @list categories and product count
-//	 * @access public
-//	 * @return array
-//	 */
-//	public function productCount()
-//	{
-//		$stmt = conn::getInstance()->prepare("SELECT parent.name, COUNT(products.name) AS product_count FROM categories AS node ,categories AS parent, products  WHERE node.left_node BETWEEN parent.left_node AND parent.right_node AND node.category_id = products.category_id GROUP BY parent.name ORDER BY node.left_node");
-//		$stmt->execute();
-//		return $stmt->fetchALL(PDO::FETCH_ASSOC);
-//	}
-//
-
 }
- /*** end of class ***/

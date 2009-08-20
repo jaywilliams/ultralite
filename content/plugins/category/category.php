@@ -65,11 +65,11 @@ function plugin_category_method_call(&$self,$controller,$action)
 	 * the config option, posts_per_page, isn't set, so display ALL the posts for this category
 	 */
 	
-	$post_sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
-				 WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node
-				 AND pixelpost.published <= '{$self->config->current_time}'
-				 AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id
-				 ORDER BY pixelpost.published DESC";
+	$posts_sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+				  WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node
+				  AND pixelpost.published <= '{$self->config->current_time}'
+				  AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id
+				  ORDER BY pixelpost.published DESC";
 			
 	if ($self->config->posts_per_page > 0)
 	{
@@ -97,12 +97,12 @@ function plugin_category_method_call(&$self,$controller,$action)
 		$range = (int) (WEB2BB_Uri::$page - 1) * $self->config->posts_per_page;
 		
 		// Add the limit to the SQL query...
-		$post_sql .= " LIMIT {$range}, {$self->config->posts_per_page}";
+		$posts_sql .= " LIMIT {$range}, {$self->config->posts_per_page}";
 	}
 
 	$self->view->title = $category;
 
-	$self->posts = (array) Pixelpost_DB::get_results($post_sql);
+	$self->posts = (array) Pixelpost_DB::get_results($posts_sql);
 }
 
 

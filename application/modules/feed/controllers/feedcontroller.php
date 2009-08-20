@@ -22,7 +22,9 @@ class feedController extends baseController implements IController
 	{
 		
 		
-
+		// Start with row 0 at the beginning...
+		$range = 0;
+		
 		/**
 		 * Feed Pagination
 		 */
@@ -45,27 +47,21 @@ class feedController extends baseController implements IController
 				// @todo this error displays if the database call doesn't work.
 				throw new Exception("Sorry, we don't have anymore pages to show!");
 			}
-
+			
 			// The database needs to know which row we need to start with:
 			$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->feed_items}";
-		}
-		else
-		{
-			/**
-			 * the config option, feed_pagination, isn't set, so only display the number listed in feed_items
-			 */
-			
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
 		}
 		
+		$posts_sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->feed_items}";
 		
 		// Grab the data object from the DB.
-		$this->posts = (array) Pixelpost_DB::get_results($sql);
+		$this->posts = (array) Pixelpost_DB::get_results($posts_sql);
 		
 		
 		/**
-		 * The RSS feed can't have altered published dates.
+		 * The RSS feed can't have altered published dates,
+		 * so we need to completely nuke "filter_published" 
+		 * before we can run processPosts().
 		 */
 		Pixelpost_Plugin::removeFilterHook('filter_published');
 		

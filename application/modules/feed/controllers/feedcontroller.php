@@ -58,52 +58,22 @@ class feedController extends baseController implements IController
 			
 			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0, {$this->config->feed_items}";
 		}
-
-
+		
+		
 		// Grab the data object from the DB.
 		$this->posts = (array) Pixelpost_DB::get_results($sql);
-
-
-		// Tack on image data to the posts array
-		foreach ($this->posts as $key => $post)
-		{
-			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
-			$this->posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
-			
-			$image_info = getimagesize('content/images/' . $post->filename);
-			
-			$this->posts[$key]->width       = $image_info[0];
-			$this->posts[$key]->height      = $image_info[1];
-			$this->posts[$key]->type        = $image_info['mime'];
-			$this->posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
-			
-			$image_info = getimagesize('content/images/thumb_' . $post->filename);
-			
-			$this->posts[$key]->thumb_width  = $image_info[0];
-			$this->posts[$key]->thumb_height = $image_info[1];
-			$this->posts[$key]->thumb_type   = $image_info['mime'];
-			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
-			
-		}
+		
 		
 		/**
-		 * Allow any plugins to modify the posts before we apply the filters:
+		 * The RSS feed can't have altered published dates.
 		 */
-		Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
+		Pixelpost_Plugin::removeFilterHook('filter_published');
 		
-		foreach ($this->posts as $key => $post) {
-			Pixelpost_Plugin::executeFilter('filter_permalink',$this->posts[$key]->permalink);
-			Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
-			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
-			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
-			// Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published); // The plublished date format shouldn't be modified on feeds
-			
-			Pixelpost_Plugin::executeFilter('filter_permalink_feed',$this->posts[$key]->permalink);
-			Pixelpost_Plugin::executeFilter('filter_title_feed',$this->posts[$key]->title);
-			Pixelpost_Plugin::executeFilter('filter_description_feed',$this->posts[$key]->description);
-			Pixelpost_Plugin::executeFilter('filter_filename_feed',$this->posts[$key]->filename);
-			// Pixelpost_Plugin::executeFilter('filter_published_feed',$this->posts[$key]->published); // The plublished date format shouldn't be modified on feeds
-		}
+		/**
+		 * Run the posts through the Plugin system, and apply any 
+		 * necessary data before sending the array to the view.
+		 */
+		$this->processPosts();
 		
 		/**
 		 * If index is called, without specifying a feed type,

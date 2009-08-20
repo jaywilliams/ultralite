@@ -17,86 +17,65 @@ class archiveController extends baseController implements IController
 	public function __construct()
 	{
 		parent::__construct();
+
+		if ( (int)$this->front->getAction() === 0 && $this->front->getAction() != 'index' && !method_exists($this,$this->front->getAction())) {
+			
+			Pixelpost_Plugin::executeAction('hook_method_call', $this , $this->front->getController() , $this->front->getAction() );
+		}
 	}
 
 	public function index()
 	{
 		
-		// Page Title
-		$this->view->title = 'The Past';
-
-
-		if ($this->config->posts_per_page > 0)
+		if (!is_array($this->posts))
 		{
-			/**
-			 * If the config option, posts_per_page is set, we will spit up the archive into pages.
-			 */
+			// Page Title
+			$this->view->title = 'The Past';
 			
-			// Get total number of publically available posts
-			$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}'";
-			$this->total_posts = (int) Pixelpost_DB::get_var($sql);
-			
-			// Determine the total number of pages
-			WEB2BB_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
-
-			// Verify that we're on a legitimate page to start with
-			if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
+			if ($this->config->posts_per_page > 0)
 			{
-				throw new Exception("Sorry, we don't have anymore pages to show!");
+				/**
+				 * If the config option, posts_per_page is set, we will spit up the archive into pages.
+				 */
+			
+				// Get total number of publically available posts
+				$sql = "SELECT count(`id`) FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}'";
+				$this->total_posts = (int) Pixelpost_DB::get_var($sql);
+			
+				// Determine the total number of pages
+				WEB2BB_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
+
+				// Verify that we're on a legitimate page to start with
+				if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
+				{
+					throw new Exception("Sorry, we don't have anymore pages to show!");
+				}
+
+				// The database needs to know which row we need to start with:
+				$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->posts_per_page}";
+			}
+			else
+			{
+				/**
+				 * the config option, posts_per_page, isn't set, so display ALL the posts
+				 */
+			
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC";
 			}
 
-			// The database needs to know which row we need to start with:
-			$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->posts_per_page}";
-		}
-		else
-		{
 			/**
-			 * the config option, posts_per_page, isn't set, so display ALL the posts
+			 * The posts to list:
 			 */
+			$this->posts = (array) Pixelpost_DB::get_results($sql);
 			
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC";
-		}
-
-		/**
-		 * The posts to list:
-		 */
-		$this->posts = (array) Pixelpost_DB::get_results($sql);
-
-		// Tack on image data to the posts array
-		foreach ($this->posts as $key => $post)
-		{
-			$this->posts[$key]->id          = (int) $this->posts[$key]->id;
-			$this->posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
-			
-			$image_info = getimagesize('content/images/' . $post->filename);
-			
-			$this->posts[$key]->width       = $image_info[0];
-			$this->posts[$key]->height      = $image_info[1];
-			$this->posts[$key]->type        = $image_info['mime'];
-			$this->posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
-			
-			$image_info = getimagesize('content/images/thumb_' . $post->filename);
-			
-			$this->posts[$key]->thumb_width  = $image_info[0];
-			$this->posts[$key]->thumb_height = $image_info[1];
-			$this->posts[$key]->thumb_type   = $image_info['mime'];
-			$this->posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
-			
-		}
+		} // !is_array($this->posts)
 		
 		/**
-		 * Allow any plugins to modify to adjust the posts before we apply the filters:
+		 * Run the posts through the Plugin system, and apply any 
+		 * necessary data before sending the array to the view.
 		 */
-		Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
-		
-		foreach ($this->posts as $key => $post) {
-			Pixelpost_Plugin::executeFilter('filter_permalink',$this->posts[$key]->permalink);
-			Pixelpost_Plugin::executeFilter('filter_title',$this->posts[$key]->title);
-			Pixelpost_Plugin::executeFilter('filter_description',$this->posts[$key]->description);
-			Pixelpost_Plugin::executeFilter('filter_filename',$this->posts[$key]->filename);
-			Pixelpost_Plugin::executeFilter('filter_published',$this->posts[$key]->published);
-		}
+		$this->processPosts();
 		
 		/**
 		 * Assign the variables to be used in the view

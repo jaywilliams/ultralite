@@ -81,7 +81,7 @@ class FrontController
 				// load the default action method
 				//$config = config::getInstance();
 				$default = Pixelpost_Config::getInstance()->default_action;
-				$this->setAction($default);
+				// $this->setAction($default);
 				$method = $rc->getMethod( $default );
 			}
 			$method->invoke( $controller );

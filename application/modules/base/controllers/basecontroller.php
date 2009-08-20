@@ -4,7 +4,7 @@
 
 class baseController
 {
-	protected $breadcrumbs, $view, $content = null;
+	var $view, $content = null;
 
 	public function __construct()
 	{
@@ -23,6 +23,56 @@ class baseController
 		 */
 		$this->layout = 'layout.phtml';
 
+	}
+	
+	/**
+	 * Process Posts
+	 * 
+	 * Run the posts through the Plugin system, and apply any 
+	 * necessary data before sending the array to the view.
+	 *
+	 * @param array & $posts (optional) if not specified, the function will process $this->posts.
+	 * @return void
+	 */
+	public function processPosts(&$posts = null)
+	{
+		if ($posts === null)
+			$posts = & $this->posts;
+		
+		// Tack on image data to the posts array
+		foreach ($posts as $key => $post)
+		{
+			$posts[$key]->id          = (int) $posts[$key]->id;
+			$posts[$key]->permalink   = $this->config->url.'post/'.$post->id;
+			
+			$image_info = getimagesize('content/images/' . $post->filename);
+			
+			$posts[$key]->width       = $image_info[0];
+			$posts[$key]->height      = $image_info[1];
+			$posts[$key]->type        = $image_info['mime'];
+			$posts[$key]->uri         = $this->config->url.'content/images/' . $post->filename;
+			
+			$image_info = getimagesize('content/images/thumb_' . $post->filename);
+			
+			$posts[$key]->thumb_width  = $image_info[0];
+			$posts[$key]->thumb_height = $image_info[1];
+			$posts[$key]->thumb_type   = $image_info['mime'];
+			$posts[$key]->thumb_uri    = $this->config->url.'content/images/thumb_' . $post->filename;
+			
+		}
+		
+		/**
+		 * Allow any plugins to modify to adjust the posts before we apply the filters:
+		 */
+		Pixelpost_Plugin::executeAction('hook_posts', $posts);
+		
+		foreach ($posts as $key => $post) {
+			Pixelpost_Plugin::executeFilter('filter_permalink',$posts[$key]->permalink);
+			Pixelpost_Plugin::executeFilter('filter_title',$posts[$key]->title);
+			Pixelpost_Plugin::executeFilter('filter_description',$posts[$key]->description);
+			Pixelpost_Plugin::executeFilter('filter_filename',$posts[$key]->filename);
+			Pixelpost_Plugin::executeFilter('filter_published',$posts[$key]->published);
+		}
 	}
 
 	public function __destruct()

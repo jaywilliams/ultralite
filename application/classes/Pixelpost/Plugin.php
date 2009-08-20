@@ -152,6 +152,24 @@ class Pixelpost_Plugin {
 
 		return true;
 	}
+
+	/**
+	 * Remove an entire action hook. This should only be used in very special cases.
+	 *
+	 * @param string $hook Action hook name
+	 * @return bool
+	 */
+	public static function removeActionHook($hook)
+	{
+		$self = self::getInstance();
+	
+		if (array_key_exists($hook, $self->actions))
+		{
+			unset($self->actions[$hook]);
+		}
+	
+		return true;
+	}
 	
 	/**
 	 * Run the actions for the specified hook
@@ -288,6 +306,24 @@ class Pixelpost_Plugin {
 	return true;
   }
   
+	/**
+	 * Remove an entire filter hook. This should only be used in very special cases.
+	 *
+	 * @param string $hook Filter hook name
+	 * @return bool
+	 */
+	public static function removeFilterHook($hook)
+	{
+		$self = self::getInstance();
+	
+		if (array_key_exists($hook, $self->filters))
+		{
+			unset($self->filters[$hook]);
+		}
+	
+		return true;
+	}
+
   /**
    * Apply filters to a specific string
    *

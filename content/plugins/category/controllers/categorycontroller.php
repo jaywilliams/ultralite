@@ -34,43 +34,15 @@ class categoryController extends baseController implements IController
 				AND categories.category_id = img2cat.category_id AND img2cat.image_id = pixelpost.id
 				ORDER BY pixelpost.published";
 			$this->posts = (array )Pixelpost_DB::get_results($sql);
-
-
-			// Tack on image data to the posts array
-			foreach ($this->posts as $key => $post)
-			{
-				$this->posts[$key]->id = (int)$this->posts[$key]->id;
-				$this->posts[$key]->permalink = $this->config->url . 'post/' . $post->id;
-
-				$image_info = getimagesize($this->path . '/' . $post->filename);
-
-				$this->posts[$key]->width = $image_info[0];
-				$this->posts[$key]->height = $image_info[1];
-				$this->posts[$key]->type = $image_info['mime'];
-				$this->posts[$key]->uri = $this->config->url . $this->path . '/' . $post->filename;
-
-				$image_info = getimagesize($this->path . '/thumb_' . $post->filename);
-
-				$this->posts[$key]->thumb_width = $image_info[0];
-				$this->posts[$key]->thumb_height = $image_info[1];
-				$this->posts[$key]->thumb_type = $image_info['mime'];
-				$this->posts[$key]->thumb_uri = $this->config->url . $this->path . '/thumb_' . $post->filename;
-
-			}
-
+			
+			
 			/**
-			 * Allow any plugins to modify to adjust the posts before we apply the filters:
+			 * Run the posts through the Plugin system, and apply any 
+			 * necessary data before sending the array to the view.
 			 */
-			Pixelpost_Plugin::executeAction('hook_posts', $this->posts);
-
-			foreach ($this->posts as $key => $post)
-			{
-				Pixelpost_Plugin::executeFilter('filter_permalink', $this->posts[$key]->permalink);
-				Pixelpost_Plugin::executeFilter('filter_title', $this->posts[$key]->title);
-				Pixelpost_Plugin::executeFilter('filter_description', $this->posts[$key]->description);
-				Pixelpost_Plugin::executeFilter('filter_filename', $this->posts[$key]->filename);
-				Pixelpost_Plugin::executeFilter('filter_published', $this->posts[$key]->published);
-			}
+			$this->processPosts();
+			
+			
 			//var_dump($this->posts);
 			$this->view->title = 'Viewing category ' . $category;
 		}

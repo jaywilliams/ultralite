@@ -20,6 +20,11 @@ class Web2BB_Uri
 	 */
 	public static $fragments = array();
 	
+	/*
+	 * @var string $uri
+	 */
+	public static $uri = '';
+	
 	/**
 	 * @var int $page Current Page, defaults to 1
 	 */
@@ -68,22 +73,22 @@ class Web2BB_Uri
 		 * Remove any double-slashes (//), and any beginning or ending slashes
 		 * Remove any potentially harmfull characters from the equasion
 		 */
-		$uri = clean_filename($_SERVER['QUERY_STRING']);
+		self::$uri = clean_filename($_SERVER['QUERY_STRING']);
 		
 		/**
 		 * Check if a page is specified in the URL.
 		 * If it is, we can trim that portion from the $uri,
 		 * and attach it to the self::$page variable.
 		 */
-		if( preg_match('/\/page\/(\d+)$/i', $uri, $matches, PREG_OFFSET_CAPTURE) )
+		if( preg_match('/\/page\/(\d+)$/i', self::$uri, $matches, PREG_OFFSET_CAPTURE) )
 		{
-			$uri = substr( $uri, 0, $matches[0][1]);
+			self::$uri = substr( self::$uri, 0, $matches[0][1]);
 			
 			self::$page = ( !empty($matches[1][0]) ) ? (int) $matches[1][0] : self::$page;
 		}
 		
 		/*** put the string into array ***/
-		self::$fragments =  explode('/', $uri );
+		self::$fragments =  explode('/', self::$uri );
 	}
 
 	/**
@@ -160,6 +165,27 @@ class Web2BB_Uri
 		}
 		
 		return self::$total_pages;
+	}
+
+	/**
+	 * Get the current uri string
+	 * 
+	 * Possible ways to get the current page:
+	 * 
+	 *   Web2BB_Uri::$uri;
+	 *   Web2BB_Uri::uri();
+	 *
+	 * @param string $uri (optional) override the current uri string
+	 * @return string self::$uri current uri
+	 */
+	public static function uri(string $uri = NULL)
+	{
+		if(!empty($uri))
+		{
+			self::$uri = $uri;
+		}
+		
+		return self::$uri;
 	}
 
 	/**

@@ -20,6 +20,7 @@
 
 Pixelpost_Plugin::registerAction('hook_method_call', 'plugin_category_method_call',10,3);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_get_category',10,1);
+Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_change_permalink',10,1);
 
 /**
  * Category Method Hook
@@ -107,10 +108,31 @@ function plugin_category_method_call(&$self,$controller,$action)
 
 
 /**
- * Example hook
+ * Change the permalink to stay into the category
  * 
- * This function adds a new element: $posts->slug
- * And it appends the slug to the end of the permalink
+ * This function gets the associated category for the images
+ * in the $posts array.
+ */
+function plugin_category_change_permalink(&$posts)
+{
+	$controller = Web2BB_Uri::fragment(0);
+	$action = Web2BB_Uri::fragment(1);
+	if ($controller != 'archive' || $action != 'category')
+		return;
+	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
+	$category      = Web2BB_Uri::fragment($last_fragment);
+	foreach ($posts as $key => $post) 
+	{
+		$posts[$key]->permalink .= '/in/category-'.$category;
+	}
+}
+
+
+/**
+ * Get the categories
+ * 
+ * This function gets the associated category for the images
+ * in the $posts array.
  */
 function plugin_category_get_category(&$posts)
 {
@@ -127,3 +149,44 @@ function plugin_category_get_category(&$posts)
 	}
 }
 
+
+/**
+ * SQL statements for the previous and next posts to stay into the category
+ *
+ * // standard call for the nodes
+ * $sql = "SELECT left_node, right_node FROM categories WHERE name='" . Pixelpost_DB::escape($category) . "'"; 
+
+ * // next image
+ * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+ * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+ * 	AND categories.category_id = img2cat.category_id 
+ * 	AND img2cat.image_id = pixelpost.id 
+ * 	AND (pixelpost.published` < '{$this->posts['current']->published}') 
+ * 		AND (pixelpost.published <= '{$this->config->current_time}') 
+ * 	ORDER BY pixelpost.published DESC LIMIT 0,1";
+
+ * // next image wrap around
+ * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+ * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+ * 	AND categories.category_id = img2cat.category_id 
+ * 	AND img2cat.image_id = pixelpost.id 
+ * 	AND pixelpost.published <= '{$this->config->current_time}' 
+ * 	ORDER BY pixelpost.published DESC LIMIT 0,1";
+
+ * // previous image
+ * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+ * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+ * 	AND categories.category_id = img2cat.category_id 
+ * 	AND img2cat.image_id = pixelpost.id 
+ * 	AND (pixelpost.published > '{$this->posts['current']->published}') 
+ * 		AND (pixelpost.published <= '{$this->config->current_time}') 
+ * 	ORDER BY pixelpost.published ASC LIMIT 0,1";
+
+ * // previous image wrap around
+ * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+ * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+ * 	AND categories.category_id = img2cat.category_id 
+ * 	AND img2cat.image_id = pixelpost.id 
+ * 	AND pixelpost.published <= '{$this->config->current_time}' 
+ * 	ORDER BY pixelpost.published ASC LIMIT 0,1";
+ */

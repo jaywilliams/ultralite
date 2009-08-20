@@ -1,9 +1,9 @@
 <?php
 /**
- * Example Controller
+ * Metadata Controller
  *
- * @package Pixelpost
- * @author Jay Williams 
+ * @package Metadata Plugin for Pixelpost
+ * @author Dennis Mooibroek
  */
 
 class metadataController extends baseController implements IController

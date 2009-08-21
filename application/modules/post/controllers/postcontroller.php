@@ -28,6 +28,7 @@ class postController extends baseController implements IController
 
 	public function index()
 	{
+		Pixelpost_Plugin::executeAction('hook_pre_posts', $this);
 
 		/**
 		 * Determine the image ID we need to lookup, and verify that it is a positive integer:
@@ -36,24 +37,25 @@ class postController extends baseController implements IController
 		$this->id = ($this->id > 0) ? $this->id : 0;
 		
 		/**
-		 * Current Image
+		 * Check if there is a Current Image, else get Current image
 		 */
-		if (empty($this->id))
+		if (!is_object($this->posts['current']))
 		{
-			// If no ID is specified, grab the latest image:
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
+			if (empty($this->id))
+			{
+				// If no ID is specified, grab the latest image:
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
+			}
+			else
+			{
+				$sql = "SELECT * FROM `pixelpost` WHERE `id` = '$this->id' AND `published` <= '{$this->config->current_time}' LIMIT 0,1";
+			}
+			// Assign the current image to the $posts array
+			$this->posts['current'] = Pixelpost_DB::get_row($sql);
 		}
-		else
-		{
-			$sql = "SELECT * FROM `pixelpost` WHERE `id` = '$this->id' AND `published` <= '{$this->config->current_time}' LIMIT 0,1";
-		}
-		
-		// Assign the current image to the $posts array
-		$this->posts['current'] = Pixelpost_DB::get_row($sql);
-		
 		
 		/**
-		 * Verify that the image exists:
+		 * Verify that the image exists, either from a plugin or from the code above:
 		 */
 		if (!is_object($this->posts['current']))
 		{
@@ -62,39 +64,45 @@ class postController extends baseController implements IController
 		}
 
 		/**
-		 * Next Image
-		 */
-		$sql = "SELECT * FROM `pixelpost` WHERE (`published` < '{$this->posts['current']->published}') and (`published` <= '{$this->config->current_time}') ORDER BY `published` DESC LIMIT 0,1";
-
-		$this->posts['next'] = Pixelpost_DB::get_row($sql);
-		
-		/**
-		 * If we are on the last image, there isn't a next image, 
-		 * so we can wrap around to the first image:
+		 * Check if Next Image exists, else get Next image
 		 */
 		if (!is_object($this->posts['next']))
 		{
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
-			
+			$sql = "SELECT * FROM `pixelpost` WHERE (`published` < '{$this->posts['current']->published}') and (`published` <= '{$this->config->current_time}') ORDER BY `published` DESC LIMIT 0,1";
+
 			$this->posts['next'] = Pixelpost_DB::get_row($sql);
+		
+			/**
+		 	 * If we are on the last image, there isn't a next image, 
+		 	 * so we can wrap around to the first image:
+		 	 */
+			if (!is_object($this->posts['next']))
+			{
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT 0,1";
+			
+				$this->posts['next'] = Pixelpost_DB::get_row($sql);
+			}
 		}
 
 		/**
-		 * Previous Image
-		 */
-		$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '{$this->posts['current']->published}') and (`published` <= '{$this->config->current_time}') ORDER BY `published` ASC LIMIT 0,1";
-
-		$this->posts['previous'] = Pixelpost_DB::get_row($sql);
-		
-		/**
-		 * If the first image, we can't go back any further, 
-		 * so we can wrap around to the last image:
+		 * Check if Previous Image exists, else get Previous image
 		 */
 		if (!is_object($this->posts['previous']))
 		{
-			$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0,1";
-			
+			$sql = "SELECT * FROM `pixelpost` WHERE (`published` > '{$this->posts['current']->published}') and (`published` <= '{$this->config->current_time}') ORDER BY `published` ASC LIMIT 0,1";
+
 			$this->posts['previous'] = Pixelpost_DB::get_row($sql);
+		
+			/**
+		 	 * If the first image, we can't go back any further, 
+		 	 * so we can wrap around to the last image:
+		 	 */
+			if (!is_object($this->posts['previous']))
+			{
+				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` ASC LIMIT 0,1";
+			
+				$this->posts['previous'] = Pixelpost_DB::get_row($sql);
+			}
 		}
 		
 		

@@ -21,6 +21,7 @@
 Pixelpost_Plugin::registerAction('hook_method_call', 'plugin_category_method_call',10,3);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_get_category',10,1);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_change_permalink',10,1);
+Pixelpost_Plugin::registerAction('hook_pre_posts', 'plugin_category_create_post_array',10,1);
 
 /**
  * Category Method Hook
@@ -151,42 +152,105 @@ function plugin_category_get_category(&$posts)
 
 
 /**
- * SQL statements for the previous and next posts to stay into the category
- *
- * // standard call for the nodes
- * $sql = "SELECT left_node, right_node FROM categories WHERE name='" . Pixelpost_DB::escape($category) . "'"; 
-
- * // next image
- * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
- * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
- * 	AND categories.category_id = img2cat.category_id 
- * 	AND img2cat.image_id = pixelpost.id 
- * 	AND (pixelpost.published` < '{$this->posts['current']->published}') 
- * 		AND (pixelpost.published <= '{$this->config->current_time}') 
- * 	ORDER BY pixelpost.published DESC LIMIT 0,1";
-
- * // next image wrap around
- * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
- * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
- * 	AND categories.category_id = img2cat.category_id 
- * 	AND img2cat.image_id = pixelpost.id 
- * 	AND pixelpost.published <= '{$this->config->current_time}' 
- * 	ORDER BY pixelpost.published DESC LIMIT 0,1";
-
- * // previous image
- * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
- * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
- * 	AND categories.category_id = img2cat.category_id 
- * 	AND img2cat.image_id = pixelpost.id 
- * 	AND (pixelpost.published > '{$this->posts['current']->published}') 
- * 		AND (pixelpost.published <= '{$this->config->current_time}') 
- * 	ORDER BY pixelpost.published ASC LIMIT 0,1";
-
- * // previous image wrap around
- * $sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
- * 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
- * 	AND categories.category_id = img2cat.category_id 
- * 	AND img2cat.image_id = pixelpost.id 
- * 	AND pixelpost.published <= '{$this->config->current_time}' 
- * 	ORDER BY pixelpost.published ASC LIMIT 0,1";
+ * Create the $posts array including the prev and next links
+ * to stay in the category
  */
+function plugin_category_create_post_array(&$self)
+{
+	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
+	
+	if (!strpos(Web2BB_Uri::fragment($last_fragment), 'category-'))
+		//return;
+		
+	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment($last_fragment)));
+
+	
+	// show the images from the category
+	// in case it isn't a leaf we need to select the subcategories as well
+	$sql = "SELECT left_node, right_node FROM categories WHERE name='" . Pixelpost_DB::escape($category) . "'";
+	$node = Pixelpost_DB::get_row($sql);
+	
+	if (empty($node)) throw new Exception("Sorry, that category doesn't exists!");
+	 
+	/**
+	 * Determine the image ID we need to lookup, and verify that it is a positive integer:
+	 */
+	$self->id = (int) Web2BB_Uri::fragment(1);
+	$self->id = ($self->id > 0) ? $self->id : 0;
+		
+	/**
+	 * Current Image
+	 */
+	$sql = "SELECT * FROM `pixelpost` WHERE `id` = '$self->id' AND `published` <= '{$self->config->current_time}' LIMIT 0,1";
+
+	// Assign the current image to the $posts array
+	$self->posts['current'] = Pixelpost_DB::get_row($sql);
+		
+		
+	/**
+	 * Verify that the image exists:
+	 */
+	if (!is_object($self->posts['current']))
+	{
+		// Error? Splash Screen?
+		throw new Exception("Whoops, we don't have anything to show on this page right now, please to back to the <a href=\"?\">home page</a>.");
+	}
+
+	/**
+	 * Next Image
+	 */
+	$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+  	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+  	AND categories.category_id = img2cat.category_id 
+  	AND img2cat.image_id = pixelpost.id 
+  	AND (pixelpost.published` < '{$self->posts['current']->published}') 
+  		AND (pixelpost.published <= '{$self->config->current_time}') 
+  	ORDER BY pixelpost.published DESC LIMIT 0,1";
+
+	$self->posts['next'] = Pixelpost_DB::get_row($sql);
+		
+	/**
+	 * If we are on the last image, there isn't a next image, 
+	 * so we can wrap around to the first image:
+	 */
+	if (!is_object($self->posts['next']))
+	{
+		$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+ 		 	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+  		AND categories.category_id = img2cat.category_id 
+  		AND img2cat.image_id = pixelpost.id 
+  		AND pixelpost.published <= '{$self->config->current_time}' 
+  		ORDER BY pixelpost.published DESC LIMIT 0,1";
+			
+		$self->posts['next'] = Pixelpost_DB::get_row($sql);
+	}
+
+	/**
+	 * Previous Image
+	 */
+	$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+  	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+  	AND categories.category_id = img2cat.category_id 
+  	AND img2cat.image_id = pixelpost.id 
+  	AND (pixelpost.published > '{$self->posts['current']->published}') 
+  		AND (pixelpost.published <= '{$self->config->current_time}') 
+  	ORDER BY pixelpost.published ASC LIMIT 0,1";
+
+	$self->posts['previous'] = Pixelpost_DB::get_row($sql);
+		
+	/**
+	 * If the first image, we can't go back any further, 
+	 * so we can wrap around to the last image:
+	 */
+	if (!is_object($self->posts['previous']))
+	{
+		$sql = "SELECT pixelpost.* FROM img2cat, categories, pixelpost 
+  		WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
+  		AND categories.category_id = img2cat.category_id 
+  		AND img2cat.image_id = pixelpost.id 
+  		AND pixelpost.published <= '{$self->config->current_time}' 
+  		ORDER BY pixelpost.published ASC LIMIT 0,1";
+	
+		$self->posts['previous'] = Pixelpost_DB::get_row($sql);
+	}
+}

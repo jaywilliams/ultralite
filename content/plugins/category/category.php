@@ -36,7 +36,7 @@ Pixelpost_Plugin::registerAction('hook_pre_posts', 'plugin_category_create_post_
 function plugin_category_method_call(&$self,$controller,$action)
 {
 	// Only run this method under the /archive/category/ page...
-	if ($controller != 'archive' || $action != 'category')
+	if ($controller != 'archive' ||  $action != 'category')
 		return;
 
 	// $cats          = new Pixelpost_Hierarchy('categories');
@@ -118,10 +118,20 @@ function plugin_category_change_permalink(&$posts)
 {
 	$controller = Web2BB_Uri::fragment(0);
 	$action = Web2BB_Uri::fragment(1);
-	if ($controller != 'archive' || $action != 'category')
-		return;
+	
 	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
-	$category      = Web2BB_Uri::fragment($last_fragment);
+	
+	/**
+	 * If the action == 'category' (archive page browsing)
+	 * or the last fragment contains the term == 'category-'
+	 * we are browsing by category, so we need to modify the 
+	 * permalinks accordingly.
+	 */
+	if ( $action != 'category'  && strpos(Web2BB_Uri::fragment($last_fragment), 'category-') === false ) 
+		return;
+	
+	$category      = str_replace('category-', '', Web2BB_Uri::fragment($last_fragment));
+	
 	foreach ($posts as $key => $post) 
 	{
 		$posts[$key]->permalink .= '/in/category-'.$category;
@@ -159,8 +169,8 @@ function plugin_category_create_post_array(&$self)
 {
 	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
 	
-	if (!strpos(Web2BB_Uri::fragment($last_fragment), 'category-'))
-		//return;
+	if (strpos(Web2BB_Uri::fragment($last_fragment), 'category-') === false)
+		return;
 		
 	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment($last_fragment)));
 
@@ -203,7 +213,7 @@ function plugin_category_create_post_array(&$self)
   	WHERE categories.left_node BETWEEN $node->left_node AND $node->right_node 
   	AND categories.category_id = img2cat.category_id 
   	AND img2cat.image_id = pixelpost.id 
-  	AND (pixelpost.published` < '{$self->posts['current']->published}') 
+  	AND (pixelpost.published < '{$self->posts['current']->published}') 
   		AND (pixelpost.published <= '{$self->config->current_time}') 
   	ORDER BY pixelpost.published DESC LIMIT 0,1";
 
@@ -253,4 +263,6 @@ function plugin_category_create_post_array(&$self)
 	
 		$self->posts['previous'] = Pixelpost_DB::get_row($sql);
 	}
+	
+	
 }

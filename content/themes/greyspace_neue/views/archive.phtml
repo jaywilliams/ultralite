@@ -2,8 +2,8 @@
 
 	<div class="top section">
 		<span class="published">Archive</span>
-		<div class="nav"><a href="./">Home</a> <a href="archive" class="active">Archive</a> <a href="about">About</a></div>
 		<h1 class="title"><?php echo $title; ?></h1>
+		<div class="nav"><a href="./">Home</a> <a href="archive" class="active">Archive</a> <a href="about">About</a></div>
 		<br class="clear"/>
 	</div>
 
@@ -24,7 +24,9 @@
 	<div class="bottom section">
 		<?php if ($config->posts_per_page > 0): ?>
 		<div class="pagination">	
-			<?php if ((WEB2BB_Uri::$page) > 1): ?>
+			<?php if ((WEB2BB_Uri::$page) == 2): ?>
+				<a href="<?php echo WEB2BB_Uri::$uri; ?>" class="previous">&#x2190; Previous Page</a>
+			<?php elseif ((WEB2BB_Uri::$page) > 1): ?>
 				<a href="<?php echo WEB2BB_Uri::$uri . '/page/' . (WEB2BB_Uri::$page-1); ?>" class="previous">&#x2190; Previous Page</a>
 			<?php else: ?>
 				<a class="previous disabled">&#x2190; Previous Page</a>

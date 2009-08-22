@@ -1,10 +1,7 @@
-/* @override 
-	http://192.168.1.200/ultralite/themes/greyspace/style.css
-	http://192.168.1.200/ultralite/themes/greyspace/style_dark.css
-*/
+/* @override http://localhost/ultralite/content/themes/greyspace_neue/styles/dark.css */
 
 /* 
-	Theme: Greyspace
+	Theme: Greyspace Neue
 	Style: Dark
 	Author: Jay Williams
 	License: GPL
@@ -81,7 +78,7 @@ a{
 .top.section .title {
 	font-size: 36px;
 	float: left;
-	height: 35px;
+	line-height: 36px;
 }
 
 .top.section .nav {
@@ -89,6 +86,8 @@ a{
 	font-size: 14px;
 	text-align: right;
 	margin-top: 9px;
+	clear: both;
+	margin-bottom: 2px;
 }
 
 .top.section .nav a{

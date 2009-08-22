@@ -28,8 +28,6 @@ class postController extends baseController implements IController
 
 	public function index()
 	{
-		Pixelpost_Plugin::executeAction('hook_pre_posts', $this);
-
 		/**
 		 * Determine the image ID we need to lookup, and verify that it is a positive integer:
 		 */

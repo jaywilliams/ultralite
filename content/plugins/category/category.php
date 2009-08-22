@@ -18,10 +18,10 @@
 	Author URI: http://pixelpost.org/
 */
 
-Pixelpost_Plugin::registerAction('hook_method_call', 'plugin_category_method_call',10,3);
+Pixelpost_Plugin::registerAction('hook_base_construct', 'plugin_category_construct',10,3);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_get_category',10,1);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_change_permalink',10,1);
-Pixelpost_Plugin::registerAction('hook_pre_posts', 'plugin_category_create_post_array',10,1);
+Pixelpost_Plugin::registerAction('hook_base_construct', 'plugin_category_create_post_array',10,3);
 
 /**
  * Category Method Hook
@@ -33,12 +33,12 @@ Pixelpost_Plugin::registerAction('hook_pre_posts', 'plugin_category_create_post_
  * @param string $action Method the user is trying to execute
  * @return null
  */
-function plugin_category_method_call(&$self,$controller,$action)
+function plugin_category_construct(&$self,$controller,$action)
 {
 	// Only run this method under the /archive/category/ page...
 	if ($controller != 'archive' ||  $action != 'category')
 		return;
-
+	
 	$category      = ucfirst(Web2BB_Uri::fragment(-1));
 	
 	if ($category == 'Category')
@@ -161,10 +161,10 @@ function plugin_category_get_category(&$posts)
  * Create the $posts array including the prev and next links
  * to stay in the category
  */
-function plugin_category_create_post_array(&$self)
+function plugin_category_create_post_array(&$self,$controller,$action)
 {
-	
-	if (strpos(Web2BB_Uri::fragment(-1), 'category-') === false)
+	// Only run this method under the 'post' controller with the uri: /in/category-{name}
+	if ($controller != 'post' || strpos(Web2BB_Uri::fragment(-1), 'category-') === false)
 		return;
 		
 	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment(-1)));

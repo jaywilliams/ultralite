@@ -22,6 +22,12 @@ class baseController
 		 * If empty, no layout will be used.
 		 */
 		$this->layout = 'layout.phtml';
+		
+		
+		// if ( (int)$this->front->getAction() === 0 && $this->front->getAction() != 'index' && !method_exists($this,$this->front->getAction())) {
+			
+			Pixelpost_Plugin::executeAction('hook_base_construct', $this , $this->front->getController() , $this->front->getAction() );
+		// }
 
 	}
 	

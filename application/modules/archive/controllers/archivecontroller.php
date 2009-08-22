@@ -17,11 +17,6 @@ class archiveController extends baseController implements IController
 	public function __construct()
 	{
 		parent::__construct();
-
-		if ( (int)$this->front->getAction() === 0 && $this->front->getAction() != 'index' && !method_exists($this,$this->front->getAction())) {
-			
-			Pixelpost_Plugin::executeAction('hook_method_call', $this , $this->front->getController() , $this->front->getAction() );
-		}
 	}
 
 	public function index()

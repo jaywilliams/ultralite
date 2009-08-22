@@ -87,7 +87,7 @@ class Pixelpost_Hierarchy
         {
             $object = get_object_vars( $object );
         }
-        return array_map( 'Pixelpost_Hierachy::objectToArray', $object );
+        return array_map('Pixelpost_Hierarchy::objectToArray', $object );
     }
 
 	/**

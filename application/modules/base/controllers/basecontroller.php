@@ -70,7 +70,7 @@ class baseController
 		/**
 		 * Allow any plugins to modify to adjust the posts before we apply the filters:
 		 */
-		Pixelpost_Plugin::executeAction('hook_posts', $posts);
+		Pixelpost_Plugin::executeAction('hook_posts', $posts, $this->front->getController(), $this->front->getAction() );
 		
 		foreach ($posts as $key => $post) {
 			Pixelpost_Plugin::executeFilter('filter_permalink',$posts[$key]->permalink);

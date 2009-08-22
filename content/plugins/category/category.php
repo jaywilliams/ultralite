@@ -20,7 +20,7 @@
 
 Pixelpost_Plugin::registerAction('hook_base_construct', 'plugin_category_construct',10,3);
 Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_get_category',10,1);
-Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_change_permalink',10,1);
+Pixelpost_Plugin::registerAction('hook_posts', 'plugin_category_change_permalink',10,3);
 Pixelpost_Plugin::registerAction('hook_base_construct', 'plugin_category_create_post_array',10,3);
 
 /**
@@ -35,10 +35,19 @@ Pixelpost_Plugin::registerAction('hook_base_construct', 'plugin_category_create_
  */
 function plugin_category_construct(&$self,$controller,$action)
 {
+	
+	if($controller == 'archive' && $action !='category'){
+		// Get the main categories if we are on the archive page...
+		$cats = new Pixelpost_Hierarchy('categories');
+		$self->view->categories = $cats->getNodeDepth();
+		return;
+	}
+	
+	
 	// Only run this method under the /archive/category/ page...
 	if ($controller != 'archive' ||  $action != 'category')
 		return;
-	
+		
 	$category      = ucfirst(Web2BB_Uri::fragment(-1));
 	
 	if ($category == 'Category')
@@ -103,6 +112,12 @@ function plugin_category_construct(&$self,$controller,$action)
 	$self->view->title = $category;
 
 	$self->posts = (array) Pixelpost_DB::get_results($posts_sql);
+	
+	// Get the sub-categories
+	$cats = new Pixelpost_Hierarchy('categories');
+	$self->view->categories = $cats->getLocalSubNodes($category);
+	
+	
 }
 
 
@@ -112,10 +127,8 @@ function plugin_category_construct(&$self,$controller,$action)
  * This function gets the associated category for the images
  * in the $posts array.
  */
-function plugin_category_change_permalink(&$posts)
+function plugin_category_change_permalink(&$posts,$controller,$action)
 {
-	$controller = Web2BB_Uri::fragment(0);
-	$action = Web2BB_Uri::fragment(1);
 	
 	/**
 	 * If the action == 'category' (archive page browsing)
@@ -144,6 +157,7 @@ function plugin_category_change_permalink(&$posts)
 function plugin_category_get_category(&$posts)
 {
 	$cats = new Pixelpost_Hierarchy('categories');
+	
 	foreach ($posts as $key => $post) 
 	{
 		/**

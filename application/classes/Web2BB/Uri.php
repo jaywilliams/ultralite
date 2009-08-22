@@ -92,19 +92,23 @@ class Web2BB_Uri
 	}
 
 	/**
-	 * @get uri fragment 
-	 *
+	 * Retrieve URI Fragment
+	 * 
+	 * Example:
+	 *     Web2BB_Uri::fragment(0); # Returns the first fragment
+	 *     Web2BB_Uri::fragment(-1); # Returns the the last fragment
+	 * 
 	 * @access public
-	 *
-	 * @param string $key:The uri key
-	 *
-	 * @return string on success
-	 *
-	 * @return bool false if key is not found
-	 *
+	 * @param int $key The uri key to retrieve, can be positive or negative.
+	 * @return bool|string FALSE if key is not found, the string result if the key is found.
 	 */
 	public static function fragment($key)
 	{
+		if($key < 0)
+		{
+			$key = count(self::$fragments) + (int)$key;
+		}
+		
 		if(array_key_exists($key, self::$fragments))
 		{
 			return self::$fragments[$key];

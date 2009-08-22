@@ -39,9 +39,7 @@ function plugin_category_method_call(&$self,$controller,$action)
 	if ($controller != 'archive' ||  $action != 'category')
 		return;
 
-	// $cats          = new Pixelpost_Hierarchy('categories');
-	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
-	$category      = ucfirst(Web2BB_Uri::fragment($last_fragment));
+	$category      = ucfirst(Web2BB_Uri::fragment(-1));
 	
 	if ($category == 'Category')
 	{
@@ -119,18 +117,16 @@ function plugin_category_change_permalink(&$posts)
 	$controller = Web2BB_Uri::fragment(0);
 	$action = Web2BB_Uri::fragment(1);
 	
-	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
-	
 	/**
 	 * If the action == 'category' (archive page browsing)
 	 * or the last fragment contains the term == 'category-'
 	 * we are browsing by category, so we need to modify the 
 	 * permalinks accordingly.
 	 */
-	if ( $action != 'category'  && strpos(Web2BB_Uri::fragment($last_fragment), 'category-') === false ) 
+	if ( $action != 'category'  && strpos(Web2BB_Uri::fragment(-1), 'category-') === false ) 
 		return;
 	
-	$category      = str_replace('category-', '', Web2BB_Uri::fragment($last_fragment));
+	$category      = str_replace('category-', '', Web2BB_Uri::fragment(-1));
 	
 	foreach ($posts as $key => $post) 
 	{
@@ -167,12 +163,11 @@ function plugin_category_get_category(&$posts)
  */
 function plugin_category_create_post_array(&$self)
 {
-	$last_fragment = Web2BB_Uri::numberOfFragments() - 1;
 	
-	if (strpos(Web2BB_Uri::fragment($last_fragment), 'category-') === false)
+	if (strpos(Web2BB_Uri::fragment(-1), 'category-') === false)
 		return;
 		
-	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment($last_fragment)));
+	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment(-1)));
 
 	
 	// show the images from the category

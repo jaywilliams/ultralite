@@ -12,7 +12,7 @@
 class archiveController extends baseController implements IController
 {
 	
-	public $posts, $otal_pages;
+	public $posts;
 
 	public function __construct()
 	{

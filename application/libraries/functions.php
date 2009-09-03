@@ -272,34 +272,47 @@ function escape($value='')
  * @param string $file 
  * @return string $filename
  */
+function clean_uri($uri='')
+{
+	$patern[] = '/\.+/';
+	$replacement[] = '.';
+
+	$patern[] = '/\/+/';
+	$replacement[] = '/';
+
+	$patern[] = '/(\/\.|\.\/)/';
+	$replacement[] = '/';
+
+	$patern[] = '/\.+/';
+	$replacement[] = '.';
+
+	$patern[] = '/\/+/';
+	$replacement[] = '/';
+	
+	$patern[] = '/(\/\.|\.\/)/';
+	$replacement[] = '/';
+
+	$uri = str_replace( '\\', '/', $uri);
+	$uri = preg_replace($patern,$replacement,$uri);
+	$uri = trim($uri,' ./\\');
+	
+	return $uri;
+}
+
+/**
+ * I split these up into a clean_uri and clean_filename. With both tags
+ * and categories we want to support spaces in them. This can be down with
+ * rawurlencode and rawurldecode, provided the spaces are not stripped.
+ * Since the URI was cleaned by clean_filename it was stripped and it stopped
+ * working. With this setup that part is executed only for the filename
+ */
+
 function clean_filename($filename='')
 {
 	$patern[] = '/[^\w\.\-\_\/]/';
 	$replacement[] = '';
-
-	$patern[] = '/\.+/';
-	$replacement[] = '.';
-
-	$patern[] = '/\/+/';
-	$replacement[] = '/';
-
-	$patern[] = '/(\/\.|\.\/)/';
-	$replacement[] = '/';
-
-	$patern[] = '/\.+/';
-	$replacement[] = '.';
-
-	$patern[] = '/\/+/';
-	$replacement[] = '/';
-	
-	$patern[] = '/(\/\.|\.\/)/';
-	$replacement[] = '/';
-
-	$filename = str_replace( '\\', '/', $filename);
 	$filename = preg_replace($patern,$replacement,$filename);
-	$filename = trim($filename,' ./\\');
-	
-	return $filename;
+	$filename = clean_uri($filename);
 }
 
 /*

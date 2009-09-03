@@ -49,6 +49,7 @@ return array (
     4 => 'smartypants',
     5 => 'metadata',
     6 => 'category',
+    7 => 'tag',
   ),
   'routes' => 
   array (

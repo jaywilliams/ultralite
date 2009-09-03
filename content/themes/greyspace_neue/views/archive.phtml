@@ -64,6 +64,15 @@
 				<?php endforeach ?>
 			</div>
 		<?php endif ?>
+		
+		<?php if (!empty($tags)): ?>
+			<h3>Tags</h3>
+			<div class="tags">
+				<?php foreach ($tags as $tag): ?>
+					<li><a href="<?php echo "archive/tag/".rawurlencode(strtolower($tag->name)); ?>"><?php echo $tag->name; ?></a></li>
+				<?php endforeach ?>
+			</div>
+		<?php endif ?>
 
 		
 	</div>

@@ -48,7 +48,7 @@ function plugin_category_construct(&$self,$controller,$action)
 	if ($controller != 'archive' ||  $action != 'category')
 		return;
 		
-	$category      = ucfirst(Web2BB_Uri::fragment(-1));
+	$category      = rawurlencode(ucfirst(Web2BB_Uri::fragment(-1)));
 	
 	if ($category == 'Category')
 	{
@@ -139,7 +139,7 @@ function plugin_category_change_permalink(&$posts,$controller,$action)
 	if ( $action != 'category'  && strpos(Web2BB_Uri::fragment(-1), 'category-') === false ) 
 		return;
 	
-	$category      = str_replace('category-', '', Web2BB_Uri::fragment(-1));
+	$category      = str_replace('category-', '', rawurldecode(Web2BB_Uri::fragment(-1)));
 	
 	foreach ($posts as $key => $post) 
 	{
@@ -181,7 +181,7 @@ function plugin_category_create_post_array(&$self,$controller,$action)
 	if ($controller != 'post' || strpos(Web2BB_Uri::fragment(-1), 'category-') === false)
 		return;
 		
-	$category = ucfirst(str_replace('category-', '', Web2BB_Uri::fragment(-1)));
+	$category = ucfirst(str_replace('category-', '', rawurlencode(Web2BB_Uri::fragment(-1))));
 
 	
 	// show the images from the category

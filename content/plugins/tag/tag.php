@@ -105,7 +105,13 @@ function plugin_tag_construct(&$self,$controller,$action)
 	/**
 	 * We should grab all the other tags associated with images with a certain tag
 	 */
-	$sql = "SELECT tags.name FROM tags";
+	 
+	$sql = "SELECT DISTINCT t2.name FROM tags t1
+		JOIN img2tag it1 ON it1.tag_id = t1.tag_id
+		JOIN img2tag it2 ON it1.image_id = it2.image_id
+		JOIN tags t2 ON it2.tag_id = t2.tag_id
+		WHERE t1.name = '" . Pixelpost_DB::escape($tag) . "' 
+		AND t2.name <> '" . Pixelpost_DB::escape($tag) . "'";
 	$tags = Pixelpost_DB::get_results($sql);
 	$self->view->tags = $tags;
 }

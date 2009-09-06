@@ -73,8 +73,7 @@ class Web2BB_Uri
 		 * Remove any double-slashes (//), and any beginning or ending slashes
 		 * Remove any potentially harmfull characters from the equasion
 		 */
-		//self::$uri = clean_filename($_SERVER['QUERY_STRING']);
-		self::$uri = clean_uri($_SERVER['QUERY_STRING']);
+		self::$uri = clean_filename($_SERVER['QUERY_STRING']);
 		
 		/**
 		 * Check if a page is specified in the URL.

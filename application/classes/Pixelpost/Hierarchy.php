@@ -98,7 +98,7 @@ class Pixelpost_Hierarchy
 	 */
 	public function leafNodes()
 	{
-		$sql = "SELECT name FROM " . $this->tablename . " WHERE right_node = left_node + 1";
+		$sql = "SELECT name, permalink FROM " . $this->tablename . " WHERE right_node = left_node + 1";
 		$result = (array) Pixelpost_DB::get_results($sql);
 		return $result;
 	}
@@ -106,15 +106,15 @@ class Pixelpost_Hierarchy
 	/**
 	 * Retrieve a single path
 	 * @access public
-	 * @param $node_name
+	 * @param $node_permalink
 	 * @return array
 	 */
-	public function singlePath($node_name)
+	public function singlePath($node_permalink)
 	{
-		$sql = "SELECT parent.name FROM " . $this->tablename . " AS node, 
+		$sql = "SELECT parent.name, parent.permalink FROM " . $this->tablename . " AS node, 
 			" . $this->tablename . " AS parent
 			WHERE node.left_node BETWEEN parent.left_node AND parent.right_node 
-		 	AND node.name = '" . Pixelpost_DB::escape($node_name) . "' ORDER BY node.left_node";
+		 	AND node.permalink = '" . Pixelpost_DB::escape($node_permalink) . "' ORDER BY node.left_node";
 	 	$result = (array) Pixelpost_DB::get_results($sql);
 		return $result;
 	}
@@ -128,7 +128,7 @@ class Pixelpost_Hierarchy
 	 */
 	public function getNodeDepth()
 	{
-		$sql = "SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth 
+		$sql = "SELECT node.name AS name, node.permalink as permalink, (COUNT(parent.name) - 1) AS depth 
 			FROM " . $this->tablename . " AS node, 
 			" . $this->tablename . " AS parent 
 			WHERE node.left_node BETWEEN parent.left_node 
@@ -143,13 +143,13 @@ class Pixelpost_Hierarchy
 	 * @param $node_name
 	 * @return array
 	 */
-	public function subTreeDepth($node_name)
+	public function subTreeDepth($node_permalink)
 	{
-		$sql = "SELECT node.name AS name, (COUNT(parent.name) - 1) AS depth 
+		$sql = "SELECT node.name AS name, node.permalink as permalink, (COUNT(parent.name) - 1) AS depth 
 			FROM " . $this->tablename . " AS node, 
 			" . $this->tablename . " AS parent 
 			WHERE node.left_node BETWEEN parent.left_node 
-			AND parent.right_node AND node.name = '" . Pixelpost_DB::escape($node_name) . "' 
+			AND parent.right_node AND node.name = '" . Pixelpost_DB::escape($node_permalink) . "' 
 			GROUP BY node.name 
 			ORDER BY node.left_node";
 		$result = (array) Pixelpost_DB::get_results($sql);
@@ -162,9 +162,9 @@ class Pixelpost_Hierarchy
 	 * @param $node_name
 	 * @return array
 	 */
-	public function getLocalSubNodes($node_name)
+	public function getLocalSubNodes($node_permalink)
 	{
-		$sql = "SELECT node.name AS name, (COUNT(parent.name) - (sub_tree.depth + 1)) AS depth 
+		$sql = "SELECT node.name AS name, node.permalink as permalink, (COUNT(parent.name) - (sub_tree.depth + 1)) AS depth 
 			FROM " . $this->tablename . " AS node, 
 			" . $this->tablename . " AS parent, 
 			categories AS sub_parent,
@@ -173,7 +173,7 @@ class Pixelpost_Hierarchy
     			FROM " . $this->tablename . " AS node,
     			" . $this->tablename . " AS parent
     			WHERE node.left_node BETWEEN parent.left_node AND parent.right_node
-    			AND node.name = '" . Pixelpost_DB::escape($node_name) . "'
+    			AND node.permalink = '" . Pixelpost_DB::escape($node_permalink) . "'
     			GROUP BY node.name
     			ORDER BY node.left_node
     		)AS sub_tree
@@ -229,7 +229,7 @@ class Pixelpost_Hierarchy
 	 * @param string $new_node The name of the new child node
 	 * @return array
 	 */
-	public function addChildNode($node_name, $new_node)
+	public function addChildNode($node_name, $node_permalink, $new_node)
 	{
 		try
 		{
@@ -241,8 +241,8 @@ class Pixelpost_Hierarchy
 
 			$new_left = $myLeft + 1;
 			$new_right = $myLeft + 2;
-			Pixelpost_DB::query("INSERT INTO " . $this->tablename . "(name, left_node, right_node) 
-				VALUES('{$new_node}', '{$new_left}', '{$new_right}')");
+			Pixelpost_DB::query("INSERT INTO " . $this->tablename . "(name, left_node, right_node, permalink) 
+				VALUES('{$new_node}', '{$new_left}', '{$new_right}', '{$node_permalink}')");
 		}
 		catch (exception $e)
 		{
@@ -255,12 +255,12 @@ class Pixelpost_Hierarchy
 	 * @param string $node_name
 	 * @access public
 	 */
-	public function deleteLeafNode($node_name)
+	public function deleteLeafNode($node_permalink)
 	{
 		try
 		{
 			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " 
-				WHERE name = '" . Pixelpost_DB::escape($node_name) . "'";
+				WHERE permalink = '" . Pixelpost_DB::escape($node_permalink) . "'";
 			$result = (array) Pixelpost_DB::get_results($sql);
 			$result[0]->width_node = $result[0]->right_node - $result[0]->left_node + 1;
 			
@@ -284,12 +284,12 @@ class Pixelpost_Hierarchy
 	 * @access public
 	 * @param string $node_name
 	 */
-	public function deleteNodeRecursive($node_name)
+	public function deleteNodeRecursive($node_permalink)
 	{
 		try
 		{
 			$sql = "SELECT left_node, right_node FROM " . $this->tablename . " 
-				WHERE name = '" . Pixelpost_DB::escape($node_name) . "'";
+				WHERE permalink = '" . Pixelpost_DB::escape($node_permalink) . "'";
 			$result = (array) Pixelpost_DB::get_results($sql);
 			$result[0]->width_node = $result[0]->right_node - $result[0]->left_node + 1;
 			

@@ -48,9 +48,9 @@ function plugin_category_construct(&$self,$controller,$action)
 	if ($controller != 'archive' ||  $action != 'category')
 		return;
 		
-	$category      = rawurlencode(ucfirst(Web2BB_Uri::fragment(-1)));
+	$category_permalink      = rawurlencode(Web2BB_Uri::fragment(-1));
 	
-	if ($category == 'Category')
+	if ($category_permalink == 'category')
 	{
 		/**
 		 * @todo Call categoryController or a plugin function...
@@ -65,7 +65,7 @@ function plugin_category_construct(&$self,$controller,$action)
 	
 	// show the images from the category
 	// in case it isn't a leaf we need to select the subcategories as well
-	$sql = "SELECT left_node, right_node FROM categories WHERE name='" . Pixelpost_DB::escape($category) . "'";
+	$sql = "SELECT left_node, right_node FROM categories WHERE permalink='" . Pixelpost_DB::escape($category_permalink) . "'";
 	$node = Pixelpost_DB::get_row($sql);
 	
 	if (empty($node)) throw new Exception("Sorry, that category doesn't exists!");
@@ -109,13 +109,13 @@ function plugin_category_construct(&$self,$controller,$action)
 		$posts_sql .= " LIMIT {$range}, {$self->config->posts_per_page}";
 	}
 
-	$self->view->title = $category;
+	$self->view->title = $category_permalink;
 
 	$self->posts = (array) Pixelpost_DB::get_results($posts_sql);
 	
 	// Get the sub-categories
 	$cats = new Pixelpost_Hierarchy('categories');
-	$self->view->categories = $cats->getLocalSubNodes($category);
+	$self->view->categories = $cats->getLocalSubNodes($category_permalink);
 	
 	
 }
@@ -139,11 +139,11 @@ function plugin_category_change_permalink(&$posts,$controller,$action)
 	if ( $action != 'category'  && strpos(Web2BB_Uri::fragment(-1), 'category-') === false ) 
 		return;
 	
-	$category      = str_replace('category-', '', rawurldecode(Web2BB_Uri::fragment(-1)));
-	
+	$category_permalink = str_replace('category-', '', Web2BB_Uri::fragment(-1));
+	// no need to encode the url as it is already encoded
 	foreach ($posts as $key => $post) 
 	{
-		$posts[$key]->permalink .= '/in/category-'.$category;
+		$posts[$key]->permalink .= '/in/category-'.$category_permalink;
 	}
 }
 
@@ -181,12 +181,12 @@ function plugin_category_create_post_array(&$self,$controller,$action)
 	if ($controller != 'post' || strpos(Web2BB_Uri::fragment(-1), 'category-') === false)
 		return;
 		
-	$category = ucfirst(str_replace('category-', '', rawurlencode(Web2BB_Uri::fragment(-1))));
+	$category_permalink = str_replace('category-', '', Web2BB_Uri::fragment(-1));
 
 	
 	// show the images from the category
 	// in case it isn't a leaf we need to select the subcategories as well
-	$sql = "SELECT left_node, right_node FROM categories WHERE name='" . Pixelpost_DB::escape($category) . "'";
+	$sql = "SELECT left_node, right_node FROM categories WHERE permalink='" . Pixelpost_DB::escape($category_permalink) . "'";
 	$node = Pixelpost_DB::get_row($sql);
 	
 	if (empty($node)) throw new Exception("Sorry, that category doesn't exists!");

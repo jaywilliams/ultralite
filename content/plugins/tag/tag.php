@@ -38,7 +38,7 @@ function plugin_tag_construct(&$self,$controller,$action)
 	if($controller == 'archive' && $action !='tag')
 	{
 		// Get the main tags if we are on the archive page...
-		$sql = "SELECT tags.name FROM tags";
+		$sql = "SELECT tags.name, tags.permalink FROM tags";
 		$tags = Pixelpost_DB::get_results($sql);
 		$self->view->tags = $tags;
 		return;
@@ -49,7 +49,7 @@ function plugin_tag_construct(&$self,$controller,$action)
 	if ($controller != 'archive' ||  $action != 'tag')
 		return;
 		
-	$tag      = rawurldecode(Web2BB_Uri::fragment(-1));
+	$tag_permalink = Web2BB_Uri::fragment(-1);
 		
 	/**
 	 * @todo Call tagController or a plugin function...
@@ -61,7 +61,7 @@ function plugin_tag_construct(&$self,$controller,$action)
 	 */
 	
 	$posts_sql = "SELECT pixelpost.* FROM img2tag, tags, pixelpost 
-				  WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "' 
+				  WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "' 
 				  AND pixelpost.published <= '{$self->config->current_time}'
 				  AND tags.tag_id = img2tag.tag_id AND img2tag.image_id = pixelpost.id
 				  ORDER BY pixelpost.published DESC";
@@ -74,7 +74,7 @@ function plugin_tag_construct(&$self,$controller,$action)
 	
 		// Get total number of publically available posts
 		$sql = "SELECT count(pixelpost.id) FROM img2tag, tags, pixelpost 
-				WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "'
+				WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "'
 				AND pixelpost.published <= '{$self->config->current_time}'
 				AND tags.tag_id = img2tag.tag_id AND img2tag.image_id = pixelpost.id";
 				
@@ -98,7 +98,7 @@ function plugin_tag_construct(&$self,$controller,$action)
 		$posts_sql .= " LIMIT {$range}, {$self->config->posts_per_page}";
 	}
 
-	$self->view->title = $tag;
+	$self->view->title = $tag_permalink;
 
 	$self->posts = (array) Pixelpost_DB::get_results($posts_sql);
 
@@ -106,12 +106,12 @@ function plugin_tag_construct(&$self,$controller,$action)
 	 * We should grab all the other tags associated with images with a certain tag
 	 */
 	 
-	$sql = "SELECT DISTINCT t2.name FROM tags t1
+	$sql = "SELECT DISTINCT t2.name, t2.permalink FROM tags t1
 		JOIN img2tag it1 ON it1.tag_id = t1.tag_id
 		JOIN img2tag it2 ON it1.image_id = it2.image_id
 		JOIN tags t2 ON it2.tag_id = t2.tag_id
-		WHERE t1.name = '" . Pixelpost_DB::escape($tag) . "' 
-		AND t2.name <> '" . Pixelpost_DB::escape($tag) . "'";
+		WHERE t1.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "' 
+		AND t2.permalink <> '" . Pixelpost_DB::escape($tag_permalink) . "'";
 	$tags = Pixelpost_DB::get_results($sql);
 	$self->view->tags = $tags;
 }
@@ -135,11 +135,11 @@ function plugin_tag_change_permalink(&$posts,$controller,$action)
 	if ( $action != 'tag'  && strpos(Web2BB_Uri::fragment(-1), 'tag-') === false ) 
 		return;
 	
-	$tag      = str_replace('tag-', '', rawurlencode(Web2BB_Uri::fragment(-1)));
+	$tag_permalink = str_replace('tag-', '', Web2BB_Uri::fragment(-1));
 	
 	foreach ($posts as $key => $post) 
 	{
-		$posts[$key]->permalink .= '/in/tag-'.$tag;
+		$posts[$key]->permalink .= '/in/tag-'.$tag_permalink;
 	}
 }
 
@@ -157,7 +157,7 @@ function plugin_tag_get_tag(&$posts)
 		/**
 		 * Get the tag(s) associated with the id
 		 */
-		$sql = "SELECT tags.name FROM tags, img2tag WHERE img2tag.image_id=" . $posts[$key]->id . " AND tags.tag_id = img2tag.tag_id";
+		$sql = "SELECT tags.name, tags.permalink FROM tags, img2tag WHERE img2tag.image_id=" . $posts[$key]->id . " AND tags.tag_id = img2tag.tag_id";
 		
 		$tags = Pixelpost_DB::get_result($sql);
 		$posts[$key]->tag = $tags; 
@@ -175,7 +175,7 @@ function plugin_tag_create_post_array(&$self,$controller,$action)
 	if ($controller != 'post' || strpos(Web2BB_Uri::fragment(-1), 'tag-') === false)
 		return;
 		
-	$tag = str_replace('tag-', '', rawurldecode(Web2BB_Uri::fragment(-1)));
+	$tag_permalink = str_replace('tag-', '', Web2BB_Uri::fragment(-1));
 	
 	/**
 	 * Determine the image ID we need to lookup, and verify that it is a positive integer:
@@ -205,7 +205,7 @@ function plugin_tag_create_post_array(&$self,$controller,$action)
 	 * Next Image
 	 */
 	$sql = "SELECT pixelpost.* FROM img2tag, tags, pixelpost 
-  	WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "'
+  	WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "'
  	AND tags.tag_id = img2tag.tag_id 
   	AND img2tag.image_id = pixelpost.id 
   	AND (pixelpost.published < '{$self->posts['current']->published}') 
@@ -221,7 +221,7 @@ function plugin_tag_create_post_array(&$self,$controller,$action)
 	if (!is_object($self->posts['next']))
 	{
 		$sql = "SELECT pixelpost.* FROM img2tag, tags, pixelpost 
- 		 	WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "'
+ 		 	WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "'
 			AND tags.tag_id = img2tag.tag_id 
   			AND img2tag.image_id = pixelpost.id 
   			AND pixelpost.published <= '{$self->config->current_time}' 
@@ -234,7 +234,7 @@ function plugin_tag_create_post_array(&$self,$controller,$action)
 	 * Previous Image
 	 */
 	$sql = "SELECT pixelpost.* FROM img2tag, tags, pixelpost 
-  		WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "' 
+  		WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "' 
  		AND tags.tag_id = img2tag.tag_id 
   		AND img2tag.image_id = pixelpost.id 
   		AND (pixelpost.published > '{$self->posts['current']->published}') 
@@ -250,7 +250,7 @@ function plugin_tag_create_post_array(&$self,$controller,$action)
 	if (!is_object($self->posts['previous']))
 	{
 		$sql = "SELECT pixelpost.* FROM img2tag, tags, pixelpost 
-  			WHERE tags.name = '" . Pixelpost_DB::escape($tag) . "'  
+  			WHERE tags.permalink = '" . Pixelpost_DB::escape($tag_permalink) . "'  
   			AND tags.tag_id = img2tag.tag_id 
   			AND img2tag.image_id = pixelpost.id 
   			AND pixelpost.published <= '{$self->config->current_time}' 

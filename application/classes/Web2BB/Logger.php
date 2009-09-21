@@ -31,6 +31,12 @@ class Web2BB_Logger
 	private function __construct()
 	{
 	}
+	
+	public static function exceptionLog()
+	{
+		$args = func_get_args();
+		self::__callStatic('exceptionLog',$args);
+	}
 
 	/**
 	 *
@@ -45,12 +51,13 @@ class Web2BB_Logger
 	 */
 	public static function __callStatic($function, $args)
 	{
+		
 		// args[0] constains the error message
 		// args[1] contains the log level
 		// args[2] constains the filename
 		// args[3] constains the line number
-		$config = config::getInstance();
-		if( $args[1] <= $config->config_values['logging']['log_level'] )
+		$config = Pixelpost_Config::getInstance();
+		if( $args[1] <= $config->logging['log_level'] )
 		{
 			$line = array(
 				'log_function'	=> $function,
@@ -59,7 +66,7 @@ class Web2BB_Logger
 				'log_file'	=> $args[2],
 				'log_line'	=> $args[3]);
 
-			switch( $config->config_values['logging']['log_handler'] )
+			switch( $config->logging['log_handler'] )
 			{
 				case 'file':
 				// set the log date/time
@@ -67,7 +74,7 @@ class Web2BB_Logger
 				// encode the line
 				$json = json_encode( $line )."\n";
 
-				if ($handle = fopen( $config->config_values['logging']['log_file'], "a+") )
+				if ($handle = fopen( $config->logging['log_file'], "a+") )
 				{
 					if( !fwrite( $handle, $json ) )
 					{

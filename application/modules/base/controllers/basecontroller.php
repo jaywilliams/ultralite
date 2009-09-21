@@ -162,8 +162,7 @@ class baseController
 			 * No matching View exists, display a 404 error.
 			 * @todo Use a Ultralite specific Exception class
 			 */
-			@header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
-			throw new Exception('<h1>Error 404</h1><p>File Not Found</p>',404);
+			throw new Web2BB_Exception('File Not Found',404);
 		}
 
 		if (!is_null($this->content))

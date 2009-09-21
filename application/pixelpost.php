@@ -19,7 +19,7 @@ return array (
     'username' => 'root',
     'password' => '',
     'database' => 'ultralite',
-    'prefix' => NULL,
+    'prefix' => '',
     'sqlite' => './application/pixelpost.sqlite3',
     'adapter' => 'sqlite',
   ),
@@ -42,14 +42,14 @@ return array (
   'cache_lifetime' => 3600,
   'enabled_plugins' => 
   array (
-    0 => 'example',
-    1 => 'comment',
-    2 => 'media_rss',
-    3 => 'markdown',
-    4 => 'smartypants',
-    5 => 'metadata',
-    6 => 'category',
-    7 => 'tag',
+    // 0 => 'example',
+    // 1 => 'comment',
+    // 2 => 'media_rss',
+    // 3 => 'markdown',
+    // 4 => 'smartypants',
+    // 5 => 'metadata',
+    // 6 => 'category',
+    // 7 => 'tag',
   ),
   'routes' => 
   array (
@@ -65,6 +65,12 @@ return array (
     3 => 'code',
     4 => 'pre',
     5 => 'a',
+  ),
+  'logging' =>
+   array (
+	'log_handler' => 'file',
+	'log_file' => 'application/pixelpost.log',
+	'log_level' => 999,
   ),
   'comments_per_page' => 25,
   'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',

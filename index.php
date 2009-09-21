@@ -1,13 +1,10 @@
 <?php
-
 /**
- * File containing the index for system.
+ * Pixelpost Ultralite Index
  *
- * @package WEB2BB
- * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
- * @filesource
- *
- */
+ * @version 2.0
+ * @package pixelpost
+ **/
 
 header('Content-Type: text/html; charset=utf-8');
 define('ULTRALITE',true);
@@ -24,9 +21,7 @@ try
 	 * 
 	 * Note: All paths do not have a trailing slash
 	 */
-	$site_path = rtrim(str_replace('\\', '/', realpath(dirname(__file__))), '/');
-	define('__SITE_PATH', $site_path);
-	
+	define('__SITE_PATH', rtrim(str_replace('\\', '/', realpath(dirname(__file__))), '/'));
 	define('__APP_PATH', __SITE_PATH . '/application');
 	
 	/**
@@ -45,14 +40,21 @@ try
 }
 catch (Web2BB_Exception $e)
 {
-	//show a 404 page here
-	echo 'FATAL:<br />';
-	echo $e->getMessage();
-	echo $e->getLine();
-}
-catch (exception $e)
-{
-	echo $e->getMessage();
+	/**
+	 * If an error occurred, attempt to load a "fancy" error view, 
+	 * otherwise, simply echo the error.
+	 */
+	if (file_exists($path = __APP_PATH.'/modules/error/views/'.$e->getCode().'.phtml')) {
+		include($path);
+	}elseif (file_exists($path = __APP_PATH.'/modules/error/views/index.phtml')) {
+		include($path);
+	}else{
+		echo "<h1>Error ".$e->getCode()."</h1><p>".$e->getMessage()."</p><p>".$e->getLine() . " (" .basename($e->getFile()).")</p>";
+	}
 }
 
 Pixelpost_Plugin::executeAction('hook_exit');
+
+/**
+ * To prevent possible issues, do not add a closing "?>" tag.
+ */

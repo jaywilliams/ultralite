@@ -13,6 +13,7 @@
 // the application directory path
 define('__THEME_PATH', __SITE_PATH . '/content/themes');
 define('__PLUGIN_PATH', __SITE_PATH . '/content/plugins');
+define('__CACHE_PATH', __SITE_PATH . '/content/cache');
 define('__IMAGE_PATH', __SITE_PATH . '/content/images');
 
 // the classes directory path

@@ -12,9 +12,6 @@ class baseController
 		$this->front = FrontController::getInstance();
 		$this->config = $this->view->config = Pixelpost_Config::getInstance(); // for use in the controllers
 		
-		/**
-		 * @todo Pixelpost_Plugin must be switched to a singleton, otherwise we're going to have no end of troubles.
-		 */
 		$this->view->plugins = Pixelpost_Plugin::getInstance();
 
 		/**
@@ -23,6 +20,10 @@ class baseController
 		 */
 		$this->layout = 'layout.phtml';
 		
+		
+		// $this->view->setTemplateDir(__THEME_PATH . '/' . $this->config->theme);
+		$this->view->setCacheDir(__CACHE_PATH);
+		// $this->view->setCaching(true);
 		
 		// if ( (int)$this->front->getAction() === 0 && $this->front->getAction() != 'index' && !method_exists($this,$this->front->getAction())) {
 			
@@ -81,6 +82,84 @@ class baseController
 		}
 	}
 
+	public function viewLoader()
+	{
+		if ($this->front->getAction() != 'index' && 
+			file_exists(
+				$view = __THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . '_' . $this->front->getAction() . ".phtml"
+				)
+			) 
+		{	
+			/**
+			 * Check for a matching template specific View & Action phtml file 
+			 * /[theme]/views/[view]_[action].phtml
+			 */
+			return $view;
+		
+		}
+		else if ($this->front->getAction() != 'index' && 
+			file_exists(
+				$view = __APP_PATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
+				)
+			)
+		{
+			/**
+			 * Check for a matching controller View & Action phtml file 
+			 * /[controller]/views/[action].phtml
+			 */
+			return $view;
+		
+		}
+		else if ($this->front->getAction() != 'index' && 
+			file_exists(
+				$view = __PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
+				)
+			) 
+		{
+			/**
+			 * Check for a matching plugin controller View & Action phtml file 
+			 * /plugins/[controller]/views/[action].phtml
+			 */
+			return $view;
+		
+		}
+		else if (file_exists(
+				$view = __THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml"
+				)
+			)
+		{
+			/**
+			 * Check for a matching template specific View phtml file 
+			 * /[theme]/views/[view].phtml
+			 */
+			return $view;
+		}
+		else if (file_exists(
+				$view = __APP_PATH . '/modules/' . $this->front->getController() . '/views/index.phtml'
+				)
+			)
+		{
+			/**
+			 * Check for a matching template specific View phtml file 
+			 * /[controller]/views/index.phtml
+			 */
+			return $view;
+		}
+		else if (file_exists(
+				$view = __PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml'
+				)
+			)
+		{
+			/**
+			 * Check for a matching plugin template specific View phtml file 
+			 * /plugins/[controller]/views/index.phtml
+			 */
+			return $view;
+		}
+		
+		return false;
+	}
+
 	public function __destruct()
 	{
 		
@@ -105,56 +184,8 @@ class baseController
 		 * @todo this complex if statement should be moved to a method, or some place out of the way.
 		 */
 		
-		if ($this->front->getAction() != 'index' && file_exists(__THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . '_' . $this->front->getAction() . ".phtml")) 
-		{	
-			/**
-			 * Check for a matching template specific View & Action phtml file 
-			 * /[theme]/views/[view]_[action].phtml
-			 */
-			$this->content = $this->view->fetch(__THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . '_' . $this->front->getAction() . '.phtml');
-		
-		}
-		else if ($this->front->getAction() != 'index' && file_exists(__APP_PATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml')) 
-		{
-			/**
-			 * Check for a matching controller View & Action phtml file 
-			 * /[controller]/views/[action].phtml
-			 */
-			$this->content = $this->view->fetch(__APP_PATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml');
-		
-		}
-		else if ($this->front->getAction() != 'index' && file_exists(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml')) 
-		{
-			/**
-			 * Check for a matching plugin controller View & Action phtml file 
-			 * /plugins/[controller]/views/[action].phtml
-			 */
-			$this->content = $this->view->fetch(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml');
-		
-		}
-		else if (file_exists(__THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml"))
-		{
-			/**
-			 * Check for a matching template specific View phtml file 
-			 * /[theme]/views/[view].phtml
-			 */
-			$this->content = $this->view->fetch(__THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml");
-		}
-		else if (file_exists(__APP_PATH . '/modules/' . $this->front->getController() . '/views/index.phtml'))
-		{
-			/**
-			 * Check for a matching template specific View phtml file 
-			 * /[controller]/views/index.phtml
-			 */
-			$this->content = $this->view->fetch(__APP_PATH . '/modules/' . $this->front->getController() . '/views/index.phtml');
-		}
-		else if (file_exists(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml'))
-		{
-			/**
-			 * Check for a matching plugin template specific View phtml file 
-			 * /plugins/[controller]/views/index.phtml
-			 */
-			$this->content = $this->view->fetch(__PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml');
+		if (($viewPath = $this->viewLoader())) {
+			$this->content = $this->view->fetch($viewPath);
 		}
 		else
 		{

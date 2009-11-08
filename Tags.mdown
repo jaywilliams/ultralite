@@ -1,0 +1,56 @@
+# Flickr Style Tag ULRs:
+
+	http://www.flickr.com/photos/tags/newmusicexperiment/
+	http://www.flickr.com/photos/differentview/tags/newmusicexperiment/
+
+Use a /tags/{tagname}/ style format. Tags can display spaces and capitalization on the photo page, but the url is all lowercase and contains no characters besides a-z0-9.
+
+
+# Tumblr Style Tag URLs:
+
+	http://my.tumblr.com/tagged/New_music_experiment
+	http://tumblelog.marco.org/tagged/New_music_experiment/chrono
+
+Uses a /tagged/{Tag_name} style format. Tags can contain capitalization, but spaces are replaced with underscores. In addition to this, Tumblr offers a /chrono switch to sort the posts in the order in which they were posted, as opposed to the default reverse-chronological order.
+
+A Tumblr user suggested the following URL option, which may be of interest:
+
+> In addition to the other requests asked here, such as tagging ability from the bookmarklet and per tag feeds, which I also desire, I'd like the ability to combine tags, especially with the AND logical connector. Perhaps a simple syntax could be in the form:
+> 
+> 	http://my.tumblr.com/tagged/this/that
+> 
+> But this may interfere with the /chron "option." Of course I don't expect a ton of "chron" tags to be attached to posts. Anyway I would also like to select posts that match a tag and not another, for which perhaps the minus sign could be used:
+> 
+> 	http://my.tumblr.com/tagged/this/-that
+> 
+> For consistency, a plus sign, which is read "and" in English, may be used in place of the first example:
+> 
+> 	http://my.tumblr.com/tagged/this/+that
+> 
+> I foresee some slight implementation difficulty for (the very unlikely to be chosen) tags that actually start with a plus or minus, but it should be easily doable, anyway.
+> 
+> For even more flexibility I would also like an OR connector, perhaps in the form of a pipe:
+> 
+> 	http://my.tumblr.com/tagged/this|that/+something
+> 
+> or
+> 
+> 	http://my.tumblr.com/tagged/this/something|something_else
+
+# Ultralite Style Tag URLs:
+
+Currently we use the current style URLs:
+
+	/in/tag-blue/
+
+I suggest with Ultralite we go for a mix between the two, perhaps something like this:
+
+	/tagged/bue,green,yellow/
+
+, = AND (or possibly: &)
+
+	/tagged/blue|green|yellow/
+
+| = OR (or possibly: /)
+
+A negative (NOT) option may be neat as well, but I'm not sure how practical it would be to implement, so we might want to scrap that option.

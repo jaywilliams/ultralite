@@ -93,7 +93,7 @@ different representations.   For instance: the same song recorded in
 both the WAV and MP3 format. It's an optional element that must only be
 used for this purpose.
 
-*``<media:content>``*
+*`<media:content>`*
 
 `<media:content>` is a sub-element of either `<item>` or
 `<media:group>`. Media objects that are not the same content should not be
@@ -412,7 +412,7 @@ attribute is not provided, and a /start/ time is used, it is expected
 that the end time is either the end of the clip or the start of the next
 `<media:text>` element.
 
-*`<media:restriction>` *
+*`<media:restriction>`*
 
 Allows restrictions to be placed on the aggregator rendering the media
 in the feed. Currently, restrictions are based on distributor (uri) and

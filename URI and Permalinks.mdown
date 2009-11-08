@@ -1,0 +1,76 @@
+Ultralite URI and Permalink Structure
+=====================================
+
+Special URI Suffixes
+--------------------
+
+Page Number:
+
+	/page/[#]
+
+Post Criteria:
+
+	/in-[option]/[value]
+	
+
+Static Pages
+------------
+
+	/about
+	/map
+	/bla
+
+Post Permalinks
+---------------
+
+Default:
+
+	/post/1234
+	/post/1234/post-title
+
+### Future Implementations: ###
+
+Alternate:
+
+	/p/1234
+	/p/1234/post-title
+
+Via Optional Plugins:
+
+	/post-title
+	/2009/01/31/post-title
+
+Showing only posts inside the category portraits:
+
+/post/1234/post-title/in-category/portraits
+
+Archive
+-------
+
+	/archive
+	/archive/in-tag/blue
+	/archive/in-category/portraits
+
+### Future Implementations: ###
+	
+Show images that have any of the three tags: blue, red, or green. (OR logical operator)
+
+	/archive/in-tag/blue,red,green
+
+Show images that have all of the three tags: blue, red, and green. (AND logical operator)
+
+	/archive/in-tag/blue+red+green
+
+Show images that have blue or red, but not green: (OR & NOT logical operators)
+
+	/archive/in-tag/blue+red-green
+
+Template Tags
+-------------
+
+	{%% post_title %%}
+	{%% post_content %%}
+	{%% post_image %%}
+	{%% attachments %%}
+
+

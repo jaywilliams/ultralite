@@ -30,11 +30,6 @@ Default:
 
 ### Future Implementations: ###
 
-Alternate:
-
-	/p/1234
-	/p/1234/post-title
-
 Via Optional Plugins:
 
 	/post-title
@@ -68,6 +63,8 @@ Show images that have blue or red, but not green: (OR & NOT logical operators)
 Template Tags
 -------------
 
+A possible idea, template tags are not totally confirmed at this point.
+	
 	{%% post_title %%}
 	{%% post_content %%}
 	{%% post_image %%}

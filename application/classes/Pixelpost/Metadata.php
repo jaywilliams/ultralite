@@ -17,7 +17,7 @@ class Pixelpost_Metadata
 	 *
 	 * @var string
 	 */
-	private $path = __IMAGE_PATH;
+	private $path = IMGPATH;
 	
 	/**
 	 * Temporary EXIF array

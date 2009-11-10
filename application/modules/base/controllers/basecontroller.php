@@ -21,8 +21,8 @@ class baseController
 		$this->layout = 'layout.phtml';
 		
 		
-		// $this->view->setTemplateDir(__THEME_PATH . '/' . $this->config->theme);
-		$this->view->setCacheDir(__CACHE_PATH);
+		// $this->view->setTemplateDir(THMPATH . '/' . $this->config->theme);
+		$this->view->setCacheDir(CSHPATH);
 		// $this->view->setCaching(true);
 		
 		// if ( (int)$this->front->getAction() === 0 && $this->front->getAction() != 'index' && !method_exists($this,$this->front->getAction())) {
@@ -86,7 +86,7 @@ class baseController
 	{
 		if ($this->front->getAction() != 'index' && 
 			file_exists(
-				$view = __THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . '_' . $this->front->getAction() . ".phtml"
+				$view = THMPATH . "/{$this->config->theme}/views/" . $this->front->getView() . '_' . $this->front->getAction() . ".phtml"
 				)
 			) 
 		{	
@@ -99,7 +99,7 @@ class baseController
 		}
 		else if ($this->front->getAction() != 'index' && 
 			file_exists(
-				$view = __APP_PATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
+				$view = APPPATH . '/modules/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
 				)
 			)
 		{
@@ -112,7 +112,7 @@ class baseController
 		}
 		else if ($this->front->getAction() != 'index' && 
 			file_exists(
-				$view = __PLUGIN_PATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
+				$view = PLGPATH . '/' . $this->front->getController() . '/views/'. $this->front->getAction() .'.phtml'
 				)
 			) 
 		{
@@ -124,7 +124,7 @@ class baseController
 		
 		}
 		else if (file_exists(
-				$view = __THEME_PATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml"
+				$view = THMPATH . "/{$this->config->theme}/views/" . $this->front->getView() . ".phtml"
 				)
 			)
 		{
@@ -135,7 +135,7 @@ class baseController
 			return $view;
 		}
 		else if (file_exists(
-				$view = __APP_PATH . '/modules/' . $this->front->getController() . '/views/index.phtml'
+				$view = APPPATH . '/modules/' . $this->front->getController() . '/views/index.phtml'
 				)
 			)
 		{
@@ -146,7 +146,7 @@ class baseController
 			return $view;
 		}
 		else if (file_exists(
-				$view = __PLUGIN_PATH . '/' . $this->front->getController() . '/views/index.phtml'
+				$view = PLGPATH . '/' . $this->front->getController() . '/views/index.phtml'
 				)
 			)
 		{
@@ -211,7 +211,7 @@ class baseController
 			}
 			else
 			{
-				$result = $this->view->fetch(__THEME_PATH . '/' . $this->config->theme . '/' . $this->layout);
+				$result = $this->view->fetch(THMPATH . '/' . $this->config->theme . '/' . $this->layout);
 			}
 
 			

@@ -160,9 +160,9 @@ class feedController extends baseController implements IController
 		/**
 		 * Include the feed icon, if it exists:
 		 */
-		if (file_exists(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png"))
+		if (file_exists(THMPATH."/{$this->config->theme}/images/feed_icon.png"))
 		{
-			// $image = getimagesize(__THEME_PATH."/{$this->config->theme}/images/feed_icon.png");
+			// $image = getimagesize(THMPATH."/{$this->config->theme}/images/feed_icon.png");
 			
 			$this->feed['rss']['channel']['image']['title']  = $this->config->site_name;
 			$this->feed['rss']['channel']['image']['link']   = $this->config->url;

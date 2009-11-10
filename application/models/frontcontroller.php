@@ -124,14 +124,14 @@ class FrontController
 	{
 		$controller = ($controller)? $controller : $this->_controller;
 		
-		if (file_exists(__APP_PATH . "/modules/{$controller}/controllers/{$controller}controller.php")) {
+		if (file_exists(APPPATH . "/modules/{$controller}/controllers/{$controller}controller.php")) {
 			return true;
 		}else {
 			
 			// Grab the list of enabled plugins...
 			$plugins = Pixelpost_Config::getInstance()->enabled_plugins;
 			
-			if (in_array($controller, $plugins) && file_exists(__PLUGIN_PATH . "/{$controller}/controllers/{$controller}controller.php"))
+			if (in_array($controller, $plugins) && file_exists(PLGPATH . "/{$controller}/controllers/{$controller}controller.php"))
 				return true;
 			else
 				return false;

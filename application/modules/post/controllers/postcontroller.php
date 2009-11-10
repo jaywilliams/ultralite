@@ -17,7 +17,7 @@ class postController extends baseController implements IController
 	 *
 	 * @var string
 	 */
-	private $path = __IMAGE_PATH;
+	private $path = IMGPATH;
 
 	public $posts = array('previous'=>null,'current'=>null,'next'=>null);
 

@@ -40,7 +40,7 @@ class Pixelpost_Plugin {
 	 *
 	 * @var string
 	 */
-	private $path = __PLUGIN_PATH;
+	private $path = PLGPATH;
 	
 	private static $instance;
 

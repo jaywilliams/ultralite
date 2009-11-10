@@ -35,7 +35,7 @@ class Pixelpost_Config
 		
 		if(!defined('ULTRALITE')) define('ULTRALITE',TRUE);
 		
-		$this->file = __APP_PATH."/pixelpost.php";
+		$this->file = APPPATH."/pixelpost.php";
 		
 		if (!$this->load())
 			return false;

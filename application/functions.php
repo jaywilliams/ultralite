@@ -48,11 +48,11 @@ function modelLoader($class)
 	$filename = $class . '.php';
 	if (in_array($filename, $models))
 	{
-		$file = __APP_PATH . "/models/$filename";
+		$file = APPPATH . "/models/$filename";
 	}
 	else
 	{
-		$file = __APP_PATH . "/$class/models/$filename";
+		$file = APPPATH . "/$class/models/$filename";
 	}
 	if (file_exists($file) == false)
 	{
@@ -70,12 +70,12 @@ function controllerLoader($class)
 	$filename = $class . '.php';
 	
 	// Check if controller exists in the /modules/ directory...
-	$file = strtolower(__APP_PATH . "/modules/$module/controllers/$filename");
+	$file = strtolower(APPPATH . "/modules/$module/controllers/$filename");
 	if (file_exists($file) == false)
 	{
 		// Grab the list of enabled plugins...
 		$plugins = Pixelpost_Config::getInstance()->enabled_plugins;
-		$file    = strtolower(__PLUGIN_PATH . "/$module/controllers/$filename");
+		$file    = strtolower(PLGPATH . "/$module/controllers/$filename");
 		
 		// Check if an enabled plugin matches the name of the controller,
 		// And if so, verify that the file exists...

@@ -1,38 +1,18 @@
-<?php
-
-/**
- * Bootstrap.php is the file that takes care of the bootstrapping.
- * Bootstrapping means that every server request are funneled through 
- * a single (or a few) PHP file(s). This file will be the “bootstrapper” 
- * of our application. It will help instantiate objects that are needed 
- * by every page in general such as starting a session, connecting to a 
- * database, defining constants and default variables, etc.
- * 
- **/
+<?php defined('APPPATH') or die('No direct script access.');
 
 // the application directory path
-define('__THEME_PATH', __SITE_PATH . '/content/themes');
-define('__PLUGIN_PATH', __SITE_PATH . '/content/plugins');
-define('__CACHE_PATH', __SITE_PATH . '/content/cache');
-define('__IMAGE_PATH', __SITE_PATH . '/content/images');
-
-// the classes directory path
-define('__CLASS_PATH', __APP_PATH . '/classes');
-define('__LIB_PATH', __APP_PATH . '/libraries');
-
-
-define('__DOC_ROOT', rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/'));
-
-// set the public web root path
-define('__PUBLIC_PATH', $path = '/' . trim(str_replace(__DOC_ROOT, '', __SITE_PATH), '/'));
+define('THMPATH', DOCROOT . '/content/themes');
+define('PLGPATH', DOCROOT . '/content/plugins');
+define('CSHPATH', DOCROOT . '/content/cache');
+define('IMGPATH', DOCROOT . '/content/images');
 
 // add the application to the include path
-set_include_path(__APP_PATH);
-set_include_path(__SITE_PATH);
-set_include_path(__CLASS_PATH);
+set_include_path(APPPATH);
+set_include_path(DOCROOT);
+set_include_path(APPPATH.'classes/');
 
 // we need this old function file to make it work.....
-require_once __LIB_PATH . '/functions.php';
+require_once APPPATH.'libraries/functions.php';
 
 // Remove register globals, if applicable:
 unregister_globals();
@@ -86,7 +66,7 @@ $config->current_time = date("Y-m-d H:i:s",time());
 /**
  * Get the language file 
  */
-if (!file_exists($language = __APP_PATH . '/languages/' . $config->locale . '.lang.php'))
+if (!file_exists($language = APPPATH . '/languages/' . $config->locale . '.lang.php'))
 	throw new Web2BB_Exception("Unable to open language file",E_ERROR);
 
 	include $language;

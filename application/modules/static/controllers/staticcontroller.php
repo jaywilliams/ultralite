@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class staticController extends baseController implements IController
+class staticController extends baseController implements Model_Interface
 {
 
 	public function __construct()

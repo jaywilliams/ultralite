@@ -13,4 +13,4 @@
 
 // namespace web2bb;
 
-interface IController {}
+interface Model_Interface {}

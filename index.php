@@ -1,59 +1,124 @@
 <?php
-/**
- * Pixelpost Ultralite Index
- *
- * @version 2.0
- * @package pixelpost
- **/
-
-header('Content-Type: text/html; charset=utf-8');
-define('ULTRALITE',true);
 
 /**
- * When debugging, or developing, be sure this is enabled:
+ * The directory in which the core Pixelpost resources are located.
+ * The application directory must contain the config.php file.
  */
-error_reporting(E_ALL|E_STRICT);
+$application = 'application';
 
-try
+/**
+ * The directory in which your caches are located.
+ */
+$caches = 'content/caches';
+
+/**
+ * The directory in which your images are located.
+ */
+$images = 'content/images';
+
+/**
+ * The directory in which your plugins are located.
+ */
+$plugins = 'content/plugins';
+
+/**
+ * The directory in which your themes are located.
+ */
+$themes = 'content/themes';
+
+/**
+ * Set the PHP error reporting level. If you set this in php.ini, you remove this.
+ * @see  http://php.net/error_reporting
+ *
+ * When developing your application, it is highly recommended to enable notices
+ * and strict warnings. Enable them by using: E_ALL | E_STRICT
+ *
+ * In a production environment, it is safe to ignore notices and strict warnings.
+ * Disable them by using: E_ALL ^ E_NOTICE
+ */
+error_reporting(E_ALL | E_STRICT);
+
+
+/**
+ * Default Content Type
+ */
+header('Content-Type: text/html; charset=utf-8');
+
+/**
+ * Default Time Zone
+ * If you don't set this, you'll get more notice errors than you'd ever care to see.
+ */
+date_default_timezone_set('America/Chicago');
+
+
+/**
+ * End of standard configuration! Changing any of the code below should only be
+ * attempted by those with a working knowledge of Pixelpost internals.
+ *
+ * @see  http://docs.kohanaphp.com/bootstrap
+ */
+
+// Set the full path to the docroot
+define('DOCROOT', path(dirname(__FILE__)));
+
+// Make the application relative to the docroot
+if ( ! is_dir($application) AND is_dir(DOCROOT.$application))
+	$application = DOCROOT.$application;
+
+// Make the modules relative to the docroot
+if ( ! is_dir($caches) AND is_dir(DOCROOT.$caches))
+	$caches = DOCROOT.$caches;
+
+// Make the modules relative to the docroot
+if ( ! is_dir($images) AND is_dir(DOCROOT.$images))
+	$images = DOCROOT.$images;
+
+// Make the modules relative to the docroot
+if ( ! is_dir($plugins) AND is_dir(DOCROOT.$plugins))
+	$plugins = DOCROOT.$plugins;
+
+// Make the modules relative to the docroot
+if ( ! is_dir($themes) AND is_dir(DOCROOT.$themes))
+	$themes = DOCROOT.$themes;
+
+// Define the absolute paths for configured directories
+define('APPPATH', path($application));
+define('CSHPATH', path($caches));
+define('IMGPATH', path($images));
+define('PLGPATH', path($plugins));
+define('THMPATH', path($themes));
+
+define('PUBPATH',  str_replace(path($_SERVER['DOCUMENT_ROOT']), '', DOCROOT) );
+
+// Clean up the configuration vars
+unset($application,$caches,$images,$plugins,$themes);
+
+// Path Helper Function
+function path($path='')
 {
-	/**
-	 * Define Paths
-	 * 
-	 * Note: All paths do not have a trailing slash
-	 */
-	define('__SITE_PATH', rtrim(str_replace('\\', '/', realpath(dirname(__file__))), '/'));
-	define('__APP_PATH', __SITE_PATH . '/application');
-	
-	/**
-	 * Initialize Bootstrap Routine
-	 */
-	require_once __APP_PATH.'/Bootstrap.php';
-	
-		// Initialize the FrontController
-		$front = FrontController::getInstance();
-		
-		Pixelpost_Plugin::executeAction('hook_init');
-		
-		$front->route();
-		
-		echo $front->getBody();
-}
-catch (Web2BB_Exception $e)
-{
-	/**
-	 * If an error occurred, attempt to load a "fancy" error view, 
-	 * otherwise, simply echo the error.
-	 */
-	if (file_exists($path = __APP_PATH.'/modules/error/views/'.$e->getCode().'.phtml')) {
-		include($path);
-	}elseif (file_exists($path = __APP_PATH.'/modules/error/views/index.phtml')) {
-		include($path);
-	}else{
-		echo "<h1>Error ".$e->getCode()."</h1><p>".$e->getMessage()."</p><p>".$e->getLine() . " (" .basename($e->getFile()).")</p>";
-	}
+	return str_replace('\\', '/', realpath($path)) . '/';
 }
 
-Pixelpost_Plugin::executeAction('hook_exit');
+if (file_exists('install.php'))
+{
+	// Load the installation check
+	return include 'install.php';
+}
+
+// Define the start time of the application
+define('PIXELPOST_START_TIME', microtime(TRUE));
+
+// Define the memory usage at the start of the application
+define('PIXELPOST_START_MEMORY', memory_get_usage());
+
+// Load the base, low-level functions
+require APPPATH.'base.php';
+
+// Load the core Pixelpost class
+//require APPPATH.'classes/pixelpost/core.php';
+
+// Bootstrap the application
+// require APPPATH.'bootstrap.php';
 
 /**
  * To prevent possible issues, do not add a closing "?>" tag.

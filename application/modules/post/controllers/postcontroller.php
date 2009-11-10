@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class postController extends baseController implements IController
+class postController extends baseController implements Model_Interface
 {
 		/**
 	 * Path to image directory

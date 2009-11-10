@@ -6,7 +6,7 @@
  * @author Jay Williams 
  */
 
-class feedController extends baseController implements IController
+class feedController extends baseController implements Model_Interface
 {
 
 	public function __construct()

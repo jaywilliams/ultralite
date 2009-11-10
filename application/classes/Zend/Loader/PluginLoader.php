@@ -452,7 +452,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
     protected static function _appendIncFile($incFile)
     {
         if (!file_exists(self::$_includeFileCache)) {
-            $file = '<?php';
+            $file = '<?php defined(\'APPPATH\') or die(\'No direct script access.\');';
         } else {
             $file = file_get_contents(self::$_includeFileCache);
         }

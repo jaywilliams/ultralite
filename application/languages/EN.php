@@ -9,7 +9,7 @@
 
 // namespace web2bb;
 
-class lang
+class Language_EN
 {
 	const __ADMIN = 'Admin';
 	const __BLOG = 'Blog';

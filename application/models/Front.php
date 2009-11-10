@@ -15,7 +15,7 @@
  *
  */
 
-class FrontController
+class Model_Front
 {
 
 	protected $_controller, $_action, $_view ,$_params, $_body, $_url;
@@ -66,8 +66,8 @@ class FrontController
 		// check if the controller exists
 		$con = $this->loadController();
 		$rc = new ReflectionClass($con );
-		// if the controller exists and implements IController
-		if( $rc->implementsInterface( 'IController' ) )
+		// if the controller exists and implements Model_Interface
+		if( $rc->implementsInterface( 'Model_Interface' ) )
 		{
 			$controller = $rc->newInstance();
 			// check if method exists 

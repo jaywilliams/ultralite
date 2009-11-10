@@ -8,8 +8,8 @@ class baseController
 
 	public function __construct()
 	{
-		$this->view = new view;
-		$this->front = FrontController::getInstance();
+		$this->view = new Model_View;
+		$this->front = Model_Front::getInstance();
 		$this->config = $this->view->config = Pixelpost_Config::getInstance(); // for use in the controllers
 		
 		$this->view->plugins = Pixelpost_Plugin::getInstance();

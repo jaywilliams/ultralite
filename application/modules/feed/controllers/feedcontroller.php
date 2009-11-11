@@ -15,7 +15,7 @@ class feedController extends baseController implements Model_Interface
 		
 		// Remove the layout.phtml wrapper for feeds
 		$this->layout = null;
-		$this->feed_type = (string) Web2BB_Uri::fragment(1);
+		$this->feed_type = (string) Pixelpost_Uri::fragment(1);
 	}
 
 	public function index()
@@ -39,17 +39,17 @@ class feedController extends baseController implements Model_Interface
 			$this->total_posts = (int) Pixelpost_DB::get_var($sql);
 			
 			// Determine the total number of pages
-			WEB2BB_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
+			Pixelpost_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
 
 			// Verify that we're on a legitimate page to start with
-			if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
+			if (Pixelpost_Uri::$total_pages < Pixelpost_Uri::$page)
 			{
 				// @todo this error displays if the database call doesn't work.
 				throw new Exception("Sorry, we don't have anymore pages to show!");
 			}
 			
 			// The database needs to know which row we need to start with:
-			$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
+			$range = (int) (Pixelpost_Uri::$page - 1) * $this->config->posts_per_page;
 		}
 		
 		$posts_sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->feed_items}";
@@ -125,10 +125,10 @@ class feedController extends baseController implements Model_Interface
 		/**
 		 * Feed Pagination - Next:
 		 */
-		if ($this->config->feed_pagination && (WEB2BB_Uri::$page) > 1)
+		if ($this->config->feed_pagination && (Pixelpost_Uri::$page) > 1)
 		{
 			// Add the current page to the rel=self link:
-			$this->feed['rss']['channel']['atom:link']['0_attr']['href'] .= '/page/'.(WEB2BB_Uri::$page);
+			$this->feed['rss']['channel']['atom:link']['0_attr']['href'] .= '/page/'.(Pixelpost_Uri::$page);
 			
 			$this->feed['rss']['channel']['atom:link'][1]    = null;
 			$this->feed['rss']['channel']['atom:link']['1_attr'] = 
@@ -138,21 +138,21 @@ class feedController extends baseController implements Model_Interface
 					'href' => $this->config->url.'feed',
 				);
 			
-			if ((WEB2BB_Uri::$page-1) != 1)
-				$this->feed['rss']['channel']['atom:link']['1_attr']['href'] .= '/page/'. (WEB2BB_Uri::$page-1);
+			if ((Pixelpost_Uri::$page-1) != 1)
+				$this->feed['rss']['channel']['atom:link']['1_attr']['href'] .= '/page/'. (Pixelpost_Uri::$page-1);
 		}
 
 		/**
 		 * Feed Pagination - Previous:
 		 */
-		if ($this->config->feed_pagination && WEB2BB_Uri::$page < WEB2BB_Uri::$total_pages)
+		if ($this->config->feed_pagination && Pixelpost_Uri::$page < Pixelpost_Uri::$total_pages)
 		{
 			$this->feed['rss']['channel']['atom:link'][2]    = null;
 			$this->feed['rss']['channel']['atom:link']['2_attr'] = 
 				array(  
 					'rel'  => 'next',
 					// 'type' => 'application/rss+xml',
-					'href' => $this->config->url.'feed/page/'. (WEB2BB_Uri::$page+1),
+					'href' => $this->config->url.'feed/page/'. (Pixelpost_Uri::$page+1),
 				);
 			
 		}

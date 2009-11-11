@@ -31,7 +31,7 @@ class postController extends baseController implements Model_Interface
 		/**
 		 * Determine the image ID we need to lookup, and verify that it is a positive integer:
 		 */
-		$this->id = (int) Web2BB_Uri::fragment(1);
+		$this->id = (int) Pixelpost_Uri::fragment(1);
 		$this->id = ($this->id > 0) ? $this->id : 0;
 		
 		/**

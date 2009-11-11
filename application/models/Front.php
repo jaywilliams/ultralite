@@ -37,7 +37,7 @@ class Model_Front
 		/**
 		 * Set the controller
 		 */
-		$this->_controller = $this->_view = ( Web2BB_Uri::fragment(0) )? Web2BB_Uri::fragment(0) : Pixelpost_Config::getInstance()->default_controller;
+		$this->_controller = $this->_view = ( Pixelpost_Uri::fragment(0) )? Pixelpost_Uri::fragment(0) : Pixelpost_Config::getInstance()->default_controller;
 		
 		/**
 		 * If the URI fragment points to an non existent controller,
@@ -51,7 +51,7 @@ class Model_Front
 		/**
 		 * Set the Action
 		 */
-		$this->_action = ( Web2BB_Uri::fragment(1) )? Web2BB_Uri::fragment(1) : Pixelpost_Config::getInstance()->default_action;
+		$this->_action = ( Pixelpost_Uri::fragment(1) )? Pixelpost_Uri::fragment(1) : Pixelpost_Config::getInstance()->default_action;
 		
 	}
 

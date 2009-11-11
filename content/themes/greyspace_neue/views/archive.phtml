@@ -27,11 +27,11 @@
 		
 			<div class="pagination">
 				
-				<?php if ((WEB2BB_Uri::$page) == 2): ?>
-					<a href="<?php echo WEB2BB_Uri::$uri; ?>" class="previous">&#x2190; Previous Page</a>
+				<?php if ((Pixelpost_Uri::$page) == 2): ?>
+					<a href="<?php echo Pixelpost_Uri::$uri; ?>" class="previous">&#x2190; Previous Page</a>
 
-				<?php elseif ((WEB2BB_Uri::$page) > 1): ?>
-					<a href="<?php echo WEB2BB_Uri::$uri . '/page/' . (WEB2BB_Uri::$page-1); ?>" class="previous">&#x2190; Previous Page</a>
+				<?php elseif ((Pixelpost_Uri::$page) > 1): ?>
+					<a href="<?php echo Pixelpost_Uri::$uri . '/page/' . (Pixelpost_Uri::$page-1); ?>" class="previous">&#x2190; Previous Page</a>
 					
 				<?php else: ?>
 					<a class="previous disabled">&#x2190; Previous Page</a>
@@ -39,8 +39,8 @@
 				<?php endif ?>
 				
 				
-				<?php if (WEB2BB_Uri::$page < WEB2BB_Uri::$total_pages): ?>
-					<a href="<?php echo WEB2BB_Uri::$uri . '/page/' . (WEB2BB_Uri::$page+1); ?>" class="next">Next Page &#x2192;</a>
+				<?php if (Pixelpost_Uri::$page < Pixelpost_Uri::$total_pages): ?>
+					<a href="<?php echo Pixelpost_Uri::$uri . '/page/' . (Pixelpost_Uri::$page+1); ?>" class="next">Next Page &#x2192;</a>
 					
 				<?php else: ?>
 					<a class="next disabled">Next Page &#x2192;</a>
@@ -48,7 +48,7 @@
 				<?php endif ?>
 				
 				
-				<span class="page"><?php echo "Page " . WEB2BB_Uri::$page . " of " . WEB2BB_Uri::$total_pages; ?></span>
+				<span class="page"><?php echo "Page " . Pixelpost_Uri::$page . " of " . Pixelpost_Uri::$total_pages; ?></span>
 			
 				<br class="clear"/>
 			</div>

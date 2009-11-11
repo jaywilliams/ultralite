@@ -38,16 +38,16 @@ class archiveController extends baseController implements Model_Interface
 				$this->total_posts = (int) Pixelpost_DB::get_var($sql);
 			
 				// Determine the total number of pages
-				WEB2BB_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
+				Pixelpost_Uri::$total_pages = (int) ceil($this->total_posts / $this->config->posts_per_page);
 
 				// Verify that we're on a legitimate page to start with
-				if (WEB2BB_Uri::$total_pages < WEB2BB_Uri::$page)
+				if (Pixelpost_Uri::$total_pages < Pixelpost_Uri::$page)
 				{
 					throw new Exception("Sorry, we don't have anymore pages to show!");
 				}
 
 				// The database needs to know which row we need to start with:
-				$range = (int) (WEB2BB_Uri::$page - 1) * $this->config->posts_per_page;
+				$range = (int) (Pixelpost_Uri::$page - 1) * $this->config->posts_per_page;
 				$sql = "SELECT * FROM `pixelpost` WHERE `published` <= '{$this->config->current_time}' ORDER BY `published` DESC LIMIT {$range}, {$this->config->posts_per_page}";
 			}
 			else

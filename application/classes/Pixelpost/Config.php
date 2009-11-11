@@ -33,12 +33,14 @@ class Pixelpost_Config
 	private function __construct()
 	{
 		
-		if(!defined('ULTRALITE')) define('ULTRALITE',TRUE);
-		
-		$this->file = APPPATH."/pixelpost.php";
+		$this->file = APPPATH.'config.php';
 		
 		if (!$this->load())
+		{
+			throw new Exception("Unable to load configuration file.", E_ERROR);
 			return false;
+		}
+			
 		
 		foreach ($this->config as $setting => $value)
 				$this->$setting = $value;
@@ -141,7 +143,7 @@ class Pixelpost_Config
 		$contents = var_export($this->config, true);
 
 		$contents = <<<CONFIG
-<?php if(!defined('ULTRALITE')) { @header("Status: 403"); exit("Access denied."); } // Prevent direct file access. 
+<?php defined('APPPATH') or die('No direct script access.');
 
 /**
  * Welcome to the Ultralite configuration file.

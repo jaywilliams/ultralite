@@ -11,9 +11,8 @@
  *
  */
 
-// namespace web2bb;
 
-class Web2BB_Uri 
+class Pixelpost_Uri 
 {
 	/*
 	 * @var array $fragments
@@ -53,7 +52,7 @@ class Web2BB_Uri
 	{
  		if(is_null(self::$instance))
  		{
- 			self::$instance = new Web2BB_Uri;
+ 			self::$instance = new Pixelpost_Uri;
  		}
 		return self::$instance;
 	}
@@ -71,9 +70,9 @@ class Web2BB_Uri
 		/**
 		 * Replace forward-slashes (\) with back-slashes (/),
 		 * Remove any double-slashes (//), and any beginning or ending slashes
-		 * Remove any potentially harmfull characters from the equasion
+		 * Remove any potentially harmful characters from the equation
 		 */
-		self::$uri = clean_filename($_SERVER['QUERY_STRING']);
+		self::$uri = self::clean($_SERVER['QUERY_STRING']);
 		
 		/**
 		 * Check if a page is specified in the URL.
@@ -95,8 +94,8 @@ class Web2BB_Uri
 	 * Retrieve URI Fragment
 	 * 
 	 * Example:
-	 *     Web2BB_Uri::fragment(0); # Returns the first fragment
-	 *     Web2BB_Uri::fragment(-1); # Returns the the last fragment
+	 *     Pixelpost_Uri::fragment(0); # Returns the first fragment
+	 *     Pixelpost_Uri::fragment(-1); # Returns the the last fragment
 	 * 
 	 * @access public
 	 * @param int $key The uri key to retrieve, can be positive or negative.
@@ -134,8 +133,8 @@ class Web2BB_Uri
 	 * 
 	 * Possible ways to get the current page:
 	 * 
-	 *   Web2BB_Uri::$page;
-	 *   Web2BB_Uri::page();
+	 *   Pixelpost_Uri::$page;
+	 *   Pixelpost_Uri::page();
 	 *
 	 * @param int $page (optional) override the current page number
 	 * @return int self::$page current page
@@ -155,8 +154,8 @@ class Web2BB_Uri
 	 * 
 	 * Possible ways to get the total pages:
 	 * 
-	 *   Web2BB_Uri::$total_pages;
-	 *   Web2BB_Uri::totalPages();
+	 *   Pixelpost_Uri::$total_pages;
+	 *   Pixelpost_Uri::totalPages();
 	 *
 	 * @param int $total_pages (optional) override the total pages
 	 * @return int self::$total_pages total pages
@@ -176,8 +175,8 @@ class Web2BB_Uri
 	 * 
 	 * Possible ways to get the current page:
 	 * 
-	 *   Web2BB_Uri::$uri;
-	 *   Web2BB_Uri::uri();
+	 *   Pixelpost_Uri::$uri;
+	 *   Pixelpost_Uri::uri();
 	 *
 	 * @param string $uri (optional) override the current uri string
 	 * @return string self::$uri current uri
@@ -190,6 +189,32 @@ class Web2BB_Uri
 		}
 		
 		return self::$uri;
+	}
+	
+	
+	/**
+	 * Clean URI
+	 * 
+	 * Remove any unsafe characters and return a limited ascii result.
+	 * Backslashes are converted to forward slashes, just in case a user mistyped the URI.
+	 * Slashes are stripped form the beginning and end of the string as well.
+	 * 
+	 *   Pixelpost_Uri::clean('/my/uri/string/');
+	 *
+	 * @param string $uri Unsafe Raw URI
+	 * @return string $uri Cleaned URI
+	 */
+	public static function clean($uri = NULL)
+	{
+		if(empty($uri))
+			return $uri;
+		
+		$uri = strtolower($uri);
+		$uri = str_replace( '\\', '/', $uri);
+		$uri = preg_replace('/[^a-z0-9\/\-,_\+!~*\'()]/', '', $uri);
+		$uri = trim($uri,'/\\');
+		
+		return $uri;
 	}
 
 	/**

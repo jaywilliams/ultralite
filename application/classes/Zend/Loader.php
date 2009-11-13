@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Loader.php 15195 2009-04-27 03:59:24Z matthew $
+ * @version    $Id: Loader.php 16206 2009-06-21 19:15:37Z thomas $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Loader
@@ -47,7 +47,7 @@ class Zend_Loader
      * @param string|array $dirs - OPTIONAL Either a path or an array of paths
      *                             to search.
      * @return void
-     * @throws Exception
+     * @throws Zend_Exception
      */
     public static function loadClass($class, $dirs = null)
     {
@@ -108,7 +108,7 @@ class Zend_Loader
      *                       to search.
      * @param  boolean       $once
      * @return boolean
-     * @throws Exception
+     * @throws Zend_Exception
      */
     public static function loadFile($filename, $dirs = null, $once = false)
     {
@@ -197,26 +197,30 @@ class Zend_Loader
      * @param string $class (optional)
      * @param boolean $enabled (optional)
      * @return void
-     * @throws Exception if spl_autoload() is not found
+     * @throws Zend_Exception if spl_autoload() is not found
      * or if the specified class does not have an autoload() method.
      */
     public static function registerAutoload($class = 'Zend_Loader', $enabled = true)
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use Zend_Loader_Autoloader instead', E_USER_NOTICE);
-        if (!function_exists('spl_autoload_register')) {
-            throw new Exception('spl_autoload does not exist in this PHP installation');
-        }
+        require_once 'Zend/Loader/Autoloader.php';
+        $autoloader = Zend_Loader_Autoloader::getInstance();
+        $autoloader->setFallbackAutoloader(true);
 
-        self::loadClass($class);
-        $methods = get_class_methods($class);
-        if (!in_array('autoload', (array) $methods)) {
+        if ('Zend_Loader' != $class) {
+            self::loadClass($class);
+            $methods = get_class_methods($class);
+            if (!in_array('autoload', (array) $methods)) {
             throw new Exception("The class \"$class\" does not have an autoload() method");
-        }
+            }
 
-        if ($enabled === true) {
-            spl_autoload_register(array($class, 'autoload'));
-        } else {
-            spl_autoload_unregister(array($class, 'autoload'));
+            $callback = array($class, 'autoload');
+
+            if ($enabled) {
+                $autoloader->pushAutoloader($callback);
+            } else {
+                $autoloader->removeAutoloader($callback);
+            }
         }
     }
 
@@ -225,7 +229,7 @@ class Zend_Loader
      *
      * @param  string $filename
      * @return void
-     * @throws Exception
+     * @throws Zend_Exception
      */
     protected static function _securityCheck($filename)
     {

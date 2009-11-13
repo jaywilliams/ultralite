@@ -15,8 +15,8 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage Autoloader
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Resource.php 14026 2009-02-09 19:03:22Z matthew $
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Resource.php 18173 2009-09-17 15:35:05Z padraic $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,8 +29,8 @@
  * @uses       Zend_Loader_Autoloader_Interface
  * @package    Zend_Loader
  * @subpackage Autoloader
- * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    New BSD {@link http://framework.zend.com/license/new-bsd}
+ * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interface
 {
@@ -83,6 +83,9 @@ class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interfac
             throw new Zend_Loader_Exception('Resource loader requires both a namespace and a base path for initialization');
         }
 
+        if (!empty($namespace)) {
+            $namespace .= '_';
+        }
         Zend_Loader_Autoloader::getInstance()->unshiftAutoloader($this, $namespace);
     }
 
@@ -137,7 +140,7 @@ class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interfac
 
         if (!empty($namespaceTopLevel)) {
             $namespace = array_shift($segments);
-            if ($namespace != $this->getNamespace()) {
+            if ($namespace != $namespaceTopLevel) {
                 // wrong prefix? we're done
                 return false;
             }
@@ -254,7 +257,7 @@ class Zend_Loader_Autoloader_Resource implements Zend_Loader_Autoloader_Interfac
         if (!is_string($path)) {
             throw new Zend_Loader_Exception('Invalid path specification provided; must be string');
         }
-        $this->_resourceTypes[$type]['path'] = $this->getBasePath() . '/' . $path;
+        $this->_resourceTypes[$type]['path'] = $this->getBasePath() . '/' . rtrim($path, '\/');
 
         $component = $this->_resourceTypes[$type]['namespace'];
         $this->_components[$component] = $this->_resourceTypes[$type]['path'];

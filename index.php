@@ -114,6 +114,9 @@ define('PIXELPOST_START_MEMORY', memory_get_usage());
 // Load the base, low-level functions
 require_once APPPATH.'base.php';
 
+// Run Translation Test:
+require_once APPPATH.'test-translation.php';
+
 // Load the core Pixelpost class
 //require APPPATH.'classes/pixelpost/core.php';
 

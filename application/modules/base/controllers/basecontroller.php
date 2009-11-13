@@ -193,7 +193,7 @@ class baseController
 			 * No matching View exists, display a 404 error.
 			 * @todo Use a Ultralite specific Exception class
 			 */
-			throw new Web2BB_Exception('File Not Found',404);
+			throw new Pixelpost_Exception('File Not Found',404);
 		}
 
 		if (!is_null($this->content))

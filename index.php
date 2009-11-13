@@ -55,7 +55,7 @@ date_default_timezone_set('America/Chicago');
  * End of standard configuration! Changing any of the code below should only be
  * attempted by those with a working knowledge of Pixelpost internals.
  *
- * @see  http://docs.kohanaphp.com/bootstrap
+ * @see  http://docs.pixelpost.org/
  */
 
 // Set the full path to the docroot
@@ -112,7 +112,7 @@ define('PIXELPOST_START_TIME', microtime(TRUE));
 define('PIXELPOST_START_MEMORY', memory_get_usage());
 
 // Load the base, low-level functions
-require APPPATH.'base.php';
+require_once APPPATH.'base.php';
 
 // Load the core Pixelpost class
 //require APPPATH.'classes/pixelpost/core.php';

@@ -1,22 +1,23 @@
 <?php defined('APPPATH') or die('No direct script access.');
 
-// Remove register globals, if applicable:
+/**
+ * Disable any potentially bad PHP features:
+ */
 unregister_globals();
-
-// Remove magic_quotes, if applicable:
 remove_magic_quotes();
 
 
 /**
- * Class Autoloader
+ * Initialize the Class Autoloader
  */
 set_include_path(APPPATH.'classes/');
 require_once 'Zend/Loader/Autoloader.php';
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->setFallbackAutoloader(true); // Load any namespace
 
+
 /**
- * Language and Model Autoloader
+ * Initialize Language and Model Autoloader
  */
 $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
 	'basePath'	=> APPPATH,
@@ -24,24 +25,19 @@ $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
 ));
 
 $resourceLoader->addResourceType('models', 'models', 'Model');
-			   // ->addResourceType('language', 'languages', 'Language')
+// $resourceLoader->addResourceType('language', 'languages', 'Language');
+
 
 /**
  * Initialize Uri Class
  */
 Pixelpost_Uri::getInstance();
 
+
 /**
  * Initialize Config Class
  */
 $config = Pixelpost_Config::getInstance();
-
-/**
- * Working Timezone
- */
-if(!empty($config->timezone))
-	date_default_timezone_set($config->timezone);
-$config->current_time = date("Y-m-d H:i:s",time());
 
 
 /**
@@ -71,6 +67,15 @@ Pixelpost_DB::set_table_prefix( $config->database['prefix'] );
 if (!Pixelpost_DB::$connected)
 	throw new Pixelpost_Exception("Unable to connect to database", E_ERROR);
 
+
+/**
+ * Initialize Timezone
+ */
+if(!empty($config->timezone))
+	date_default_timezone_set($config->timezone);
+$config->current_time = date("Y-m-d H:i:s",time());
+
+
 /**
  * Helper Functions
  */
@@ -99,6 +104,7 @@ function unregister_globals() {
 		}
 }
 
+
 /**
  * Remove magic quotes for incoming GET/POST/Cookie data.
  *
@@ -113,3 +119,6 @@ function remove_magic_quotes() {
 	$_COOKIE  = array_map('stripslashes', $_COOKIE);
 }
 
+/**
+ * To prevent possible issues, do not add a closing "?>" tag.
+ */

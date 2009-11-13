@@ -69,18 +69,11 @@ switch ($config->database['adapter'])
 Pixelpost_DB::set_table_prefix( $config->database['prefix'] );
 
 if (!Pixelpost_DB::$connected)
-	throw new Web2BB_Exception("Unable to connect to database", E_ERROR);
-
-
-
-
+	throw new Pixelpost_Exception("Unable to connect to database", E_ERROR);
 
 /**
  * Helper Functions
  */
-
-
-
 
 
 /**

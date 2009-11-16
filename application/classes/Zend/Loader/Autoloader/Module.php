@@ -151,6 +151,13 @@ class Zend_Loader_Autoloader_Module extends Zend_Loader_Autoloader_Resource impl
             return false;
         }
 
+        // Interject /controllers/ into the path for module controllers:
+        if ($segments[0] == 'Module' && strpos(end($segments),'Controller')) {
+            $controller_class = $segments;
+            $controller_class[1] = $controller_class[1].'_controllers';
+            $class = implode('_',$controller_class);
+        }
+
         $final     = array_pop($segments);
         $component = $namespace;
         $lastMatch = false;

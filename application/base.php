@@ -19,13 +19,13 @@ $autoloader->setFallbackAutoloader(true); // Load any namespace
 /**
  * Initialize Language and Model Autoloader
  */
-$resourceLoader = new Zend_Loader_Autoloader_Resource(array(
+$resourceLoader = new Zend_Loader_Autoloader_Module(array(
 	'basePath'	=> APPPATH,
 	'namespace' => '',
 ));
 
-$resourceLoader->addResourceType('models', 'models', 'Model');
-// $resourceLoader->addResourceType('language', 'languages', 'Language');
+// $resourceLoader->addResourceType('models', 'models', 'Model');
+$resourceLoader->addResourceType('modules', 'modules', 'Module');
 
 
 /**

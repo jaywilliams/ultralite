@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class staticController extends baseController implements Model_Interface
+class Module_Post_staticController extends Module_Base_Controller implements Model_Interface
 {
 
 	public function __construct()
@@ -33,14 +33,14 @@ class staticController extends baseController implements Model_Interface
 		
 	}
 
-	public function index()
+	public function indexAction()
 	{
 		/**
 		 * We don't need to do anything here, since we only have to include
 		 * a template file. Everything is taken care of by the basecontroller.
 		 */
 	}
-	public function test()
+	public function testAction()
 	{
 		/**
 		 * Sample Sub-Page Action Test

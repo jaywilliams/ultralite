@@ -2,7 +2,7 @@
 
 // namespace web2bb;
 
-class errorController extends baseController implements Model_Interface
+class errorController extends Module_Base_Controller implements Model_Interface
 {
 	/**
 	*

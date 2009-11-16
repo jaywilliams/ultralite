@@ -9,7 +9,7 @@
  *
  */
 
-class archiveController extends baseController implements Model_Interface
+class archiveController extends Module_Base_Controller implements Model_Interface
 {
 	
 	public $posts;

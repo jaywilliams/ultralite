@@ -69,7 +69,7 @@ return array (
   'my-bool' => false,
   'default_controller' => 'post',
   'default_action' => 'index',
-  'error_controller' => 'error404',
+  'error_controller' => 'error',
   'static_controller' => 'static',
   'test' => true,
 )

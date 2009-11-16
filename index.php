@@ -115,7 +115,16 @@ define('PIXELPOST_START_MEMORY', memory_get_usage());
 require_once APPPATH.'base.php';
 
 // Run Translation Test:
-require_once APPPATH.'test-translation.php';
+// require_once APPPATH.'test-translation.php';
+
+// FrontController
+// $front = Model_Front::getInstance();
+// $front->route();
+
+// echo $front->getBody();
+$front = new Module_Base_baseController;
+var_dump($front);
+// require_once APPPATH.'test-translation.php';
 
 // Load the core Pixelpost class
 //require APPPATH.'classes/pixelpost/core.php';

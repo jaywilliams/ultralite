@@ -2,7 +2,7 @@
 
 // namespace web2bb;
 
-class baseController
+class Module_Base_baseController
 {
 	var $view, $content = null;
 

@@ -37,7 +37,7 @@ class Model_Front
 		/**
 		 * Set the controller
 		 */
-		$this->_controller = $this->_view = ( Pixelpost_Uri::fragment(0) )? Pixelpost_Uri::fragment(0) : Pixelpost_Config::getInstance()->default_controller;
+		$this->_controller = $this->_view = ( Pixelpost_Uri::fragment(0) )? ucfirst(Pixelpost_Uri::fragment(0)) : Pixelpost_Config::getInstance()->default_controller;
 		
 		/**
 		 * If the URI fragment points to an non existent controller,
@@ -51,7 +51,7 @@ class Model_Front
 		/**
 		 * Set the Action
 		 */
-		$this->_action = ( Pixelpost_Uri::fragment(1) )? Pixelpost_Uri::fragment(1) : Pixelpost_Config::getInstance()->default_action;
+		$this->_action = ( Pixelpost_Uri::fragment(1) )? Pixelpost_Uri::fragment(1).'Action' : Pixelpost_Config::getInstance()->default_action;
 		
 	}
 
@@ -88,7 +88,7 @@ class Model_Front
 		}
 		else
 		{
-			throw new Exception("Interface iController must be implemented");
+			throw new Exception("Interface Model_Interface must be implemented");
 		}
 	}
 
@@ -109,13 +109,13 @@ class Model_Front
 	*/
 	public function loadController()
 	{
-		if( class_exists("{$this->_controller}Controller") )
+		if( class_exists("Module_{$this->_controller}_indexController") )
 		{
-			return "{$this->_controller}Controller";
+			return "Module_{$this->_controller}_indexController";
 		}
 		else
 		{
-			return Pixelpost_Config::getInstance()->error_controller.'Controller';
+			return 'Module_'.Pixelpost_Config::getInstance()->error_controller.'_indexController';
 		}
 	}
 	
@@ -124,18 +124,27 @@ class Model_Front
 	{
 		$controller = ($controller)? $controller : $this->_controller;
 		
-		if (file_exists(APPPATH . "/modules/{$controller}/controllers/{$controller}controller.php")) {
-			return true;
-		}else {
-			
-			// Grab the list of enabled plugins...
-			$plugins = Pixelpost_Config::getInstance()->enabled_plugins;
-			
-			if (in_array($controller, $plugins) && file_exists(PLGPATH . "/{$controller}/controllers/{$controller}controller.php"))
-				return true;
-			else
-				return false;
-		}
+        // if ( class_exists("Module_{$this->_controller}_indexController") ) {
+            // return true;
+        // }else {
+            // return false;
+        // }
+        
+        if (file_exists(APPPATH . "/modules/{$controller}/controllers/indexController.php")) {
+         	return true;
+         }else {
+         	return false;
+         }
+        // }else {
+        //       
+        //        // Grab the list of enabled plugins...
+        //        $plugins = Pixelpost_Config::getInstance()->enabled_plugins;
+        //        
+        //        if (in_array($controller, $plugins) && file_exists(PLGPATH . "/{$controller}/controllers/{$controller}Controller.php"))
+        //            return true;
+        //        else
+        //            return false;
+        //       }
 		
 	}
 

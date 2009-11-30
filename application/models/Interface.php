@@ -13,4 +13,7 @@
 
 // namespace web2bb;
 
-interface Model_Interface {}
+interface Model_Interface
+{
+    public function indexAction();
+}

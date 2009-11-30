@@ -118,12 +118,12 @@ require_once APPPATH.'base.php';
 // require_once APPPATH.'test-translation.php';
 
 // FrontController
-// $front = Model_Front::getInstance();
-// $front->route();
+$front = Model_Front::getInstance();
+$front->route();
 
-// echo $front->getBody();
-$front = new Module_Base_baseController;
-var_dump($front);
+echo $front->getBody();
+// $front = new Module_Base_baseController;
+// var_dump($front);
 // require_once APPPATH.'test-translation.php';
 
 // Load the core Pixelpost class

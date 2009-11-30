@@ -37,8 +37,6 @@ return array (
   'post_url' => '(year)/(month)/(day)/(url)/',
   'timezone' => 'America/Chicago',
   'can_register' => true,
-  'uploads_path' => '/content/images/',
-  'cache_dir' => 'content/cache',
   'cache_lifetime' => 3600,
   'enabled_plugins' => 
   array (
@@ -67,10 +65,10 @@ return array (
   'comments_per_page' => 25,
   'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',
   'my-bool' => false,
-  'default_controller' => 'post',
-  'default_action' => 'index',
-  'error_controller' => 'error',
-  'static_controller' => 'static',
+  'default_controller' => 'Post',
+  'default_action' => 'indexAction',
+  'error_controller' => 'Error',
+  'static_controller' => 'Static',
   'test' => true,
 )
 

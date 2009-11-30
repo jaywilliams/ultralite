@@ -6,7 +6,7 @@
  * @author Jay Williams 
  */
 
-class feedController extends Module_Base_Controller implements Model_Interface
+class Module_Feed_indexController extends Module_Base_baseController implements Model_Interface
 {
 
 	public function __construct()
@@ -18,7 +18,7 @@ class feedController extends Module_Base_Controller implements Model_Interface
 		$this->feed_type = (string) Pixelpost_Uri::fragment(1);
 	}
 
-	public function index()
+	public function indexAction()
 	{
 		
 		
@@ -75,21 +75,21 @@ class feedController extends Module_Base_Controller implements Model_Interface
 		 * If index is called, without specifying a feed type,
 		 * auto-run the default rss method.
 		 */
-		if (empty($this->feed_type) || !method_exists($this,$this->feed_type)) {
-			$this->rss();
+		if (empty($this->feed_type) || !method_exists($this,$this->feed_type.'Action')) {
+			$this->rssAction();
 		}
 
 		
 	}
 	
-	public function rss()
+	public function rssAction()
 	{
 		/**
 		 * If this method is being auto-run by index(), 
 		 * we don't need to run it here.
 		 */
 		if ($this->feed_type == 'rss') {
-			$this->index();
+			$this->indexAction();
 		}
 		
 		/**
@@ -224,9 +224,9 @@ class feedController extends Module_Base_Controller implements Model_Interface
 		$this->view->posts = $this->posts;
 	}
 	
-	public function atom()
+	public function atomAction()
 	{
-		$this->index();
+		$this->indexAction();
 		
 		/**
 		 * @todo Add ATOM Specific Code

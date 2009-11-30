@@ -10,7 +10,7 @@
 
 // namespace web2bb;
 
-class Module_Post_staticController extends Module_Base_Controller implements Model_Interface
+class Module_Static_indexController extends Module_Base_baseController implements Model_Interface
 {
 
 	public function __construct()

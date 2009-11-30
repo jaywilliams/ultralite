@@ -9,7 +9,7 @@
  *
  */
 
-class archiveController extends Module_Base_Controller implements Model_Interface
+class Module_Archive_indexController extends Module_Base_baseController implements Model_Interface
 {
 	
 	public $posts;
@@ -19,7 +19,7 @@ class archiveController extends Module_Base_Controller implements Model_Interfac
 		parent::__construct();
 	}
 
-	public function index()
+	public function indexAction()
 	{
 		
 		if (!is_array($this->posts))
@@ -87,7 +87,7 @@ class archiveController extends Module_Base_Controller implements Model_Interfac
 		$thumbnails = '';
 		foreach ($this->posts as $post)
 		{
-			$thumbnails .= "<a href=\"$post->permalink\">" . "<img src=\"{$post->thumb_uri}\" alt=\"" . escape($post->title) . "\" width=\"{$post->thumb_width}\" height=\"{$post->thumb_height}\" />" . "</a>";
+			$thumbnails .= "<a href=\"$post->permalink\">" . "<img src=\"{$post->thumb_uri}\" alt=\"" . $post->title . "\" width=\"{$post->thumb_width}\" height=\"{$post->thumb_height}\" />" . "</a>";
 		}
 		return $thumbnails;
 	}

@@ -2,7 +2,7 @@
 
 // namespace web2bb;
 
-class errorController extends Module_Base_Controller implements Model_Interface
+class Module_Error_indexController extends Module_Base_baseController implements Model_Interface
 {
 	/**
 	*
@@ -21,7 +21,7 @@ class errorController extends Module_Base_Controller implements Model_Interface
 	* @access	public
 	*
 	*/
-	public function index()
+	public function indexAction()
 	{
 		/*** a view variable ***/
 		$this->view->title = '404 File Not Found';

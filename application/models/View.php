@@ -57,7 +57,7 @@ class Model_View
 	 * @access private
 	 * @var string
 	 */
-	private $cache_dir = 'cache';
+	private $cache_dir = '';
 
 	/**
 	 * Lifetime of a cache file in seconds.
@@ -244,8 +244,7 @@ class Model_View
 	{
 		if( is_null( $cacheDir ) )
 		{
-			//$config = config::getInstance();
-			$cacheDir =Pixelpost_Config::getInstance()->cache_dir;
+			return false;
 		}
 	
 		if (is_dir($cacheDir) && is_writable($cacheDir))

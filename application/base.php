@@ -24,6 +24,8 @@ $resourceLoader = new Zend_Loader_Autoloader_Module(array(
 	'namespace' => '',
 ));
 
+
+
 $resourceLoader->addResourceType('models', 'models', 'Model');
 $resourceLoader->addResourceType('modules', 'modules', 'Module');
 

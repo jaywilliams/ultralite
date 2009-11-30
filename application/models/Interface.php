@@ -1,19 +1,16 @@
 <?php
-/**
- *
- * @Controller Interface
- *
- * @copyright Copyright (C) 2009 PHPRO.ORG. All rights reserved.
- *
- * @license new bsd http://www.opensource.org/licenses/bsd-license.php
- * @package Core
- * @Author Kevin Waterson
- *
- */
 
-// namespace web2bb;
+/**
+ * Model Interface
+ * 
+ * Defines the required methods modules must implement in order to be executed.
+ *
+ * @author Jay Williams
+ * @license GPL 2.0
+ * @package Pixelpost
+ **/
 
 interface Model_Interface
 {
-    public function indexAction();
+	public function indexAction();
 }

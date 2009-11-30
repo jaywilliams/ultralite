@@ -117,20 +117,16 @@ require_once APPPATH.'base.php';
 // Run Translation Test:
 // require_once APPPATH.'test-translation.php';
 
-// FrontController
-$front = Model_Front::getInstance();
+// Route the page request
 $front->route();
 
+// Display the page
 echo $front->getBody();
-// $front = new Module_Base_baseController;
-// var_dump($front);
-// require_once APPPATH.'test-translation.php';
-
-// Load the core Pixelpost class
-//require APPPATH.'classes/pixelpost/core.php';
 
 // Bootstrap the application
 // require APPPATH.'bootstrap.php';
+
+Pixelpost_Plugin::executeAction('hook_exit');
 
 /**
  * To prevent possible issues, do not add a closing "?>" tag.

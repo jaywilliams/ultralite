@@ -71,11 +71,21 @@ if (!Pixelpost_DB::$connected)
 
 
 /**
+ * Initialize Page
+ */
+$front = Model_Front::getInstance();
+
+/**
  * Initialize Timezone
  */
 if(!empty($config->timezone))
 	date_default_timezone_set($config->timezone);
 $config->current_time = date("Y-m-d H:i:s",time());
+
+/**
+ * Initialize Plugin Hooks
+ */
+Pixelpost_Plugin::executeAction('hook_init');
 
 
 /**

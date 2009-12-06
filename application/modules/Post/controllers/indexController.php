@@ -33,7 +33,7 @@ class Module_Post_indexController extends Module_Base_baseController implements 
          * get the details for the posts.
          */
         $this->id = (int)Pixelpost_Uri::fragment(1);
-        $this->posts = Model_Post::getDetails($this->id, $this->posts, $this->config);
+        $this->posts = Model_Post::getDetails($this->id);
 
         /**
          * Run the posts through the Plugin system, and apply any 

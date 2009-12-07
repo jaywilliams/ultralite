@@ -33,19 +33,18 @@ return array (
   'posts_per_page' => 5,
   'feed_items' => 5,
   'feed_pagination' => true,
-  'clean_urls' => true,
-  'post_url' => '(year)/(month)/(day)/(url)/',
   'timezone' => 'America/Chicago',
-  'can_register' => true,
-  'cache_lifetime' => 3600,
   'enabled_plugins' => 
   array (
+    // 0 => 'Example',
+    // 1 => 'comment',
+    // 2 => 'media_rss',
+    // 3 => 'markdown',
+    // 4 => 'smartypants',
+    // 5 => 'metadata',
+    // 6 => 'category',
+    // 7 => 'tag',
   ),
-  'routes' => 
-  array (
-    'tag/(name)/' => 'tag',
-  ),
-  'secure_hashkey' => '090cf52270f04c28b7bb0fab1e93d425',
   'default_comment_status' => 'denied',
   'allowed_comment_html' => 
   array (
@@ -61,15 +60,10 @@ return array (
     'log_handler' => 'file',
     'log_file' => 'application/pixelpost.log',
     'log_level' => 999,
-  ),
-  'comments_per_page' => 25,
-  'defensio_api_key' => '090cf52270f04c28b7bb0fab1e93d425',
-  'my-bool' => false,
-  'default_controller' => 'Post',
+  ),  'default_controller' => 'Post',
   'default_action' => 'indexAction',
   'error_controller' => 'Error',
   'static_controller' => 'Static',
-  'test' => true,
 )
 
 ?>
